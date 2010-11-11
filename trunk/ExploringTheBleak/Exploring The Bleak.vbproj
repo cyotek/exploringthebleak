@@ -1,0 +1,410 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{0BF9343D-15F6-4E02-9919-A15367A55C60}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <StartupObject>Exploring_The_Bleak.My.MyApplication</StartupObject>
+    <RootNamespace>Exploring_The_Bleak</RootNamespace>
+    <AssemblyName>Exploring The Bleak</AssemblyName>
+    <FileAlignment>512</FileAlignment>
+    <MyType>WindowsForms</MyType>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <DefineDebug>true</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DocumentationFile>Exploring The Bleak.xml</DocumentationFile>
+    <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <DefineDebug>false</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DocumentationFile>Exploring The Bleak.xml</DocumentationFile>
+    <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup>
+    <OptionExplicit>On</OptionExplicit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <OptionCompare>Binary</OptionCompare>
+  </PropertyGroup>
+  <PropertyGroup>
+    <OptionStrict>Off</OptionStrict>
+  </PropertyGroup>
+  <PropertyGroup>
+    <OptionInfer>On</OptionInfer>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Untitled-2.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+  </ItemGroup>
+  <ItemGroup>
+    <Import Include="Microsoft.VisualBasic" />
+    <Import Include="System" />
+    <Import Include="System.Collections" />
+    <Import Include="System.Collections.Generic" />
+    <Import Include="System.Data" />
+    <Import Include="System.Drawing" />
+    <Import Include="System.Diagnostics" />
+    <Import Include="System.Windows.Forms" />
+    <Import Include="System.Linq" />
+    <Import Include="System.Xml.Linq" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ApplicationEvents.vb" />
+    <Compile Include="ChooseCharacter.Designer.vb">
+      <DependentUpon>ChooseCharacter.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ChooseCharacter.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GenerateItem.vb" />
+    <Compile Include="Inventory.Designer.vb">
+      <DependentUpon>Inventory.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Inventory.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Main.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Main.Designer.vb">
+      <DependentUpon>Main.vb</DependentUpon>
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="My Project\AssemblyInfo.vb" />
+    <Compile Include="My Project\Application.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Application.myapp</DependentUpon>
+    </Compile>
+    <Compile Include="My Project\Resources.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="My Project\Settings.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <Compile Include="MyProgressBar.Designer.vb">
+      <DependentUpon>MyProgressBar.vb</DependentUpon>
+    </Compile>
+    <Compile Include="MyProgressBar.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Splash.Designer.vb">
+      <DependentUpon>Splash.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Splash.vb">
+      <SubType>Form</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="ChooseCharacter.resx">
+      <DependentUpon>ChooseCharacter.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Inventory.resx">
+      <DependentUpon>Inventory.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Main.resx">
+      <DependentUpon>Main.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="My Project\Resources.resx">
+      <Generator>VbMyResourcesResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.vb</LastGenOutput>
+      <CustomToolNamespace>My.Resources</CustomToolNamespace>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Splash.resx">
+      <DependentUpon>Splash.vb</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="My Project\Application.myapp">
+      <Generator>MyApplicationCodeGenerator</Generator>
+      <LastGenOutput>Application.Designer.vb</LastGenOutput>
+    </None>
+    <None Include="My Project\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <CustomToolNamespace>My</CustomToolNamespace>
+      <LastGenOutput>Settings.Designer.vb</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Untitled.png" />
+    <None Include="Resources\StairsUp.jpg" />
+    <None Include="Resources\StairsDown.jpg" />
+    <None Include="Resources\Level1Floor_Character.jpg" />
+    <None Include="Resources\Level1Wall.jpg" />
+    <None Include="Resources\Level1Floor.jpg" />
+    <None Include="Resources\Level1Elevator.jpg" />
+    <None Include="Resources\BrickWall.jpg" />
+    <None Include="Resources\GrassFloor.jpg" />
+    <None Include="Resources\IceWall.jpg" />
+    <None Include="Resources\Lava.jpg" />
+    <None Include="Resources\MetalFloor.jpg" />
+    <None Include="Resources\RockWall.jpg" />
+    <None Include="Resources\Splash.jpg" />
+    <None Include="Resources\1.jpg" />
+    <None Include="Resources\1floor.jpg" />
+    <None Include="Resources\2.jpg" />
+    <None Include="Resources\2floor.jpg" />
+    <None Include="Resources\3.jpg" />
+    <None Include="Resources\3floor.jpg" />
+    <None Include="Resources\4.jpg" />
+    <None Include="Resources\4floor.jpg" />
+    <None Include="Resources\5.jpg" />
+    <None Include="Resources\5floor.jpg" />
+    <None Include="Resources\6.jpg" />
+    <None Include="Resources\6floor.jpg" />
+    <None Include="Resources\7.jpg" />
+    <None Include="Resources\7floor.jpg" />
+    <None Include="Resources\8.jpg" />
+    <None Include="Resources\8floor.jpg" />
+    <None Include="Resources\9.jpg" />
+    <None Include="Resources\9floor.jpg" />
+    <None Include="Resources\10.jpg" />
+    <None Include="Resources\10floor.jpg" />
+    <None Include="Resources\Equip Inventory-01.jpg" />
+    <None Include="Resources\Water1.jpg" />
+    <None Include="Resources\Water2.jpg" />
+    <None Include="Resources\Water3.jpg" />
+    <None Include="Resources\Water4.jpg" />
+    <None Include="Resources\CommentBox1-01.jpg" />
+    <None Include="Resources\CommentBox2-01.jpg" />
+    <None Include="Resources\CommentBox3-01.jpg" />
+    <None Include="Resources\CommentBox4-01.jpg" />
+    <None Include="Resources\CommentBox5-01.jpg" />
+    <None Include="Resources\CommentBox6-01.jpg" />
+    <None Include="Resources\CommentBox7-01.jpg" />
+    <None Include="Resources\CommentBox8-01.jpg" />
+    <None Include="Resources\CommentBox9-01.jpg" />
+    <None Include="Resources\CommentBox10-01.jpg" />
+    <None Include="Resources\CommentBox11-01.jpg" />
+    <None Include="Resources\Backstab.jpg" />
+    <None Include="Resources\Block.jpg" />
+    <None Include="Resources\BoneShield.jpg" />
+    <None Include="Resources\Clumsiness.jpg" />
+    <None Include="Resources\Counter.jpg" />
+    <None Include="Resources\DoubleSlice.jpg" />
+    <None Include="Resources\Empower.jpg" />
+    <None Include="Resources\FireArrow.jpg" />
+    <None Include="Resources\Fireball.jpg" />
+    <None Include="Resources\FireShield.jpg" />
+    <None Include="Resources\Fury.jpg" />
+    <None Include="Resources\Heal.jpg" />
+    <None Include="Resources\Hide.jpg" />
+    <None Include="Resources\Hit.jpg" />
+    <None Include="Resources\HolyBolt.jpg" />
+    <None Include="Resources\Immolate.jpg" />
+    <None Include="Resources\Kick.jpg" />
+    <None Include="Resources\Leech.jpg" />
+    <None Include="Resources\MagicShield.jpg" />
+    <None Include="Resources\Punch.jpg" />
+    <None Include="Resources\Runestrike.jpg" />
+    <None Include="Resources\Sacrifice.jpg" />
+    <None Include="Resources\Shoot.jpg" />
+    <None Include="Resources\Silence.jpg" />
+    <None Include="Resources\Slice.jpg" />
+    <None Include="Resources\Stab.jpg" />
+    <None Include="Resources\Strike.jpg" />
+    <None Include="Resources\Stun.jpg" />
+    <None Include="Resources\Trip.jpg" />
+    <None Include="Resources\TripleSlice.jpg" />
+    <None Include="Resources\Whisper.jpg" />
+    <None Include="Resources\Wound.jpg" />
+    <None Include="Resources\BlurOut.jpg" />
+    <None Include="Resources\1.gif" />
+    <None Include="Resources\1floor.gif" />
+    <None Include="Resources\2.gif" />
+    <None Include="Resources\2floor.gif" />
+    <None Include="Resources\3.gif" />
+    <None Include="Resources\3floor.gif" />
+    <None Include="Resources\4.gif" />
+    <None Include="Resources\4floor.gif" />
+    <None Include="Resources\5.gif" />
+    <None Include="Resources\5floor.gif" />
+    <None Include="Resources\6.gif" />
+    <None Include="Resources\6floor.gif" />
+    <None Include="Resources\7.gif" />
+    <None Include="Resources\7floor.gif" />
+    <None Include="Resources\8.gif" />
+    <None Include="Resources\8floor.gif" />
+    <None Include="Resources\9.gif" />
+    <None Include="Resources\9floor.gif" />
+    <None Include="Resources\10.gif" />
+    <None Include="Resources\10floor.gif" />
+    <None Include="Resources\Backstab.gif" />
+    <None Include="Resources\Block.gif" />
+    <None Include="Resources\BlurOut.gif" />
+    <None Include="Resources\BoneShield.gif" />
+    <None Include="Resources\BrickWall.gif" />
+    <None Include="Resources\Clumsiness.gif" />
+    <None Include="Resources\CommentBox1-01.gif" />
+    <None Include="Resources\CommentBox2-01.gif" />
+    <None Include="Resources\CommentBox3-01.gif" />
+    <None Include="Resources\CommentBox4-01.gif" />
+    <None Include="Resources\CommentBox5-01.gif" />
+    <None Include="Resources\CommentBox6-01.gif" />
+    <None Include="Resources\CommentBox7-01.gif" />
+    <None Include="Resources\CommentBox8-01.gif" />
+    <None Include="Resources\CommentBox9-01.gif" />
+    <None Include="Resources\CommentBox10-01.gif" />
+    <None Include="Resources\CommentBox11-01.gif" />
+    <None Include="Resources\Counter.gif" />
+    <None Include="Resources\DoubleSlice.gif" />
+    <None Include="Resources\Empower.gif" />
+    <None Include="Resources\Equip-Inventory-01.gif" />
+    <None Include="Resources\FireArrow.gif" />
+    <None Include="Resources\Fireball.gif" />
+    <None Include="Resources\FireShield.gif" />
+    <None Include="Resources\Fury.gif" />
+    <None Include="Resources\Heal.gif" />
+    <None Include="Resources\Hide.gif" />
+    <None Include="Resources\Hit.gif" />
+    <None Include="Resources\HolyBolt.gif" />
+    <None Include="Resources\IceWall.gif" />
+    <None Include="Resources\Immolate.gif" />
+    <None Include="Resources\Kick.gif" />
+    <None Include="Resources\Lava.gif" />
+    <None Include="Resources\Leech.gif" />
+    <None Include="Resources\MagicShield.gif" />
+    <None Include="Resources\MetalFloor.gif" />
+    <None Include="Resources\Punch.gif" />
+    <None Include="Resources\RockWall.gif" />
+    <None Include="Resources\Runestrike.gif" />
+    <None Include="Resources\Sacrifice.gif" />
+    <None Include="Resources\Shoot.gif" />
+    <None Include="Resources\Silence.gif" />
+    <None Include="Resources\Slice.gif" />
+    <None Include="Resources\Splash.gif" />
+    <None Include="Resources\Stab.gif" />
+    <None Include="Resources\StairsDown.gif" />
+    <None Include="Resources\StairsUp.gif" />
+    <None Include="Resources\Strike.gif" />
+    <None Include="Resources\Stun.gif" />
+    <None Include="Resources\Trip.gif" />
+    <None Include="Resources\TripleSlice.gif" />
+    <None Include="Resources\Water1.gif" />
+    <None Include="Resources\Water2.gif" />
+    <None Include="Resources\Water3.gif" />
+    <None Include="Resources\Water4.gif" />
+    <None Include="Resources\Whisper.gif" />
+    <None Include="Resources\Wound.gif" />
+    <None Include="Resources\BloodSplatter.png" />
+    <None Include="Resources\1.png" />
+    <None Include="Resources\1floor.png" />
+    <None Include="Resources\2.png" />
+    <None Include="Resources\2floor.png" />
+    <None Include="Resources\3.png" />
+    <None Include="Resources\3floor.png" />
+    <None Include="Resources\4.png" />
+    <None Include="Resources\4floor.png" />
+    <None Include="Resources\5.png" />
+    <None Include="Resources\5floor.png" />
+    <None Include="Resources\6.png" />
+    <None Include="Resources\6floor.png" />
+    <None Include="Resources\7.png" />
+    <None Include="Resources\7floor.png" />
+    <None Include="Resources\8.png" />
+    <None Include="Resources\8floor.png" />
+    <None Include="Resources\9.png" />
+    <None Include="Resources\9floor.png" />
+    <None Include="Resources\10.png" />
+    <None Include="Resources\10floor.png" />
+    <None Include="Resources\Backstab.png" />
+    <None Include="Resources\Block.png" />
+    <None Include="Resources\BlurOut.png" />
+    <None Include="Resources\BoneShield.png" />
+    <None Include="Resources\BrickWall.png" />
+    <None Include="Resources\Clumsiness.png" />
+    <None Include="Resources\CommentBox1-01.png" />
+    <None Include="Resources\CommentBox2-01.png" />
+    <None Include="Resources\CommentBox3-01.png" />
+    <None Include="Resources\CommentBox4-01.png" />
+    <None Include="Resources\CommentBox5-01.png" />
+    <None Include="Resources\CommentBox6-01.png" />
+    <None Include="Resources\CommentBox7-01.png" />
+    <None Include="Resources\CommentBox8-01.png" />
+    <None Include="Resources\CommentBox9-01.png" />
+    <None Include="Resources\CommentBox10-01.png" />
+    <None Include="Resources\CommentBox11-01.png" />
+    <None Include="Resources\Counter.png" />
+    <None Include="Resources\DoubleSlice.png" />
+    <None Include="Resources\Empower.png" />
+    <None Include="Resources\FireArrow.png" />
+    <None Include="Resources\Fireball.png" />
+    <None Include="Resources\FireShield.png" />
+    <None Include="Resources\Fury.png" />
+    <None Include="Resources\Heal.png" />
+    <None Include="Resources\Hide.png" />
+    <None Include="Resources\Hit.png" />
+    <None Include="Resources\HolyBolt.png" />
+    <None Include="Resources\IceWall.png" />
+    <None Include="Resources\Immolate.png" />
+    <None Include="Resources\Inventory.png" />
+    <None Include="Resources\Kick.png" />
+    <None Include="Resources\Lava.png" />
+    <None Include="Resources\Leech.png" />
+    <None Include="Resources\MagicShield.png" />
+    <None Include="Resources\MetalFloor.png" />
+    <None Include="Resources\Punch.png" />
+    <None Include="Resources\RockWall.png" />
+    <None Include="Resources\Runestrike.png" />
+    <None Include="Resources\Sacrifice.png" />
+    <None Include="Resources\Shoot.png" />
+    <None Include="Resources\Silence.png" />
+    <None Include="Resources\Slice.png" />
+    <None Include="Resources\Splash.png" />
+    <None Include="Resources\Stab.png" />
+    <None Include="Resources\StairsDown.png" />
+    <None Include="Resources\StairsUp.png" />
+    <None Include="Resources\Strike.png" />
+    <None Include="Resources\Stun.png" />
+    <None Include="Resources\Trip.png" />
+    <None Include="Resources\TripleSlice.png" />
+    <None Include="Resources\Water1.png" />
+    <None Include="Resources\Water2.png" />
+    <None Include="Resources\Water3.png" />
+    <None Include="Resources\Water4.png" />
+    <None Include="Resources\Whisper.png" />
+    <None Include="Resources\Wound.png" />
+    <None Include="Resources\BloodSplatter.jpg" />
+    <None Include="Resources\Inventory.jpg" />
+    <Content Include="Untitled-2.ico" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
