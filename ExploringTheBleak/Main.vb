@@ -1,19 +1,23 @@
 ﻿Imports System.IO
 Public Class MainForm
 #Region "Constants"
-    Const MapSize As Short = 25 'original 25
+    Const MapSize As Short = 50 'original 25
 
     Const North As Short = 1
     Const East As Short = 2
     Const South As Short = 3
     Const West As Short = 4
 
+    'mobiles can't walk on anything above 3
     Const Wall As Short = 0
     Const Floor As Short = 1
-    Const StairsUp As Short = 5 'note that mobiles can't walk on entrances (anything > 3)
+    Const SpecialFloor As Integer = 2
     Const StairsDown As Short = 3
     Const Item As Short = 4
-    Const SpecialFloor As Integer = 2
+    Const StairsUp As Short = 5
+    Const Water As Short = 6
+    Const Lava As Short = 7
+    Const Ice As Short = 8
 
     Const Head As Short = 1
     Const Chest As Short = 2
@@ -52,6 +56,7 @@ Public Class MainForm
     Public MapOccupied(MapSize, MapSize) As Short
     Public MapDrawStatus(MapSize, MapSize) As Short 'draw status is an attempt to reduce overhead by preventing redraws on something already visible
     Public MapDrawStatusPlus(MapSize, MapSize) As Short 'draw status plus is an attempt to replace the original with something b3tter
+    Public MapBlur(MapSize, MapSize, 3) As Boolean
     Public FogMap(MapSize, MapSize) As Short
 
     Public SKillGobalCooldown As Short 'prevents skills for a amount of time
@@ -244,6 +249,164 @@ Public Class MainForm
             Next
         Next
         Return pic2
+    End Function
+    Function FilterImageWall(ByVal TheObject As Image, ByVal TheWater As Image, ByVal N As Boolean, ByVal E As Boolean, ByVal S As Boolean, ByVal W As Boolean) As System.Object
+        'right now it's a test function to make transparent outsides -> fade into opaque insides
+        Dim x, y, a As Integer
+        Dim c1, c2 As System.Drawing.Color
+        Dim Water As System.Drawing.Bitmap
+        Dim BG As System.Drawing.Bitmap
+        Dim r1, b1, g1, r2, b2, g2 As Integer
+        Dim ResultColor As Color
+        Dim GoDirection As Short
+        Dim AlphaBG As Double
+        Dim AlphaWater As Double
+        Dim FadePercent As Double = 0.2 'change this, .1-.3
+        Dim NegPercent As Double = 1 - FadePercent
+        'The fade will last for 10% of the tiles width or height
+        BG = TheObject
+        Water = TheWater
+        For y = 0 To TheObject.Height - 1
+            For x = 0 To TheObject.Width - 1
+                'only process transparency if it's in the outer 10% of the tile
+                If x / TheObject.Height < TheObject.Height * FadePercent Or y / TheObject.Width < TheObject.Width * FadePercent Or x / TheObject.Height > TheObject.Height * NegPercent Or y / TheObject.Width > TheObject.Width * NegPercent Then
+                    'We need to grab the percentage of transparency based on 0-100% of closeness to the inner square
+                    'first we need to grab a direction that falls into our transparency formula
+                    'if two directions fall into it, favor the smallest direction to remove inconsistancies
+                    'note, go direction is always TOWARDS the opaque
+                    If x < TheObject.Width * FadePercent And y < TheObject.Height * FadePercent Then 'top leftcorner
+                        If x < y Then GoDirection = East Else GoDirection = South
+                    ElseIf x < TheObject.Width * FadePercent And y > TheObject.Height * NegPercent Then 'top right corner
+                        If x < (TheObject.Height * NegPercent) - y + (TheObject.Height * FadePercent) Then GoDirection = East Else GoDirection = North
+                    ElseIf x > TheObject.Width * NegPercent And y < TheObject.Height * FadePercent Then 'bottom left corner
+                        If (TheObject.Width * NegPercent) - x + (TheObject.Width * FadePercent) < y Then GoDirection = West Else GoDirection = South
+                    ElseIf x > TheObject.Width * NegPercent And y > TheObject.Width * NegPercent Then 'bottom right corner
+                        If (TheObject.Width * NegPercent) - x + (TheObject.Width * FadePercent) < (TheObject.Height * NegPercent) - y + (TheObject.Height * FadePercent) Then GoDirection = West Else GoDirection = North
+                    ElseIf y < TheObject.Height * FadePercent Then 'top side
+                        GoDirection = South
+                    ElseIf y > TheObject.Height * NegPercent Then 'bottom side
+                        GoDirection = North
+                    ElseIf x < TheObject.Width * FadePercent Then 'left side
+                        GoDirection = East
+                    ElseIf x > TheObject.Width * NegPercent Then 'right side
+                        GoDirection = West
+                    Else
+                        GoDirection = 10 'none
+                        AlphaBG = 1
+                        AlphaWater = 1
+                    End If
+                    If GoDirection = South And N = True Then
+                        AlphaBG = ((TheObject.Height * FadePercent) - y) / (TheObject.Height * FadePercent)
+                        AlphaWater = y / (TheObject.Height * FadePercent)
+                    ElseIf GoDirection = East And W = True Then
+                        AlphaBG = ((TheObject.Width * FadePercent) - x) / (TheObject.Width * FadePercent)
+                        AlphaWater = x / (TheObject.Width * FadePercent)
+                    ElseIf GoDirection = North And S = True Then
+                        AlphaBG = ((TheObject.Height - (TheObject.Height * NegPercent)) - (TheObject.Height - y)) / (TheObject.Height - (TheObject.Height * NegPercent))
+                        AlphaWater = (TheObject.Height - y) / (TheObject.Height - (TheObject.Height * NegPercent))
+                    ElseIf GoDirection = West And E = True Then
+                        AlphaBG = ((TheObject.Width - (TheObject.Width * NegPercent)) - (TheObject.Width - x)) / (TheObject.Width - (TheObject.Width * NegPercent))
+                        AlphaWater = (TheObject.Width - x) / (TheObject.Width - (TheObject.Width * NegPercent))
+                    Else
+                        AlphaBG = 1
+                        AlphaWater = 1
+                    End If
+                    c2 = BG.GetPixel(x, y)
+                    c1 = Water.GetPixel(x, y)
+                    r1 = c1.R : r2 = c2.R
+                    g1 = c1.G : g2 = c2.G
+                    b1 = c1.B : b2 = c2.B
+                    If r1 = 255 And g1 = 255 And b1 = 255 Then
+                        ResultColor = Color.FromArgb(a, r2, g2, b2)
+                        BG.SetPixel(x, y, ResultColor)
+                    Else
+                        r2 = (r1 * AlphaWater + r2 * AlphaBG) / 2 : g2 = (g1 * AlphaWater + g2 * AlphaBG) / 2 : b2 = (b1 * AlphaWater + b2 * AlphaBG) / 2
+                        ResultColor = Color.FromArgb(a, r2, g2, b2)
+                        BG.SetPixel(x, y, ResultColor)
+                    End If
+                End If
+            Next
+        Next
+        Return BG 'returns a modified background
+    End Function
+    Function FilterImageWater(ByVal TheObject As Image, ByVal TheWater As Image) As System.Object
+        'right now it's a test function to make transparent outsides -> fade into opaque insides
+        Dim x, y, a As Integer
+        Dim c1, c2 As System.Drawing.Color
+        Dim Water As System.Drawing.Bitmap
+        Dim BG As System.Drawing.Bitmap
+        Dim r1, b1, g1, r2, b2, g2 As Integer
+        Dim ResultColor As Color
+        Dim GoDirection As Short
+        Dim AlphaBG As Double
+        Dim AlphaWater As Double
+        Dim FadePercent As Double = 0.2 'change this, .1-.3
+        Dim NegPercent As Double = 1 - FadePercent
+        'The fade will last for 10% of the tiles width or height
+        BG = TheObject
+        Water = TheWater
+        For y = 0 To TheObject.Height - 1
+            For x = 0 To TheObject.Width - 1
+                'only process transparency if it's in the outer 10% of the tile
+                If x / TheObject.Height < TheObject.Height * FadePercent Or y / TheObject.Width < TheObject.Width * FadePercent Or x / TheObject.Height > TheObject.Height * NegPercent Or y / TheObject.Width > TheObject.Width * NegPercent Then
+                    'We need to grab the percentage of transparency based on 0-100% of closeness to the inner square
+                    'first we need to grab a direction that falls into our transparency formula
+                    'if two directions fall into it, favor the smallest direction to remove inconsistancies
+                    'note, go direction is always TOWARDS the opaque
+                    If x < TheObject.Width * FadePercent And y < TheObject.Height * FadePercent Then 'top leftcorner
+                        If x < y Then GoDirection = East Else GoDirection = South
+                    ElseIf x < TheObject.Width * FadePercent And y > TheObject.Height * NegPercent Then 'top right corner
+                        If x < (TheObject.Height * NegPercent) - y + (TheObject.Height * FadePercent) Then GoDirection = East Else GoDirection = North
+                    ElseIf x > TheObject.Width * NegPercent And y < TheObject.Height * FadePercent Then 'bottom left corner
+                        If (TheObject.Width * NegPercent) - x + (TheObject.Width * FadePercent) < y Then GoDirection = West Else GoDirection = South
+                    ElseIf x > TheObject.Width * NegPercent And y > TheObject.Width * NegPercent Then 'bottom right corner
+                        If (TheObject.Width * NegPercent) - x + (TheObject.Width * FadePercent) < (TheObject.Height * NegPercent) - y + (TheObject.Height * FadePercent) Then GoDirection = West Else GoDirection = North
+                    ElseIf y < TheObject.Height * FadePercent Then 'top side
+                        GoDirection = South
+                    ElseIf y > TheObject.Height * NegPercent Then 'bottom side
+                        GoDirection = North
+                    ElseIf x < TheObject.Width * FadePercent Then 'left side
+                        GoDirection = East
+                    ElseIf x > TheObject.Width * NegPercent Then 'right side
+                        GoDirection = West
+                    Else
+                        GoDirection = 10 'none
+                        AlphaBG = 1
+                        AlphaWater = 1
+                    End If
+                    If GoDirection = South Then
+                        AlphaBG = ((TheObject.Height * FadePercent) - y) / (TheObject.Height * FadePercent)
+                        AlphaWater = y / (TheObject.Height * FadePercent)
+                    ElseIf GoDirection = East Then
+                        AlphaBG = ((TheObject.Width * FadePercent) - x) / (TheObject.Width * FadePercent)
+                        AlphaWater = x / (TheObject.Width * FadePercent)
+                    ElseIf GoDirection = North Then
+                        AlphaBG = ((TheObject.Height - (TheObject.Height * NegPercent)) - (TheObject.Height - y)) / (TheObject.Height - (TheObject.Height * NegPercent))
+                        AlphaWater = (TheObject.Height - y) / (TheObject.Height - (TheObject.Height * NegPercent))
+                    ElseIf GoDirection = West Then
+                        AlphaBG = ((TheObject.Width - (TheObject.Width * NegPercent)) - (TheObject.Width - x)) / (TheObject.Width - (TheObject.Width * NegPercent))
+                        AlphaWater = (TheObject.Width - x) / (TheObject.Width - (TheObject.Width * NegPercent))
+                    Else
+                        AlphaBG = 1
+                        AlphaWater = 1
+                    End If
+                    c2 = BG.GetPixel(x, y)
+                    c1 = Water.GetPixel(x, y)
+                    r1 = c1.R : r2 = c2.R
+                    g1 = c1.G : g2 = c2.G
+                    b1 = c1.B : b2 = c2.B
+                    If r1 = 255 And g1 = 255 And b1 = 255 Then
+                        ResultColor = Color.FromArgb(a, r2, g2, b2)
+                        BG.SetPixel(x, y, ResultColor)
+                    Else
+                        r2 = (r1 * AlphaWater + r2 * AlphaBG) / 2 : g2 = (g1 * AlphaWater + g2 * AlphaBG) / 2 : b2 = (b1 * AlphaWater + b2 * AlphaBG) / 2
+                        ResultColor = Color.FromArgb(a, r2, g2, b2)
+                        BG.SetPixel(x, y, ResultColor)
+                    End If
+                    End If
+            Next
+        Next
+        Return BG 'returns a modified background
     End Function
 #Region "Mobile Actions & Battle"
     Function MoveMobile(ByVal MobNum As Short, ByVal MvType As Short)
@@ -945,6 +1108,7 @@ Public Class MainForm
         WillpowerBar.Caption = LTrim(Str(PlayerCurWillpower)) + " / " + LTrim(Str(PlayerWillpower)) + " WP"
         WillpowerBar.Value = PlayerCurWillpower
         WillpowerBar.Max = PlayerWillpower
+        SkillInfoBox.Left = Panel1.Left - SkillInfoBox.Width
         BuildNewMap()
         SND("Press '?' or 'h' for help.")
         SND("You ascend to depth 1.")
@@ -970,10 +1134,31 @@ Public Class MainForm
         DetermineEnvironment()
         GenerateMap(8)
         GenerateFog()
+        GenerateBlur()
         PopulateItems()
         PopulateMobiles()
         PopulateEntrances()
         ReDraw()
+    End Sub
+    Sub GenerateBlur()
+        For x = 0 To MapSize Step 1
+            For y = 0 To MapSize Step 1
+                If Map(x, y) = Wall Then
+                    If x > 0 Then
+                        If Map(x - 1, y) <> Wall Then MapBlur(x, y, 3) = True Else MapBlur(x, y, 3) = False
+                    End If
+                    If x < MapSize Then
+                        If Map(x + 1, y) <> Wall Then MapBlur(x, y, 1) = True Else MapBlur(x, y, 1) = False
+                    End If
+                    If y > 0 Then
+                        If Map(x, y - 1) <> Wall Then MapBlur(x, y, 2) = True Else MapBlur(x, y, 2) = False
+                    End If
+                    If y < MapSize Then
+                        If Map(x, y + 1) <> Wall Then MapBlur(x, y, 0) = True Else MapBlur(x, y, 0) = False
+                    End If
+                End If
+            Next
+        Next
     End Sub
     Sub PopulateEntrances()
         Dim RandomNum As New Random
@@ -1249,64 +1434,64 @@ Public Class MainForm
                     If PotentialGrowth > 4 Then
                         BuilderLastDirection = BuilderDirection
                         BuilderGrowthAmount = RandomNumber.Next(1, PotentialGrowth) 'growth includes wall, can't draw to end of map so just use potential growth since it's exclusive instead of inclusive
-                        Map(BuilderPositionX + 1, BuilderPositionY) = 1
-                        Map(BuilderPositionX - 1, BuilderPositionY) = 1
-                        Map(BuilderPositionX, BuilderPositionY + 1) = 1
-                        Map(BuilderPositionX, BuilderPositionY - 1) = 1
+                        Map(BuilderPositionX + 1, BuilderPositionY) = Floor
+                        Map(BuilderPositionX - 1, BuilderPositionY) = Floor
+                        Map(BuilderPositionX, BuilderPositionY + 1) = Floor
+                        Map(BuilderPositionX, BuilderPositionY - 1) = Floor
                         PotentialSides = RandomNumber.Next(1, 3)
                         If PotentialSides = 1 Then
-                            Map(BuilderPositionX + 1, BuilderPositionY + 1) = 1
+                            Map(BuilderPositionX + 1, BuilderPositionY + 1) = Floor
                         End If
                         PotentialSides = RandomNumber.Next(1, 3)
                         If PotentialSides = 1 Then
-                            Map(BuilderPositionX - 1, BuilderPositionY - 1) = 1
+                            Map(BuilderPositionX - 1, BuilderPositionY - 1) = Floor
                         End If
                         PotentialSides = RandomNumber.Next(1, 3)
                         If PotentialSides = 1 Then
-                            Map(BuilderPositionX - 1, BuilderPositionY + 1) = 1
+                            Map(BuilderPositionX - 1, BuilderPositionY + 1) = Floor
                         End If
                         PotentialSides = RandomNumber.Next(1, 3)
                         If PotentialSides = 1 Then
-                            Map(BuilderPositionX + 1, BuilderPositionY - 1) = 1
+                            Map(BuilderPositionX + 1, BuilderPositionY - 1) = Floor
                         End If
                         If BuilderDirection = North Then
                             For BuilderPositionY = BuilderPositionY To BuilderPositionY - BuilderGrowthAmount Step -1
-                                Map(BuilderPositionX, BuilderPositionY) = 1
+                                Map(BuilderPositionX, BuilderPositionY) = Floor
                                 PotentialSides = RandomNumber.Next(1, 11)
                                 If PotentialSides = 1 Then 'random chance to draw a floor to the right 10%
-                                    Map(BuilderPositionX + 1, BuilderPositionY) = 1
+                                    Map(BuilderPositionX + 1, BuilderPositionY) = Floor
                                 ElseIf PotentialSides = 2 Then 'randomchance to draw a floor to the left 10%
-                                    Map(BuilderPositionX - 1, BuilderPositionY) = 1
+                                    Map(BuilderPositionX - 1, BuilderPositionY) = Floor
                                 End If
                             Next
                         ElseIf BuilderDirection = East Then
                             For BuilderPositionX = BuilderPositionX To BuilderPositionX + BuilderGrowthAmount Step 1
-                                Map(BuilderPositionX, BuilderPositionY) = 1
+                                Map(BuilderPositionX, BuilderPositionY) = Floor
                                 PotentialSides = RandomNumber.Next(1, 11)
                                 If PotentialSides = 1 Then 'random chance to draw a floor to the north 10%
-                                    Map(BuilderPositionX, BuilderPositionY - 1) = 1
+                                    Map(BuilderPositionX, BuilderPositionY - 1) = Floor
                                 ElseIf PotentialSides = 2 Then 'randomchance to draw a floor to the south 10%
-                                    Map(BuilderPositionX, BuilderPositionY + 1) = 1
+                                    Map(BuilderPositionX, BuilderPositionY + 1) = Floor
                                 End If
                             Next
                         ElseIf BuilderDirection = South Then
                             For BuilderPositionY = BuilderPositionY To BuilderPositionY + BuilderGrowthAmount Step 1
-                                Map(BuilderPositionX, BuilderPositionY) = 1
+                                Map(BuilderPositionX, BuilderPositionY) = Floor
                                 PotentialSides = RandomNumber.Next(1, 11)
                                 If PotentialSides = 1 Then 'random chance to draw a floor to the right 10%
-                                    Map(BuilderPositionX + 1, BuilderPositionY) = 1
+                                    Map(BuilderPositionX + 1, BuilderPositionY) = Floor
                                 ElseIf PotentialSides = 2 Then 'randomchance to draw a floor to the left 10%
-                                    Map(BuilderPositionX - 1, BuilderPositionY) = 1
+                                    Map(BuilderPositionX - 1, BuilderPositionY) = Floor
                                 End If
                             Next
                         ElseIf BuilderDirection = West Then
                             For BuilderPositionX = BuilderPositionX To BuilderPositionX - BuilderGrowthAmount Step -1
-                                Map(BuilderPositionX, BuilderPositionY) = 1
+                                Map(BuilderPositionX, BuilderPositionY) = Floor
                                 PotentialSides = RandomNumber.Next(1, 11)
                                 If PotentialSides = 1 Then 'random chance to draw a floor to the north 10%
-                                    Map(BuilderPositionX, BuilderPositionY - 1) = 1
+                                    Map(BuilderPositionX, BuilderPositionY - 1) = Floor
                                 ElseIf PotentialSides = 2 Then 'randomchance to draw a floor to the south 10%
-                                    Map(BuilderPositionX, BuilderPositionY + 1) = 1
+                                    Map(BuilderPositionX, BuilderPositionY + 1) = Floor
                                 End If
                             Next
                         End If
@@ -1709,7 +1894,7 @@ Public Class MainForm
                             MapDrawStatusPlus(x, y) += 1
                             'draw wall
                             If Map(x, y) = Wall And MapDrawStatus(x, y) <> NotHidden Then
-                                CANVAS.DrawImage(WallArt, xish, yish, TheRoomWidth, TheRoomHeight)
+                                CANVAS.DrawImage(FilterImageWall(FloorArt, WallArt, MapBlur(x, y, 2), MapBlur(x, y, 1), MapBlur(x, y, 0), MapBlur(x, y, 3)), xish, yish, TheRoomWidth, TheRoomHeight)
                                 MapDrawStatus(x, y) = NotHidden
                                 'draw floor
                             ElseIf Map(x, y) = Floor And MapDrawStatus(x, y) <> NotHidden Then
@@ -1726,6 +1911,15 @@ Public Class MainForm
                                 'draw stairs down
                             ElseIf Map(x, y) = StairsDown And MapDrawStatus(x, y) <> NotHidden Then
                                 CANVAS.DrawImage(My.Resources.StairsDown, xish, yish, TheRoomWidth, TheRoomHeight)
+                                MapDrawStatus(x, y) = NotHidden
+                            ElseIf Map(x, y) = Lava And MapDrawStatus(x, y) <> NotHidden Then
+                                CANVAS.DrawImage(FilterImageWall(FloorArt, My.Resources.Lava, True, True, False, False), xish, yish, TheRoomWidth, TheRoomHeight)
+                                MapDrawStatus(x, y) = NotHidden
+                            ElseIf Map(x, y) = Water And MapDrawStatus(x, y) <> NotHidden Then
+                                CANVAS.DrawImage(FilterImageWater(FloorArt, My.Resources.Water), xish, yish, TheRoomWidth, TheRoomHeight)
+                                MapDrawStatus(x, y) = NotHidden
+                            ElseIf Map(x, y) = Ice And MapDrawStatus(x, y) <> NotHidden Then
+                                CANVAS.DrawImage(FilterImageWater(FloorArt, My.Resources.Ice), xish, yish, TheRoomWidth, TheRoomHeight)
                                 MapDrawStatus(x, y) = NotHidden
                             End If
                         End If
@@ -1759,7 +1953,7 @@ Public Class MainForm
                         MapDrawStatusPlus(x, y) += 1
                         'draw wall
                         If Map(x, y) = Wall Then
-                            CANVAS.DrawImage(WallArt, xish, yish, TheRoomWidth, TheRoomHeight)
+                            CANVAS.DrawImage(FilterImageWall(FloorArt, WallArt, MapBlur(x, y, 2), MapBlur(x, y, 1), MapBlur(x, y, 0), MapBlur(x, y, 3)), xish, yish, TheRoomWidth, TheRoomHeight)
                             MapDrawStatus(x, y) = Shadowed
                             'draw floor
                         ElseIf Map(x, y) = Floor Then
@@ -1776,6 +1970,18 @@ Public Class MainForm
                             'draw stairs down
                         ElseIf Map(x, y) = StairsDown Then
                             CANVAS.DrawImage(My.Resources.StairsDown, xish, yish, TheRoomWidth, TheRoomHeight)
+                            MapDrawStatus(x, y) = Shadowed
+                            'water
+                        ElseIf Map(x, y) = Water And MapDrawStatus(x, y) <> NotHidden Then
+                            CANVAS.DrawImage(FilterImageWater(FloorArt, My.Resources.Water), xish, yish, TheRoomWidth, TheRoomHeight)
+                            MapDrawStatus(x, y) = Shadowed
+                            'water
+                        ElseIf Map(x, y) = Lava And MapDrawStatus(x, y) <> NotHidden Then
+                            CANVAS.DrawImage(FilterImageWater(FloorArt, My.Resources.Lava), xish, yish, TheRoomWidth, TheRoomHeight)
+                            MapDrawStatus(x, y) = Shadowed
+                            'water
+                        ElseIf Map(x, y) = Ice And MapDrawStatus(x, y) <> NotHidden Then
+                            CANVAS.DrawImage(FilterImageWater(FloorArt, My.Resources.Ice), xish, yish, TheRoomWidth, TheRoomHeight)
                             MapDrawStatus(x, y) = Shadowed
                         End If
                         'shadow the area

@@ -221,13 +221,6 @@ Namespace My.Resources
             End Get
         End Property
         
-        Friend ReadOnly Property BlurOut() As System.Drawing.Bitmap
-            Get
-                Dim obj As Object = ResourceManager.GetObject("BlurOut", resourceCulture)
-                Return CType(obj,System.Drawing.Bitmap)
-            End Get
-        End Property
-        
         Friend ReadOnly Property BoneShield() As System.Drawing.Bitmap
             Get
                 Dim obj As Object = ResourceManager.GetObject("BoneShield", resourceCulture)
@@ -403,9 +396,9 @@ Namespace My.Resources
             End Get
         End Property
         
-        Friend ReadOnly Property IceWall() As System.Drawing.Bitmap
+        Friend ReadOnly Property Ice() As System.Drawing.Bitmap
             Get
-                Dim obj As Object = ResourceManager.GetObject("IceWall", resourceCulture)
+                Dim obj As Object = ResourceManager.GetObject("Ice", resourceCulture)
                 Return CType(obj,System.Drawing.Bitmap)
             End Get
         End Property
@@ -564,30 +557,9 @@ Namespace My.Resources
             End Get
         End Property
         
-        Friend ReadOnly Property Water1() As System.Drawing.Bitmap
+        Friend ReadOnly Property Water() As System.Drawing.Bitmap
             Get
-                Dim obj As Object = ResourceManager.GetObject("Water1", resourceCulture)
-                Return CType(obj,System.Drawing.Bitmap)
-            End Get
-        End Property
-        
-        Friend ReadOnly Property Water2() As System.Drawing.Bitmap
-            Get
-                Dim obj As Object = ResourceManager.GetObject("Water2", resourceCulture)
-                Return CType(obj,System.Drawing.Bitmap)
-            End Get
-        End Property
-        
-        Friend ReadOnly Property Water3() As System.Drawing.Bitmap
-            Get
-                Dim obj As Object = ResourceManager.GetObject("Water3", resourceCulture)
-                Return CType(obj,System.Drawing.Bitmap)
-            End Get
-        End Property
-        
-        Friend ReadOnly Property Water4() As System.Drawing.Bitmap
-            Get
-                Dim obj As Object = ResourceManager.GetObject("Water4", resourceCulture)
+                Dim obj As Object = ResourceManager.GetObject("Water", resourceCulture)
                 Return CType(obj,System.Drawing.Bitmap)
             End Get
         End Property
