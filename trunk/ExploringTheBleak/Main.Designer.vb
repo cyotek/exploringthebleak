@@ -219,7 +219,7 @@ Partial Class MainForm
         Me.HelpInfo.ForeColor = System.Drawing.Color.FromArgb(CType(CType(224, Byte), Integer), CType(CType(224, Byte), Integer), CType(CType(224, Byte), Integer))
         Me.HelpInfo.Location = New System.Drawing.Point(262, 32)
         Me.HelpInfo.Name = "HelpInfo"
-        Me.HelpInfo.Size = New System.Drawing.Size(455, 364)
+        Me.HelpInfo.Size = New System.Drawing.Size(455, 378)
         Me.HelpInfo.TabIndex = 93
         Me.HelpInfo.Text = resources.GetString("HelpInfo.Text")
         Me.HelpInfo.Visible = False

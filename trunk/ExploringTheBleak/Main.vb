@@ -1,7 +1,10 @@
 ﻿Imports System.IO
 Public Class MainForm
 #Region "Constants"
-    Const MapSize As Short = 50 'original 25
+    Public Const MapSize As Short = 25 'original 25
+
+    Const ASCII = False
+    Const Tiled = True
 
     Const North As Short = 1
     Const East As Short = 2
@@ -46,6 +49,7 @@ Public Class MainForm
 #End Region
 #Region "Declarations and Dimensions"
     Public AdminVisible As Boolean = False 'admin mode, allows full map view without exploration. generally used to debug generation techniques
+    Public GraphicalMode As Boolean = Tiled
 
     Public StandardColor As Color 'used for color types in fog display
     Public GenerateType As Short = Random
@@ -90,6 +94,8 @@ Public Class MainForm
 
     Public MobilePosX(9), MobilePosY(9), MobilePrevX(9), MobilePrevY(9), MobileLastMove(9), MobileType(9) As Short
     Public MobileHealth(9), MobileFlee(9), MobileStun(9), MobileClumsiness(9) As Short
+    Public MobileVisible(9, 3) As Short
+    Public MobileExists As Boolean
 
     Public ItemNum(9), ItemType(9), ItemOccupied(MapSize, MapSize) As Short
     Public ItemNameType(MapSize, MapSize), ItemShowType(MapSize, MapSize)
@@ -106,9 +112,6 @@ Public Class MainForm
     Public RowSpace As Integer = 0
 
     Public CommentBoxOpen As Boolean = False
-
-    Dim displayfont As New Font("Arial", 24)
-    Dim displayfont2 As New Font("Arial", 12)
 #End Region
 #Region "Basic Functions"
     Function CapitalizeFirstLetter(ByVal TheString As String) As String
@@ -196,218 +199,6 @@ Public Class MainForm
         Return bAns
     End Function
 #End Region
-    Function FilterImageRed(ByVal TheObject As Image) As System.Object
-        Dim i, j, a As Integer
-        Dim c As System.Drawing.Color
-        Dim c2 As System.Drawing.Color
-        Dim pic1 As System.Drawing.Bitmap
-        Dim pic2 As System.Drawing.Bitmap
-        Dim r1, b1, g1, r2, b2, g2 As Integer
-        pic1 = My.Resources.BloodSplatter
-        pic2 = TheObject
-        For j = 1 To TheObject.height - 2
-            For i = 1 To TheObject.Width - 2
-                c = pic1.GetPixel(i, j)
-                c2 = pic2.GetPixel(i, j)
-                r1 = c.R : r2 = c2.R
-                g1 = c.G : g2 = c2.G
-                b1 = c.B : b2 = c2.B
-                If r1 = 255 And g1 = 255 And b1 = 255 Then
-                    c = Color.FromArgb(a, r2, g2, b2)
-                    pic2.SetPixel(i, j, c)
-                Else
-                    r1 = 255 : g1 = 0 : b1 = 0
-                    r2 = (r1 + r2) / 2 : g2 = (g1 + g2) / 2 : b2 = (b1 + b2) / 2
-                    c = Color.FromArgb(a, r2, g2, b2)
-                    pic2.SetPixel(i, j, c)
-                End If
-            Next
-        Next
-        Return TheObject
-    End Function
-    Function FilterImageFog(ByVal TheObject As Image, ByVal TheColor As Short) As System.Object
-        Dim i, j, a As Integer
-        Dim c2 As System.Drawing.Color
-        Dim pic2 As System.Drawing.Bitmap
-        Dim r1, b1, g1, r2, b2, g2 As Integer
-        Dim ResultColor As Color
-        pic2 = TheObject
-        For j = 0 To TheObject.height - 1
-            For i = 0 To TheObject.Width - 1
-                c2 = pic2.GetPixel(i, j)
-                r1 = TheColor : r2 = c2.R
-                g1 = TheColor : g2 = c2.G
-                b1 = TheColor : b2 = c2.B
-                If r1 = 255 And g1 = 255 And b1 = 255 Then
-                    ResultColor = Color.FromArgb(a, r2, g2, b2)
-                    pic2.SetPixel(i, j, ResultColor)
-                Else
-                    r2 = (r1 + r2) / 2 : g2 = (g1 + g2) / 2 : b2 = (b1 + b2) / 2
-                    ResultColor = Color.FromArgb(a, r2, g2, b2)
-                    pic2.SetPixel(i, j, ResultColor)
-                End If
-            Next
-        Next
-        Return pic2
-    End Function
-    Function FilterImageWall(ByVal TheObject As Image, ByVal TheWater As Image, ByVal N As Boolean, ByVal E As Boolean, ByVal S As Boolean, ByVal W As Boolean) As System.Object
-        'right now it's a test function to make transparent outsides -> fade into opaque insides
-        Dim x, y, a As Integer
-        Dim c1, c2 As System.Drawing.Color
-        Dim Water As System.Drawing.Bitmap
-        Dim BG As System.Drawing.Bitmap
-        Dim r1, b1, g1, r2, b2, g2 As Integer
-        Dim ResultColor As Color
-        Dim GoDirection As Short
-        Dim AlphaBG As Double
-        Dim AlphaWater As Double
-        Dim FadePercent As Double = 0.2 'change this, .1-.3
-        Dim NegPercent As Double = 1 - FadePercent
-        'The fade will last for 10% of the tiles width or height
-        BG = TheObject
-        Water = TheWater
-        For y = 0 To TheObject.Height - 1
-            For x = 0 To TheObject.Width - 1
-                'only process transparency if it's in the outer 10% of the tile
-                If x / TheObject.Height < TheObject.Height * FadePercent Or y / TheObject.Width < TheObject.Width * FadePercent Or x / TheObject.Height > TheObject.Height * NegPercent Or y / TheObject.Width > TheObject.Width * NegPercent Then
-                    'We need to grab the percentage of transparency based on 0-100% of closeness to the inner square
-                    'first we need to grab a direction that falls into our transparency formula
-                    'if two directions fall into it, favor the smallest direction to remove inconsistancies
-                    'note, go direction is always TOWARDS the opaque
-                    If x < TheObject.Width * FadePercent And y < TheObject.Height * FadePercent Then 'top leftcorner
-                        If x < y Then GoDirection = East Else GoDirection = South
-                    ElseIf x < TheObject.Width * FadePercent And y > TheObject.Height * NegPercent Then 'top right corner
-                        If x < (TheObject.Height * NegPercent) - y + (TheObject.Height * FadePercent) Then GoDirection = East Else GoDirection = North
-                    ElseIf x > TheObject.Width * NegPercent And y < TheObject.Height * FadePercent Then 'bottom left corner
-                        If (TheObject.Width * NegPercent) - x + (TheObject.Width * FadePercent) < y Then GoDirection = West Else GoDirection = South
-                    ElseIf x > TheObject.Width * NegPercent And y > TheObject.Width * NegPercent Then 'bottom right corner
-                        If (TheObject.Width * NegPercent) - x + (TheObject.Width * FadePercent) < (TheObject.Height * NegPercent) - y + (TheObject.Height * FadePercent) Then GoDirection = West Else GoDirection = North
-                    ElseIf y < TheObject.Height * FadePercent Then 'top side
-                        GoDirection = South
-                    ElseIf y > TheObject.Height * NegPercent Then 'bottom side
-                        GoDirection = North
-                    ElseIf x < TheObject.Width * FadePercent Then 'left side
-                        GoDirection = East
-                    ElseIf x > TheObject.Width * NegPercent Then 'right side
-                        GoDirection = West
-                    Else
-                        GoDirection = 10 'none
-                        AlphaBG = 1
-                        AlphaWater = 1
-                    End If
-                    If GoDirection = South And N = True Then
-                        AlphaBG = ((TheObject.Height * FadePercent) - y) / (TheObject.Height * FadePercent)
-                        AlphaWater = y / (TheObject.Height * FadePercent)
-                    ElseIf GoDirection = East And W = True Then
-                        AlphaBG = ((TheObject.Width * FadePercent) - x) / (TheObject.Width * FadePercent)
-                        AlphaWater = x / (TheObject.Width * FadePercent)
-                    ElseIf GoDirection = North And S = True Then
-                        AlphaBG = ((TheObject.Height - (TheObject.Height * NegPercent)) - (TheObject.Height - y)) / (TheObject.Height - (TheObject.Height * NegPercent))
-                        AlphaWater = (TheObject.Height - y) / (TheObject.Height - (TheObject.Height * NegPercent))
-                    ElseIf GoDirection = West And E = True Then
-                        AlphaBG = ((TheObject.Width - (TheObject.Width * NegPercent)) - (TheObject.Width - x)) / (TheObject.Width - (TheObject.Width * NegPercent))
-                        AlphaWater = (TheObject.Width - x) / (TheObject.Width - (TheObject.Width * NegPercent))
-                    Else
-                        AlphaBG = 1
-                        AlphaWater = 1
-                    End If
-                    c2 = BG.GetPixel(x, y)
-                    c1 = Water.GetPixel(x, y)
-                    r1 = c1.R : r2 = c2.R
-                    g1 = c1.G : g2 = c2.G
-                    b1 = c1.B : b2 = c2.B
-                    If r1 = 255 And g1 = 255 And b1 = 255 Then
-                        ResultColor = Color.FromArgb(a, r2, g2, b2)
-                        BG.SetPixel(x, y, ResultColor)
-                    Else
-                        r2 = (r1 * AlphaWater + r2 * AlphaBG) / 2 : g2 = (g1 * AlphaWater + g2 * AlphaBG) / 2 : b2 = (b1 * AlphaWater + b2 * AlphaBG) / 2
-                        ResultColor = Color.FromArgb(a, r2, g2, b2)
-                        BG.SetPixel(x, y, ResultColor)
-                    End If
-                End If
-            Next
-        Next
-        Return BG 'returns a modified background
-    End Function
-    Function FilterImageWater(ByVal TheObject As Image, ByVal TheWater As Image) As System.Object
-        'right now it's a test function to make transparent outsides -> fade into opaque insides
-        Dim x, y, a As Integer
-        Dim c1, c2 As System.Drawing.Color
-        Dim Water As System.Drawing.Bitmap
-        Dim BG As System.Drawing.Bitmap
-        Dim r1, b1, g1, r2, b2, g2 As Integer
-        Dim ResultColor As Color
-        Dim GoDirection As Short
-        Dim AlphaBG As Double
-        Dim AlphaWater As Double
-        Dim FadePercent As Double = 0.2 'change this, .1-.3
-        Dim NegPercent As Double = 1 - FadePercent
-        'The fade will last for 10% of the tiles width or height
-        BG = TheObject
-        Water = TheWater
-        For y = 0 To TheObject.Height - 1
-            For x = 0 To TheObject.Width - 1
-                'only process transparency if it's in the outer 10% of the tile
-                If x / TheObject.Height < TheObject.Height * FadePercent Or y / TheObject.Width < TheObject.Width * FadePercent Or x / TheObject.Height > TheObject.Height * NegPercent Or y / TheObject.Width > TheObject.Width * NegPercent Then
-                    'We need to grab the percentage of transparency based on 0-100% of closeness to the inner square
-                    'first we need to grab a direction that falls into our transparency formula
-                    'if two directions fall into it, favor the smallest direction to remove inconsistancies
-                    'note, go direction is always TOWARDS the opaque
-                    If x < TheObject.Width * FadePercent And y < TheObject.Height * FadePercent Then 'top leftcorner
-                        If x < y Then GoDirection = East Else GoDirection = South
-                    ElseIf x < TheObject.Width * FadePercent And y > TheObject.Height * NegPercent Then 'top right corner
-                        If x < (TheObject.Height * NegPercent) - y + (TheObject.Height * FadePercent) Then GoDirection = East Else GoDirection = North
-                    ElseIf x > TheObject.Width * NegPercent And y < TheObject.Height * FadePercent Then 'bottom left corner
-                        If (TheObject.Width * NegPercent) - x + (TheObject.Width * FadePercent) < y Then GoDirection = West Else GoDirection = South
-                    ElseIf x > TheObject.Width * NegPercent And y > TheObject.Width * NegPercent Then 'bottom right corner
-                        If (TheObject.Width * NegPercent) - x + (TheObject.Width * FadePercent) < (TheObject.Height * NegPercent) - y + (TheObject.Height * FadePercent) Then GoDirection = West Else GoDirection = North
-                    ElseIf y < TheObject.Height * FadePercent Then 'top side
-                        GoDirection = South
-                    ElseIf y > TheObject.Height * NegPercent Then 'bottom side
-                        GoDirection = North
-                    ElseIf x < TheObject.Width * FadePercent Then 'left side
-                        GoDirection = East
-                    ElseIf x > TheObject.Width * NegPercent Then 'right side
-                        GoDirection = West
-                    Else
-                        GoDirection = 10 'none
-                        AlphaBG = 1
-                        AlphaWater = 1
-                    End If
-                    If GoDirection = South Then
-                        AlphaBG = ((TheObject.Height * FadePercent) - y) / (TheObject.Height * FadePercent)
-                        AlphaWater = y / (TheObject.Height * FadePercent)
-                    ElseIf GoDirection = East Then
-                        AlphaBG = ((TheObject.Width * FadePercent) - x) / (TheObject.Width * FadePercent)
-                        AlphaWater = x / (TheObject.Width * FadePercent)
-                    ElseIf GoDirection = North Then
-                        AlphaBG = ((TheObject.Height - (TheObject.Height * NegPercent)) - (TheObject.Height - y)) / (TheObject.Height - (TheObject.Height * NegPercent))
-                        AlphaWater = (TheObject.Height - y) / (TheObject.Height - (TheObject.Height * NegPercent))
-                    ElseIf GoDirection = West Then
-                        AlphaBG = ((TheObject.Width - (TheObject.Width * NegPercent)) - (TheObject.Width - x)) / (TheObject.Width - (TheObject.Width * NegPercent))
-                        AlphaWater = (TheObject.Width - x) / (TheObject.Width - (TheObject.Width * NegPercent))
-                    Else
-                        AlphaBG = 1
-                        AlphaWater = 1
-                    End If
-                    c2 = BG.GetPixel(x, y)
-                    c1 = Water.GetPixel(x, y)
-                    r1 = c1.R : r2 = c2.R
-                    g1 = c1.G : g2 = c2.G
-                    b1 = c1.B : b2 = c2.B
-                    If r1 = 255 And g1 = 255 And b1 = 255 Then
-                        ResultColor = Color.FromArgb(a, r2, g2, b2)
-                        BG.SetPixel(x, y, ResultColor)
-                    Else
-                        r2 = (r1 * AlphaWater + r2 * AlphaBG) / 2 : g2 = (g1 * AlphaWater + g2 * AlphaBG) / 2 : b2 = (b1 * AlphaWater + b2 * AlphaBG) / 2
-                        ResultColor = Color.FromArgb(a, r2, g2, b2)
-                        BG.SetPixel(x, y, ResultColor)
-                    End If
-                    End If
-            Next
-        Next
-        Return BG 'returns a modified background
-    End Function
 #Region "Mobile Actions & Battle"
     Function MoveMobile(ByVal MobNum As Short, ByVal MvType As Short)
         Dim MobileDead As Boolean = False
@@ -1012,60 +803,6 @@ Public Class MainForm
         MobilePrevX(MobNum) = MobilePosX(MobNum)
         MobilePrevY(MobNum) = MobilePosY(MobNum)
         Return 0
-    End Function
-#End Region
-#Region "Player FoV / LoS"
-    Function IsVisible(ByVal x As Short, ByVal y As Short) As Short
-        Dim TestVarX As Short = PlayerPosX
-        Dim TestVarY As Short = PlayerPosY
-        Dim TestResult As Short = 0
-        While TestVarX <> x Or TestVarY <> y
-            If Math.Abs(TestVarX - x) - Math.Abs(TestVarY - y) >= 0 Then 'will change x first, it is the greatest off
-                If TestVarX < x Then
-                    TestVarX += 1
-                ElseIf TestVarX > x Then
-                    TestVarX -= 1
-                End If
-            Else
-                If TestVarY < y Then
-                    TestVarY += 1
-                ElseIf TestVarY > y Then
-                    TestVarY -= 1
-                End If
-            End If
-            If Map(TestVarX, TestVarY) = 0 Then
-                TestResult += 1
-            ElseIf TestResult = 1 Then
-                TestResult += 1 'this ensures you can't see through one wall
-            End If
-        End While
-        Return TestResult
-    End Function
-    Function IsVisible2(ByVal x As Short, ByVal y As Short) As Short
-        Dim TestVarX As Short = PlayerPosX
-        Dim TestVarY As Short = PlayerPosY
-        Dim TestResult As Short = 0
-        While TestVarX <> x Or TestVarY <> y
-            If Math.Abs(TestVarY - y) - Math.Abs(TestVarX - x) >= 0 Then 'will change x first, it is the greatest off
-                If TestVarY < y Then
-                    TestVarY += 1
-                ElseIf TestVarY > y Then
-                    TestVarY -= 1
-                End If
-            Else
-                If TestVarX < x Then
-                    TestVarX += 1
-                ElseIf TestVarX > x Then
-                    TestVarX -= 1
-                End If
-            End If
-            If Map(TestVarX, TestVarY) = 0 Then
-                TestResult += 1
-            ElseIf TestResult = 1 Then
-                TestResult += 1 'this ensures you can't see through one wall
-            End If
-        End While
-        Return TestResult
     End Function
 #End Region
 #Region "Initialize"
@@ -1829,6 +1566,7 @@ Public Class MainForm
 #End Region
 #Region "Tick"
     Sub ReDraw() 'also known as 'tick'
+        'Process the mobiles on the map and move them one at a time.
         Dim ProcessMobilePathNumber As Short = 0
         For ProcessMobilePathNumber = 0 To 9 Step 1
             If Silence <= 0 Then
@@ -1837,16 +1575,20 @@ Public Class MainForm
                         DetermineMobMov(ProcessMobilePathNumber)
                     End If
                 Else
+                    'mobile is stunned and can't move
                     SND("Stunned enemy struggles.")
+                    'reduce the current time left on stun
                     MobileStun(ProcessMobilePathNumber) -= 1
                 End If
             End If
         Next
+        'reduce global cooldown of skill by one round, as a round has just passed
         SKillGobalCooldown -= 1
         If SKillGobalCooldown <= 0 Then
             SKillGobalCooldown = 0
             UpdateSkills()
         End If
+        'reduce all cooldowns of skills that use cooldowns, cooldown can't go below 0
         Silence -= 1 : If Silence <= 0 Then Silence = 0 Else SND("The room remains pacified.")
         PlayerHidden -= 1 : If PlayerHidden <= 0 Then PlayerHidden = 0
         BoneShield -= 1 : If BoneShield <= 0 Then BoneShield = 0
@@ -1855,206 +1597,10 @@ Public Class MainForm
         Immolate -= 1 : If Immolate <= 0 Then Immolate = 0
         Fury -= 1 : If Fury <= 0 Then Fury = 0
         Block -= 1 : If Block <= 0 Then Block = 0
-        Dim xish, xishPLUS, yish, yishPLUS As Integer
-        Dim RandomNum As New Random
-        'lets reduce redundancy
-        Dim WallArt As Bitmap
-        Dim FloorArt As Bitmap
-        'define bounds, start x visible area -1 to x visible area +1, same with y, no need to check whole map, it's already written
-        'just make sure you check where player is moving and where he could have moved to see if tiles need to be replaced.
-        Dim StartX As Short = PlayerPosX - 5 : If StartX < 0 Then StartX = 0
-        Dim StartY As Short = PlayerPosY - 5 : If StartY < 0 Then StartY = 0
-        Dim FinishX As Short = PlayerPosX + 5 : If FinishX > MapSize Then FinishX = MapSize
-        Dim FinishY As Short = PlayerPosY + 5 : If FinishY > MapSize Then FinishY = MapSize
-        'start at top left and go to bottom right
-        For x = StartX To FinishX Step 1
-            For y = StartY To FinishY Step 1
-                'sets wall and floor art to prevent redundancy later, easier to read
-                If EnvironmentType = 0 Then : WallArt = My.Resources._1 : FloorArt = My.Resources._1floor()
-                ElseIf EnvironmentType = 1 Then : WallArt = My.Resources._2 : FloorArt = My.Resources._2floor()
-                ElseIf EnvironmentType = 2 Then : WallArt = My.Resources._3 : FloorArt = My.Resources._3floor()
-                ElseIf EnvironmentType = 3 Then : WallArt = My.Resources._4 : FloorArt = My.Resources._4floor()
-                ElseIf EnvironmentType = 4 Then : WallArt = My.Resources._5 : FloorArt = My.Resources._5floor()
-                ElseIf EnvironmentType = 5 Then : WallArt = My.Resources._6 : FloorArt = My.Resources._6floor()
-                ElseIf EnvironmentType = 6 Then : WallArt = My.Resources._7 : FloorArt = My.Resources._7floor()
-                ElseIf EnvironmentType = 7 Then : WallArt = My.Resources._8 : FloorArt = My.Resources._8floor()
-                ElseIf EnvironmentType = 8 Then : WallArt = My.Resources._9 : FloorArt = My.Resources._9floor()
-                ElseIf EnvironmentType = 9 Then : WallArt = My.Resources._10 : FloorArt = My.Resources._10floor()
-                End If
-                xish = TheRoomWidth * x + ColumnsSpace * x + 10
-                yish = TheRoomHeight * y + RowSpace * y + 10
-                xishPLUS = Val(TheRoomWidth) * x + Val(ColumnsSpace) * x + 10 + Val(TheRoomWidth)
-                yishPLUS = Val(TheRoomHeight) * y + Val(RowSpace) * y + 10 + Val(TheRoomHeight)
-                If Math.Abs((PlayerPosX + PlayerPosY) - (x + y)) <= 4 And Math.Abs((PlayerPosX - PlayerPosY) - (x - y)) <= 4 Or AdminVisible = True Then 'admin visible shows all
-                    If IsVisible(x, y) <= 1 Or IsVisible2(x, y) <= 1 Or AdminVisible = True Then 'admin visible shows all, only process isvisible routines if it's within 4 of character so it doesn't process unnecessary squares too far from player
-                        If MapDrawStatus(x, y) = Shadowed Then
-                            MapDrawStatusPlus(x, y) = 0
-                        End If
-                        If MapDrawStatusPlus(x, y) = 0 Then
-                            MapDrawStatusPlus(x, y) += 1
-                            'draw wall
-                            If Map(x, y) = Wall And MapDrawStatus(x, y) <> NotHidden Then
-                                CANVAS.DrawImage(FilterImageWall(FloorArt, WallArt, MapBlur(x, y, 2), MapBlur(x, y, 1), MapBlur(x, y, 0), MapBlur(x, y, 3)), xish, yish, TheRoomWidth, TheRoomHeight)
-                                MapDrawStatus(x, y) = NotHidden
-                                'draw floor
-                            ElseIf Map(x, y) = Floor And MapDrawStatus(x, y) <> NotHidden Then
-                                ShowFog(xish, yish, x, y, FloorArt)
-                                MapDrawStatus(x, y) = NotHidden
-                                'draw floor with blood
-                            ElseIf Map(x, y) = SpecialFloor And MapDrawStatus(x, y) <> NotHidden Then
-                                ShowFog(xish, yish, x, y, FilterImageRed(FloorArt))
-                                MapDrawStatus(x, y) = NotHidden
-                                'draw stairs up
-                            ElseIf Map(x, y) = StairsUp And MapDrawStatus(x, y) <> NotHidden Then
-                                CANVAS.DrawImage(My.Resources.StairsUp, xish, yish, TheRoomWidth, TheRoomHeight)
-                                MapDrawStatus(x, y) = NotHidden
-                                'draw stairs down
-                            ElseIf Map(x, y) = StairsDown And MapDrawStatus(x, y) <> NotHidden Then
-                                CANVAS.DrawImage(My.Resources.StairsDown, xish, yish, TheRoomWidth, TheRoomHeight)
-                                MapDrawStatus(x, y) = NotHidden
-                            ElseIf Map(x, y) = Lava And MapDrawStatus(x, y) <> NotHidden Then
-                                CANVAS.DrawImage(FilterImageWall(FloorArt, My.Resources.Lava, True, True, False, False), xish, yish, TheRoomWidth, TheRoomHeight)
-                                MapDrawStatus(x, y) = NotHidden
-                            ElseIf Map(x, y) = Water And MapDrawStatus(x, y) <> NotHidden Then
-                                CANVAS.DrawImage(FilterImageWater(FloorArt, My.Resources.Water), xish, yish, TheRoomWidth, TheRoomHeight)
-                                MapDrawStatus(x, y) = NotHidden
-                            ElseIf Map(x, y) = Ice And MapDrawStatus(x, y) <> NotHidden Then
-                                CANVAS.DrawImage(FilterImageWater(FloorArt, My.Resources.Ice), xish, yish, TheRoomWidth, TheRoomHeight)
-                                MapDrawStatus(x, y) = NotHidden
-                            End If
-                        End If
-                        'if map is occupied, show enemy
-                        If MapOccupied(x, y) > 0 Then
-                            ShowEnemy(MapOccupied(x, y), xish, yish, x, y)
-                            MapDrawStatus(x, y) = Hidden
-                            MapDrawStatusPlus(x, y) = 0
-                        Else
-                            'if map isn't occupied by mobiles, is it occupied by items, if so show items (prioritize enemy showing over items)
-                            If ItemOccupied(x, y) > 0 Then
-                                ShowItem(xish, yish, x, y)
-                                MapDrawStatusPlus(x, y) = 0
-                            End If
-                            MapDrawStatus(x, y) = Hidden
-                        End If
-                        'player can be shown over items for better visibility
-                        If x = PlayerPosX And y = PlayerPosY Then
-                            CANVAS.DrawString("@", displayfont, Brushes.LimeGreen, xish, yish)
-                            MapDrawStatus(x, y) = Hidden
-                            MapDrawStatusPlus(x, y) = 0
-                        End If
-                        MapShown(x, y) = True
-                    End If
-                ElseIf MapShown(x, y) = True And MapDrawStatus(x, y) <> Shadowed Then 'not within the visual sight of the player, but was visited, so should just be fogged
-                    Dim semiTransBrush As SolidBrush = New SolidBrush(Color.FromArgb(150, 0, 0, 0))
-                    If MapDrawStatus(x, y) = Hidden Then
-                        MapDrawStatusPlus(x, y) = 0
-                    End If
-                    If MapDrawStatusPlus(x, y) = 0 Then
-                        MapDrawStatusPlus(x, y) += 1
-                        'draw wall
-                        If Map(x, y) = Wall Then
-                            CANVAS.DrawImage(FilterImageWall(FloorArt, WallArt, MapBlur(x, y, 2), MapBlur(x, y, 1), MapBlur(x, y, 0), MapBlur(x, y, 3)), xish, yish, TheRoomWidth, TheRoomHeight)
-                            MapDrawStatus(x, y) = Shadowed
-                            'draw floor
-                        ElseIf Map(x, y) = Floor Then
-                            ShowFog(xish, yish, x, y, FloorArt)
-                            MapDrawStatus(x, y) = Shadowed
-                            'draw floor with blood
-                        ElseIf Map(x, y) = SpecialFloor Then
-                            ShowFog(xish, yish, x, y, FilterImageRed(FloorArt))
-                            MapDrawStatus(x, y) = Shadowed
-                            'draw stairs up
-                        ElseIf Map(x, y) = StairsUp Then
-                            CANVAS.DrawImage(My.Resources.StairsUp, xish, yish, TheRoomWidth, TheRoomHeight)
-                            MapDrawStatus(x, y) = Shadowed
-                            'draw stairs down
-                        ElseIf Map(x, y) = StairsDown Then
-                            CANVAS.DrawImage(My.Resources.StairsDown, xish, yish, TheRoomWidth, TheRoomHeight)
-                            MapDrawStatus(x, y) = Shadowed
-                            'water
-                        ElseIf Map(x, y) = Water And MapDrawStatus(x, y) <> NotHidden Then
-                            CANVAS.DrawImage(FilterImageWater(FloorArt, My.Resources.Water), xish, yish, TheRoomWidth, TheRoomHeight)
-                            MapDrawStatus(x, y) = Shadowed
-                            'water
-                        ElseIf Map(x, y) = Lava And MapDrawStatus(x, y) <> NotHidden Then
-                            CANVAS.DrawImage(FilterImageWater(FloorArt, My.Resources.Lava), xish, yish, TheRoomWidth, TheRoomHeight)
-                            MapDrawStatus(x, y) = Shadowed
-                            'water
-                        ElseIf Map(x, y) = Ice And MapDrawStatus(x, y) <> NotHidden Then
-                            CANVAS.DrawImage(FilterImageWater(FloorArt, My.Resources.Ice), xish, yish, TheRoomWidth, TheRoomHeight)
-                            MapDrawStatus(x, y) = Shadowed
-                        End If
-                        'shadow the area
-                        MapShown(x, y) = True
-                        CANVAS.FillRectangle(semiTransBrush, xish, yish, TheRoomWidth, TheRoomHeight)
-                    End If
-                End If
-            Next
-        Next
-        Me.CreateGraphics.DrawImage(PAD, 0, 0)
+        'that ends a turn, add the turn to the players score
         PlayerTurns += 1
-    End Sub
-    Sub ShowEnemy(ByVal EnemyNum As Short, ByVal xish As Short, ByVal yish As Short, ByVal x As Short, ByVal y As Short)
-        If MapOccupied(x, y) = 1 Then 'creatures are currently being hidden in the shadows.
-            CANVAS.DrawString("r", displayfont, Brushes.Red, xish, yish) 'rat
-        ElseIf MapOccupied(x, y) = 2 Then
-            CANVAS.DrawString("b", displayfont, Brushes.Red, xish, yish) 'bat
-        ElseIf MapOccupied(x, y) = 3 Then
-            CANVAS.DrawString("i", displayfont, Brushes.Red, xish, yish) 'imp
-        ElseIf MapOccupied(x, y) = 4 Then
-            CANVAS.DrawString("g", displayfont, Brushes.Red, xish, yish) 'goblin
-        ElseIf MapOccupied(x, y) = 5 Then
-            CANVAS.DrawString("t", displayfont, Brushes.Red, xish, yish) 'troll
-        ElseIf MapOccupied(x, y) = 6 Then
-            CANVAS.DrawString("o", displayfont, Brushes.Red, xish, yish) 'ogre
-        ElseIf MapOccupied(x, y) = 7 Then
-            CANVAS.DrawString("c", displayfont, Brushes.Red, xish, yish) 'catoblepas
-        ElseIf MapOccupied(x, y) = 8 Then
-            CANVAS.DrawString("p", displayfont, Brushes.Red, xish, yish) 'parandrus
-        ElseIf MapOccupied(x, y) = 9 Then
-            CANVAS.DrawString("C", displayfont, Brushes.Red, xish, yish) 'Clurichuan
-        ElseIf MapOccupied(x, y) = 10 Then
-            CANVAS.DrawString("d", displayfont, Brushes.Red, xish, yish) 'Dullahan
-        ElseIf MapOccupied(x, y) = 11 Then
-            CANVAS.DrawString("G", displayfont, Brushes.Red, xish, yish) 'Golem
-        ElseIf MapOccupied(x, y) = 12 Then
-            CANVAS.DrawString("s", displayfont, Brushes.Red, xish, yish) 'sceadugengan
-        ElseIf MapOccupied(x, y) = 13 Then
-            CANVAS.DrawString("S", displayfont, Brushes.Red, xish, yish) 'Schilla
-        End If
-    End Sub
-    Sub ShowItem(ByVal xish As Short, ByVal yish As Short, ByVal x As Short, ByVal y As Short)
-        If ItemType(ItemOccupied(x, y)) = Gold Then
-            CANVAS.DrawString("g", displayfont, Brushes.Yellow, xish, yish)
-        ElseIf ItemType(ItemOccupied(x, y)) = TheEverspark Then
-            CANVAS.DrawString("E", displayfont, Brushes.White, xish, yish)
-        ElseIf ItemType(ItemOccupied(x, y)) = Weapon Then
-            CANVAS.DrawString("g", displayfont, Brushes.DarkCyan, xish, yish)
-        Else
-            CANVAS.DrawString(ItemShowType(x, y), displayfont, Brushes.Green, xish, yish)
-        End If
-    End Sub
-    Sub ShowFog(ByVal xish As Short, ByVal yish As Short, ByVal x As Short, ByVal y As Short, ByVal FloorArt As Image)
-        CANVAS.DrawImage(FloorArt, xish, yish, TheRoomWidth, TheRoomHeight)
-        If FogMap(x, y) = 1 Then
-            CANVAS.DrawImage(FilterImageFog(FloorArt, 10), xish, yish, TheRoomWidth, TheRoomHeight)
-        ElseIf FogMap(x, y) = 2 Then
-            CANVAS.DrawImage(FilterImageFog(FloorArt, 20), xish, yish, TheRoomWidth, TheRoomHeight)
-        ElseIf FogMap(x, y) = 3 Then
-            CANVAS.DrawImage(FilterImageFog(FloorArt, 30), xish, yish, TheRoomWidth, TheRoomHeight)
-        ElseIf FogMap(x, y) = 4 Then
-            CANVAS.DrawImage(FilterImageFog(FloorArt, 40), xish, yish, TheRoomWidth, TheRoomHeight)
-        ElseIf FogMap(x, y) = 5 Then
-            CANVAS.DrawImage(FilterImageFog(FloorArt, 50), xish, yish, TheRoomWidth, TheRoomHeight)
-        ElseIf FogMap(x, y) = 6 Then
-            CANVAS.DrawImage(FilterImageFog(FloorArt, 60), xish, yish, TheRoomWidth, TheRoomHeight)
-        ElseIf FogMap(x, y) = 7 Then
-            CANVAS.DrawImage(FilterImageFog(FloorArt, 70), xish, yish, TheRoomWidth, TheRoomHeight)
-        ElseIf FogMap(x, y) = 8 Then
-            CANVAS.DrawImage(FilterImageFog(FloorArt, 80), xish, yish, TheRoomWidth, TheRoomHeight)
-        Else
-            CANVAS.DrawImage(FilterImageFog(FloorArt, 0), xish, yish, TheRoomWidth, TheRoomHeight)
-        End If
+        'draw map last to complete the tick
+        DrawingProcedures.DrawMap(GraphicalMode) 'graphical mode is either tiled (true) or ASCII (False)
     End Sub
 #End Region
 #Region "Level Up"
@@ -2264,14 +1810,18 @@ Public Class MainForm
     Private Sub ProcessSKill(ByVal Skillname As String)
         If Skillname = "Fire Shield" Then
         ElseIf Skillname = "Wound" Then
-            If PlayerCurWillpower >= 20 Then
-                SND("Wound in what direction?")
-                SkillType = "Wound"
-                SKillGobalCooldown = 3
-                SetSkillsToCooldown()
-                PlayerCurWillpower -= 20
+            If MobileExists = True Then
+                If PlayerCurWillpower >= 20 Then
+                    SND("Wound in what direction?")
+                    SkillType = "Wound"
+                    SKillGobalCooldown = 3
+                    SetSkillsToCooldown()
+                    PlayerCurWillpower -= 20
+                Else
+                    SND("Not enough willpower.")
+                End If
             Else
-                SND("Not enough willpower.")
+                SND("No enemies are around.")
             End If
         ElseIf Skillname = "Fury" Then
             If PlayerCurWillpower >= 20 Then
@@ -2284,274 +1834,300 @@ Public Class MainForm
                 SND("Not enough willpower.")
             End If
         ElseIf Skillname = "Trip" Then
-            If PlayerCurWillpower >= 10 Then
-                PlayerCurWillpower -= 10
-                SND("Trip in what direction?")
-                SkillType = "Trip"
-                SKillGobalCooldown = 2
-                SetSkillsToCooldown()
-            Else
-                SND("Not enough willpower.")
-            End If
-        ElseIf Skillname = "Block" Then
-            If PlayerCurWillpower >= 15 Then
-                PlayerCurWillpower -= 15
-                SND("You prepare to block attacks.")
-                Block = 2
-            Else
-                SND("Not enough willpower.")
-            End If
-        ElseIf Skillname = "Double Slice" Then
-            If PlayerCurWillpower >= 15 Then
-                PlayerCurWillpower -= 15
-                SND("Double Slice which direction?")
-                SkillType = "Double Slice"
-                SKillGobalCooldown = 2
-                SetSkillsToCooldown()
-            Else
-                SND("Not enough willpower.")
-            End If
-        ElseIf Skillname = "Runestrike" Then
-            If PlayerCurWillpower >= 20 Then
-                PlayerCurWillpower -= 20
-                SND("Runestrike which direction?")
-                SkillType = "Runestrike"
-                SKillGobalCooldown = 3
-                SetSkillsToCooldown()
-            Else
-                SND("Not enough willpower.")
-            End If
-        ElseIf Skillname = "Empower" Then
-            If PlayerCurHitpoints >= 31 Then
-                PlayerCurHitpoints -= 30
-                PlayerCurWillpower += 30
-                SND("Empower which direction?")
-            Else
-                SND("That would kill you.")
-            End If
-        ElseIf Skillname = "Holy Bolt" Then
-            If PlayerCurWillpower >= 20 Then
-                PlayerCurWillpower -= 20
-                SkillType = "Holy Bolt"
-                SKillGobalCooldown = 4
-                SetSkillsToCooldown()
-            Else
-                SND("Not enough willpower.")
-            End If
-        ElseIf Skillname = "Fire Arrow" Then
-            If PlayerCurWillpower >= 15 Then
-                PlayerCurWillpower -= 15
-                SkillType = "Fire Arrow"
-                SKillGobalCooldown = 3
-                SetSkillsToCooldown()
-            Else
-                SND("Not enough willpower.")
-            End If
-        ElseIf Skillname = "Leech" Then
-            If PlayerCurWillpower >= PlayerAttack Then
-                PlayerCurWillpower -= PlayerAttack
-                PlayerCurHitpoints += PlayerAttack
-                SKillGobalCooldown = 3
-                SetSkillsToCooldown()
-            Else
-                SND("Not enough willpower.")
-            End If
-        ElseIf Skillname = "Punch" Then
-            If PlayerCurWillpower >= 5 Then
-                SND("Punch in what direction?")
-                SkillType = "Punch"
-                PlayerCurWillpower -= 5
-            Else
-                SND("Not enough willpower.")
-            End If
-        ElseIf Skillname = "Kick" Then
-            If PlayerCurWillpower >= 5 Then
-                SND("Kick in what direction?")
-                SkillType = "Kick"
-                PlayerCurWillpower -= 5
-            Else
-                SND("Not enough willpower.")
-            End If
-        ElseIf Skillname = "Hit" Then
-            If PlayerCurWillpower >= 5 Then
-                SND("Hit in what direction?")
-                SkillType = "Hit"
-                PlayerCurWillpower -= 5
-            Else
-                SND("Not enough willpower.")
-            End If
-        ElseIf Skillname = "Strike" Then
-            If PlayerCurWillpower >= 5 Then
-                SND("Strike in what direction?")
-                SkillType = "Strike"
-                PlayerCurWillpower -= 5
-            Else
-                SND("Not enough willpower.")
-            End If
-        ElseIf Skillname = "Stab" Then
-            If PlayerCurWillpower >= 5 Then
-                SND("Stab in what direction?")
-                SkillType = "Stab"
-                PlayerCurWillpower -= 5
-            Else
-                SND("Not enough willpower.")
-            End If
-        ElseIf Skillname = "Slice" Then
-            If PlayerCurWillpower >= 5 Then
-                SND("Stab in what direction?")
-                SkillType = "Stab"
-                PlayerCurWillpower -= 5
-            Else
-                SND("Not enough willpower.")
-            End If
-        ElseIf Skillname = "Shoot" Then
-            If PlayerCurWillpower >= 5 Then
-                SND("Shoot in what direction?")
-                SkillType = "Shoot"
-                PlayerCurWillpower -= 5
-            Else
-                SND("Not enough willpower.")
-            End If
-        ElseIf Skillname = "Heal" Then
-            If PlayerCurWillpower >= 20 Then
-                SND("You heal yourself.")
-                PlayerCurWillpower -= 20
-                PlayerCurHitpoints += 20
-                If PlayerCurHitpoints >= PlayerHitpoints Then
-                    PlayerCurHitpoints = PlayerHitpoints
+            If MobileExists = True Then
+                If PlayerCurWillpower >= 10 Then
+                    PlayerCurWillpower -= 10
+                    SND("Trip in what direction?")
+                    SkillType = "Trip"
+                    SKillGobalCooldown = 2
+                    SetSkillsToCooldown()
+                Else
+                    SND("Not enough willpower.")
                 End If
             Else
-                SND("Not enough willpower.")
+                SND("No enemies are around.")
             End If
-        ElseIf Skillname = "Hide" Then
-            If PlayerCurWillpower >= 10 Then
-                SND("You hide. Don't move.")
-                PlayerCurWillpower -= 10
-                SkillType = "Hide"
-                PlayerHidden = 6
-                SKillGobalCooldown = 6
-                SetSkillsToCooldown()
+        ElseIf Skillname = "Block" Then
+            If MobileExists = True Then
+                If PlayerCurWillpower >= 15 Then
+                    PlayerCurWillpower -= 15
+                    SND("You prepare to block attacks.")
+                    Block = 2
+                Else
+                    SND("Not enough willpower.")
+                End If
             Else
-                SND("Not enough willpower.")
+                SND("No enemies are around.")
             End If
-        ElseIf Skillname = "Bone Shield" Then
-            If PlayerCurWillpower >= 30 Then
-                SND("You cast bone shield.")
-                PlayerCurWillpower -= 30
-                BoneShield = 5
-                SKillGobalCooldown = 10
-                SetSkillsToCooldown()
+        ElseIf Skillname = "Double Slice" Then
+            If MobileExists = True Then
+                If PlayerCurWillpower >= 15 Then
+                    PlayerCurWillpower -= 15
+                    SND("Double Slice which direction?")
+                    SkillType = "Double Slice"
+                    SKillGobalCooldown = 2
+                    SetSkillsToCooldown()
+                Else
+                    SND("Not enough willpower.")
+                End If
             Else
-                SND("Not enough willpower.")
+                SND("No enemies are around.")
             End If
-        ElseIf Skillname = "Magic Shield" Then
-            If PlayerCurWillpower >= 30 Then
-                SND("You cast magic shield.")
-                PlayerCurWillpower -= 30
-                MagicShield = 10
-                SKillGobalCooldown = 10
-                SetSkillsToCooldown()
+        ElseIf Skillname = "Runestrike" Then
+            If MobileExists = True Then
+                If PlayerCurWillpower >= 20 Then
+                    PlayerCurWillpower -= 20
+                    SND("Runestrike which direction?")
+                    SkillType = "Runestrike"
+                    SKillGobalCooldown = 3
+                    SetSkillsToCooldown()
+                Else
+                    SND("Not enough willpower.")
+                End If
             Else
-                SND("Not enough willpower.")
+                SND("No enemies are around.")
             End If
-        ElseIf Skillname = "Counter" Then
-            If PlayerCurWillpower >= 15 Then
-                SND("You cast counter")
-                PlayerCurWillpower -= 15
-                CounterAttack = 3
+        ElseIf Skillname = "Empower" Then
+            If MobileExists = True Then
+                If PlayerCurHitpoints >= 31 Then
+                    PlayerCurHitpoints -= 30
+                    PlayerCurWillpower += 30
+                    SND("Empower which direction?")
+                Else
+                    SND("That would kill you.")
+                End If
             Else
-                SND("Not enough willpower.")
+                SND("No enemies are around.")
             End If
-        ElseIf Skillname = "Fireball" Then
-            If PlayerCurWillpower >= 30 Then
-                SND("Fireball in which direction?")
-                PlayerCurWillpower -= 30
-                SkillType = "Fireball"
-                SKillGobalCooldown = 3
-                SetSkillsToCooldown()
+        ElseIf Skillname = "Holy Bolt" Then
+            If MobileExists = True Then
+                If PlayerCurWillpower >= 20 Then
+                    PlayerCurWillpower -= 20
+                    SkillType = "Holy Bolt"
+                    SKillGobalCooldown = 4
+                    SetSkillsToCooldown()
+                    DrawingProcedures.TargetEnemy()
+                    SND("Press Spacebar to cast.")
+                Else
+                    SND("Not enough willpower.")
+                End If
             Else
-                SND("Not enough willpower.")
+                SND("No enemies are around.")
             End If
-        ElseIf Skillname = "Clumsiness" Then
-            If PlayerCurWillpower >= 20 Then
-                PlayerCurWillpower -= 20
-                SND("Clumsiness in what direction?")
-                SKillGobalCooldown = 10
-                SetSkillsToCooldown()
-                SkillType = "Clumsiness"
-            Else
-                SND("Not enough willpower.")
+            ElseIf Skillname = "Fire Arrow" Then
+                If PlayerCurWillpower >= 15 Then
+                    PlayerCurWillpower -= 15
+                    SkillType = "Fire Arrow"
+                    SKillGobalCooldown = 3
+                    SetSkillsToCooldown()
+                Else
+                    SND("Not enough willpower.")
+                End If
+            ElseIf Skillname = "Leech" Then
+                If PlayerCurWillpower >= PlayerAttack Then
+                    PlayerCurWillpower -= PlayerAttack
+                    PlayerCurHitpoints += PlayerAttack
+                    SKillGobalCooldown = 3
+                    SetSkillsToCooldown()
+                Else
+                    SND("Not enough willpower.")
+                End If
+            ElseIf Skillname = "Punch" Then
+                If PlayerCurWillpower >= 5 Then
+                    SND("Punch in what direction?")
+                    SkillType = "Punch"
+                    PlayerCurWillpower -= 5
+                Else
+                    SND("Not enough willpower.")
+                End If
+            ElseIf Skillname = "Kick" Then
+                If PlayerCurWillpower >= 5 Then
+                    SND("Kick in what direction?")
+                    SkillType = "Kick"
+                    PlayerCurWillpower -= 5
+                Else
+                    SND("Not enough willpower.")
+                End If
+            ElseIf Skillname = "Hit" Then
+                If PlayerCurWillpower >= 5 Then
+                    SND("Hit in what direction?")
+                    SkillType = "Hit"
+                    PlayerCurWillpower -= 5
+                Else
+                    SND("Not enough willpower.")
+                End If
+            ElseIf Skillname = "Strike" Then
+                If PlayerCurWillpower >= 5 Then
+                    SND("Strike in what direction?")
+                    SkillType = "Strike"
+                    PlayerCurWillpower -= 5
+                Else
+                    SND("Not enough willpower.")
+                End If
+            ElseIf Skillname = "Stab" Then
+                If PlayerCurWillpower >= 5 Then
+                    SND("Stab in what direction?")
+                    SkillType = "Stab"
+                    PlayerCurWillpower -= 5
+                Else
+                    SND("Not enough willpower.")
+                End If
+            ElseIf Skillname = "Slice" Then
+                If PlayerCurWillpower >= 5 Then
+                    SND("Stab in what direction?")
+                    SkillType = "Stab"
+                    PlayerCurWillpower -= 5
+                Else
+                    SND("Not enough willpower.")
+                End If
+            ElseIf Skillname = "Shoot" Then
+                If PlayerCurWillpower >= 5 Then
+                    SND("Shoot in what direction?")
+                    SkillType = "Shoot"
+                    PlayerCurWillpower -= 5
+                Else
+                    SND("Not enough willpower.")
+                End If
+            ElseIf Skillname = "Heal" Then
+                If PlayerCurWillpower >= 20 Then
+                    SND("You heal yourself.")
+                    PlayerCurWillpower -= 20
+                    PlayerCurHitpoints += 20
+                    If PlayerCurHitpoints >= PlayerHitpoints Then
+                        PlayerCurHitpoints = PlayerHitpoints
+                    End If
+                Else
+                    SND("Not enough willpower.")
+                End If
+            ElseIf Skillname = "Hide" Then
+                If PlayerCurWillpower >= 10 Then
+                    SND("You hide. Don't move.")
+                    PlayerCurWillpower -= 10
+                    SkillType = "Hide"
+                    PlayerHidden = 6
+                    SKillGobalCooldown = 6
+                    SetSkillsToCooldown()
+                Else
+                    SND("Not enough willpower.")
+                End If
+            ElseIf Skillname = "Bone Shield" Then
+                If PlayerCurWillpower >= 30 Then
+                    SND("You cast bone shield.")
+                    PlayerCurWillpower -= 30
+                    BoneShield = 5
+                    SKillGobalCooldown = 10
+                    SetSkillsToCooldown()
+                Else
+                    SND("Not enough willpower.")
+                End If
+            ElseIf Skillname = "Magic Shield" Then
+                If PlayerCurWillpower >= 30 Then
+                    SND("You cast magic shield.")
+                    PlayerCurWillpower -= 30
+                    MagicShield = 10
+                    SKillGobalCooldown = 10
+                    SetSkillsToCooldown()
+                Else
+                    SND("Not enough willpower.")
+                End If
+            ElseIf Skillname = "Counter" Then
+                If PlayerCurWillpower >= 15 Then
+                    SND("You cast counter")
+                    PlayerCurWillpower -= 15
+                    CounterAttack = 3
+                Else
+                    SND("Not enough willpower.")
+                End If
+            ElseIf Skillname = "Fireball" Then
+                If PlayerCurWillpower >= 30 Then
+                    SND("Fireball in which direction?")
+                    PlayerCurWillpower -= 30
+                    SkillType = "Fireball"
+                    SKillGobalCooldown = 3
+                    SetSkillsToCooldown()
+                Else
+                    SND("Not enough willpower.")
+                End If
+            ElseIf Skillname = "Clumsiness" Then
+                If PlayerCurWillpower >= 20 Then
+                    PlayerCurWillpower -= 20
+                    SND("Clumsiness in what direction?")
+                    SKillGobalCooldown = 10
+                    SetSkillsToCooldown()
+                    SkillType = "Clumsiness"
+                Else
+                    SND("Not enough willpower.")
+                End If
+            ElseIf Skillname = "Immolate" Then
+                If PlayerCurWillpower >= 20 Then
+                    PlayerCurWillpower -= 20
+                    SND("You cast Immolate.")
+                    SKillGobalCooldown = 10
+                    SetSkillsToCooldown()
+                    Immolate = 5
+                Else
+                    SND("Not enough willpower.")
+                End If
+            ElseIf Skillname = "Stun" Then
+                If PlayerCurWillpower >= 25 Then
+                    SND("Stun in what direction?")
+                    SkillType = "Stun"
+                    PlayerCurWillpower -= 25
+                Else
+                    SND("Not enough willpower.")
+                End If
+            ElseIf Skillname = "Sacrifice" Then
+                If PlayerCurHitpoints >= 11 Then
+                    PlayerCurHitpoints -= 10
+                    SKillGobalCooldown = 5
+                    SetSkillsToCooldown()
+                    SkillType = "Sacrifice"
+                Else
+                    SND("You would die.")
+                End If
+            ElseIf Skillname = "Backstab" Then
+                If PlayerCurWillpower >= 25 Then
+                    PlayerCurWillpower -= 25
+                    SKillGobalCooldown = 5
+                    SetSkillsToCooldown()
+                    SkillType = "Sacrifice" 'does same amount of damage
+                Else
+                    SND("Not enough willpower.")
+                End If
+            ElseIf Skillname = "Triple Slice" Then
+                If PlayerCurWillpower >= 30 Then
+                    PlayerCurWillpower -= 30
+                    SKillGobalCooldown = 4
+                    SetSkillsToCooldown()
+                    SkillType = "Triple Slice"
+                Else
+                    SND("Not enough willpower.")
+                End If
+            ElseIf Skillname = "Whisper" Then
+                If PlayerCurWillpower >= 50 Then
+                    PlayerCurWillpower -= 50
+                    SKillGobalCooldown = 10
+                    SetSkillsToCooldown()
+                    SkillType = "Whisper"
+                Else
+                    SND("Not enough willpower.")
+                End If
+            ElseIf Skillname = "Silence" Then
+                If PlayerCurWillpower >= 50 Then
+                    PlayerCurWillpower -= 50
+                    SKillGobalCooldown = 10
+                    SetSkillsToCooldown()
+                    SkillType = "Silence"
+                    SND("You cast silence.")
+                    Silence = 5
+                Else
+                    SND("Not enough willpower.")
+                End If
             End If
-        ElseIf Skillname = "Immolate" Then
-            If PlayerCurWillpower >= 20 Then
-                PlayerCurWillpower -= 20
-                SND("You cast Immolate.")
-                SKillGobalCooldown = 10
-                SetSkillsToCooldown()
-                Immolate = 5
-            Else
-                SND("Not enough willpower.")
-            End If
-        ElseIf Skillname = "Stun" Then
-            If PlayerCurWillpower >= 25 Then
-                SND("Stun in what direction?")
-                SkillType = "Stun"
-                PlayerCurWillpower -= 25
-            Else
-                SND("Not enough willpower.")
-            End If
-        ElseIf Skillname = "Sacrifice" Then
-            If PlayerCurHitpoints >= 11 Then
-                PlayerCurHitpoints -= 10
-                SKillGobalCooldown = 5
-                SetSkillsToCooldown()
-                SkillType = "Sacrifice"
-            Else
-                SND("You would die.")
-            End If
-        ElseIf Skillname = "Backstab" Then
-            If PlayerCurWillpower >= 25 Then
-                PlayerCurWillpower -= 25
-                SKillGobalCooldown = 5
-                SetSkillsToCooldown()
-                SkillType = "Sacrifice" 'does same amount of damage
-            Else
-                SND("Not enough willpower.")
-            End If
-        ElseIf Skillname = "Triple Slice" Then
-            If PlayerCurWillpower >= 30 Then
-                PlayerCurWillpower -= 30
-                SKillGobalCooldown = 4
-                SetSkillsToCooldown()
-                SkillType = "Triple Slice"
-            Else
-                SND("Not enough willpower.")
-            End If
-        ElseIf Skillname = "Whisper" Then
-            If PlayerCurWillpower >= 50 Then
-                PlayerCurWillpower -= 50
-                SKillGobalCooldown = 10
-                SetSkillsToCooldown()
-                SkillType = "Whisper"
-            Else
-                SND("Not enough willpower.")
-            End If
-        ElseIf Skillname = "Silence" Then
-            If PlayerCurWillpower >= 50 Then
-                PlayerCurWillpower -= 50
-                SKillGobalCooldown = 10
-                SetSkillsToCooldown()
-                SkillType = "Silence"
-                SND("You cast silence.")
-                Silence = 5
-            Else
-                SND("Not enough willpower.")
-            End If
-        End If
-        HealthBar.Caption = LTrim(Str(PlayerCurHitpoints)) + " / " + LTrim(Str(PlayerHitpoints)) + " HP"
-        HealthBar.Value = PlayerCurHitpoints
-        WillpowerBar.Caption = LTrim(Str(PlayerCurWillpower)) + " / " + LTrim(Str(PlayerWillpower)) + " WP"
-        WillpowerBar.Value = PlayerCurWillpower
+            HealthBar.Caption = LTrim(Str(PlayerCurHitpoints)) + " / " + LTrim(Str(PlayerHitpoints)) + " HP"
+            HealthBar.Value = PlayerCurHitpoints
+            WillpowerBar.Caption = LTrim(Str(PlayerCurWillpower)) + " / " + LTrim(Str(PlayerWillpower)) + " WP"
+            WillpowerBar.Value = PlayerCurWillpower
     End Sub
     Private Sub SetSkillsToCooldown()
         FilterRed(Skill1)
@@ -2787,12 +2363,17 @@ Public Class MainForm
                     PlayerHitLocation(PlayerPosX - 1, PlayerPosY)
                     ReDraw()
                 End If
+            ElseIf e.KeyCode = Keys.Space Then
+                PlayerHitLocation(MobileVisible(0, 0), MobileVisible(0, 1))
+                ReDraw()
             ElseIf e.KeyCode = Keys.NumPad5 Then
-                If PlayerCurHitpoints < PlayerHitpoints Or PlayerCurWillpower < PlayerWillpower Then
+                If PlayerCurHitpoints < PlayerHitpoints Then
                     PlayerCurHitpoints += 1
-                    PlayerCurWillpower += 1
                     HealthBar.Caption = LTrim(Str(PlayerCurHitpoints)) + " / " + LTrim(Str(PlayerHitpoints)) + " HP"
                     HealthBar.Value = PlayerCurHitpoints
+                End If
+                If PlayerCurWillpower < PlayerWillpower Then
+                    PlayerCurWillpower += 1
                     WillpowerBar.Caption = LTrim(Str(PlayerCurWillpower)) + " / " + LTrim(Str(PlayerWillpower)) + " WP"
                     WillpowerBar.Value = PlayerCurWillpower
                 End If
@@ -2879,6 +2460,17 @@ Public Class MainForm
                 ChooseCharacter.CharacterName.Text = "Mykil Ironfist"
                 ChooseCharacter.TopMost = True
                 ChooseCharacter.Show()
+            ElseIf e.KeyCode = Keys.F5 Then
+                If GraphicalMode = ASCII Then GraphicalMode = Tiled Else GraphicalMode = ASCII
+                For x = 0 To MapSize Step 1
+                    For y = 0 To MapSize Step 1
+                        MapDrawStatus(x, y) = 0
+                        MapDrawStatusPlus(x, y) = 0
+                    Next
+                Next
+                DrawingProcedures.changedmode = True
+                If PlayerTurns > 0 Then DrawingProcedures.DrawMap(GraphicalMode)
+                DrawingProcedures.changedmode = False
             ElseIf e.KeyCode = Keys.OemPeriod And e.Shift = True Then 'go down
                 If Map(PlayerPosX, PlayerPosY) = 3 Then 'exit
                     Dim tmp1 As Short
@@ -2889,6 +2481,14 @@ Public Class MainForm
                     Next
                     BuildNewMap()
                 End If
+            ElseIf e.KeyCode = Keys.F9 And e.Shift = True And e.Control = True And e.Alt = True Then 'go down regardless of stairs, admin cheat mode
+                Dim tmp1 As Short
+                For tmp0 = 0 To MapSize Step 1
+                    For tmp1 = 0 To MapSize Step 1
+                        Map(tmp0, tmp1) = 0
+                    Next
+                Next
+                BuildNewMap()
             ElseIf e.KeyCode = Keys.I Then 'inventory
                 Inventory.NameStat.Text = PlayerName
                 Inventory.HealthStat.Text = LTrim(Str(PlayerCurHitpoints)) + " / " + LTrim(Str(PlayerHitpoints))
