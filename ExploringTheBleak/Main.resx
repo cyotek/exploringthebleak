@@ -142,6 +142,7 @@ Charisma increases the chance to cause enemies to flee.
 'f2' shows your character stats.
 'f3' shows or hides the activity log.
 'f4' exits game and restarts character creation.
+'f5' switches between ascii and tile-based graphics.
 
 &lt;Press 'h' or '?' to hide this help&gt;</value>
   </data>

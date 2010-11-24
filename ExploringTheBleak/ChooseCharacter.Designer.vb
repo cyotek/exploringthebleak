@@ -883,9 +883,9 @@ Partial Class ChooseCharacter
         '
         'Button1
         '
-        Me.Button1.Location = New System.Drawing.Point(1, 370)
+        Me.Button1.Location = New System.Drawing.Point(388, 1)
         Me.Button1.Name = "Button1"
-        Me.Button1.Size = New System.Drawing.Size(385, 23)
+        Me.Button1.Size = New System.Drawing.Size(52, 367)
         Me.Button1.TabIndex = 2
         Me.Button1.Text = "Next"
         Me.Button1.UseVisualStyleBackColor = True
@@ -894,7 +894,7 @@ Partial Class ChooseCharacter
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(388, 399)
+        Me.ClientSize = New System.Drawing.Size(440, 369)
         Me.ControlBox = False
         Me.Controls.Add(Me.TabControl1)
         Me.Controls.Add(Me.Button1)

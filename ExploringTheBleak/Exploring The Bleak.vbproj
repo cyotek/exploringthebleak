@@ -82,6 +82,7 @@
     <Compile Include="ChooseCharacter.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="DrawingProcedures.vb" />
     <Compile Include="GenerateItem.vb" />
     <Compile Include="Inventory.Designer.vb">
       <DependentUpon>Inventory.vb</DependentUpon>
