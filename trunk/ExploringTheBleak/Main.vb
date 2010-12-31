@@ -58,8 +58,6 @@ Public Class MainForm
     Public Map(MapSize, MapSize) As Short
     Public MapShown(MapSize, MapSize) As Boolean
     Public MapOccupied(MapSize, MapSize) As Short
-    Public MapDrawStatus(MapSize, MapSize) As Short 'draw status is an attempt to reduce overhead by preventing redraws on something already visible
-    Public MapDrawStatusPlus(MapSize, MapSize) As Short 'draw status plus is an attempt to replace the original with something b3tter
     Public MapBlur(MapSize, MapSize, 3) As Boolean
     Public FogMap(MapSize, MapSize) As Short
 
@@ -873,8 +871,7 @@ Public Class MainForm
         For RefreshShownMapX = 0 To MapSize Step 1
             For RefreshShownMapY = 0 To MapSize Step 1
                 MapShown(RefreshShownMapX, RefreshShownMapY) = False
-                MapDrawStatus(RefreshShownMapX, RefreshShownMapY) = Hidden
-                MapDrawStatusPlus(RefreshShownMapX, RefreshShownMapY) = 0
+                DrawingProcedures.LOSMap(RefreshShownMapX, RefreshShownMapY) = Hidden
             Next
         Next
         DetermineEnvironment()
@@ -2594,8 +2591,7 @@ Public Class MainForm
                 If GraphicalMode = ASCII Then GraphicalMode = Tiled Else GraphicalMode = ASCII
                 For x = 0 To MapSize Step 1
                     For y = 0 To MapSize Step 1
-                        MapDrawStatus(x, y) = 0
-                        MapDrawStatusPlus(x, y) = 0
+                        DrawingProcedures.LOSMap(x, y) = Hidden
                     Next
                 Next
                 DrawingProcedures.changedmode = True

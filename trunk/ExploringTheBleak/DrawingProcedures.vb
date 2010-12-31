@@ -33,8 +33,9 @@
     Const TheEverspark As Short = 50
 
     Const Hidden As Short = 0 'used for MapDrawStatus, prevents recursive drawing on something already visible
-    Const NotHidden As Short = 1 'ditto
+    Const Visible As Short = 1 'ditto
     Const Shadowed As Short = 2 'ditto again
+    Const Redraw As Short = 3 'forces redraw no matter what
 
     Const TotalEnvironmentTypes As Short = 10
 
@@ -53,6 +54,7 @@
     Public displayfont As New Font("Arial", 24)
     Public displayfont2 As New Font("Arial", 12)
     Public ChangedMode As Boolean = False
+    Public LOSMap(MainForm.MapSize, MainForm.MapSize) As Short
 #End Region
 #Region "Image Filters"
     Function FilterImageRed(ByVal TheObject As Image) As System.Object
@@ -329,7 +331,7 @@
         Dim Mapsize As Short = MainForm.MapSize
         Dim PlayerPosX As Short = MainForm.PlayerPosX
         Dim PlayerposY As Short = MainForm.PlayerPosY
-        Dim EnvironmentType As Short = MainForm.EnvironmentType
+        Dim EnvironmentType As Short = MainForm.EnvironmentType 'different looking sets of tiles, like jungle scene, ice scene etc.
         Dim TheRoomWidth As Short = MainForm.TheRoomWidth
         Dim TheRoomHeight As Short = MainForm.TheRoomHeight
         Dim ColumnsSpace As Short = MainForm.ColumnsSpace
@@ -339,7 +341,7 @@
         Dim RandomNum As New Random
         'Mobile placed reduced the need to check for mobile targeting if nothings on screen, less overhead
         Dim MobilePlaced As Boolean = False
-        'lets reduce redundancy
+        'wallart and floor art is assigned depending on environmenttype which is dependant on the current depth or level
         Dim WallArt As Bitmap
         Dim FloorArt As Bitmap
         'define bounds, start x visible area -1 to x visible area +1, same with y, no need to check whole map, it's already written
@@ -354,7 +356,7 @@
         'start at top left and go to bottom right
         For x = StartX To FinishX Step 1
             For y = StartY To FinishY Step 1
-                'sets wall and floor art to prevent redundancy later, easier to read
+                'sets wall and floor art dependant on environment type which is dependant on current depth or dungeon level
                 If GraphicalMode = Tiled Then
                     If EnvironmentType = 0 Then : WallArt = My.Resources._1 : FloorArt = My.Resources._1floor()
                     ElseIf EnvironmentType = 1 Then : WallArt = My.Resources._2 : FloorArt = My.Resources._2floor()
@@ -368,190 +370,57 @@
                     ElseIf EnvironmentType = 9 Then : WallArt = My.Resources._10 : FloorArt = My.Resources._10floor()
                     End If
                 End If
+                'xish and yish is the x and y location on the screen that the tile will be placed upon
                 xish = TheRoomWidth * x + ColumnsSpace * x + 10
                 yish = TheRoomHeight * y + RowSpace * y + 10
                 xishPLUS = Val(TheRoomWidth) * x + Val(ColumnsSpace) * x + 10 + Val(TheRoomWidth)
                 yishPLUS = Val(TheRoomHeight) * y + Val(RowSpace) * y + 10 + Val(TheRoomHeight)
-                If Math.Abs((PlayerPosX + PlayerposY) - (x + y)) <= 4 And Math.Abs((PlayerPosX - PlayerposY) - (x - y)) <= 4 Or MainForm.AdminVisible = True Then 'admin visible shows all
+                'draws a circle around player 4 wide on each side for visibility, remember that x and y are passed starting -5 to 5 of characters current position.
+                If ((Math.Pow(PlayerPosX - x, 2) + Math.Pow(PlayerposY - y, 2)) < (Math.Pow(4, 2))) Or MainForm.AdminVisible = True Then 'admin visible shows all
                     'within range of player, only process isvisible routines if it's within 4 of character so it doesn't process unnecessary squares too far from player
                     If IsVisible(x, y, PlayerPosX, PlayerposY) <= 1 Or IsVisible2(x, y, PlayerPosX, PlayerposY) <= 1 Or MainForm.AdminVisible = True Or ChangedMode = True And MainForm.MapShown(x, y) = True Then
                         'within range of player and is visible
-                        If MainForm.MapDrawStatus(x, y) = Shadowed Then
-                            MainForm.MapDrawStatusPlus(x, y) = 0
-                        End If
-                        If MainForm.MapDrawStatusPlus(x, y) = 0 Then
-                            MainForm.MapDrawStatusPlus(x, y) += 1
+                        If LOSMap(x, y) <> Visible Then 'should be visible, tile not currently visible, change then set map as visible
+                            LOSMap(x, y) = Visible
                             'draw wall
-                            If MainForm.Map(x, y) = Wall And MainForm.MapDrawStatus(x, y) <> NotHidden Then
-                                If GraphicalMode = Tiled Then
-                                    MainForm.CANVAS.DrawImage(FilterImageWall(FloorArt, WallArt, MainForm.MapBlur(x, y, 2), MainForm.MapBlur(x, y, 1), MainForm.MapBlur(x, y, 0), MainForm.MapBlur(x, y, 3)), xish, yish, TheRoomWidth, TheRoomHeight)
-                                ElseIf GraphicalMode = ASCII Then
-                                    MainForm.CANVAS.FillRectangle(Brushes.Black, xish, yish, TheRoomWidth, TheRoomHeight)
-                                    MainForm.CANVAS.DrawString("#", displayfont, Brushes.LightGray, xish, yish)
-                                End If
-                                MainForm.MapDrawStatus(x, y) = NotHidden
-                                'draw floor
-                            ElseIf MainForm.Map(x, y) = Floor And MainForm.MapDrawStatus(x, y) <> NotHidden Then
-                                If GraphicalMode = Tiled Then
-                                    ShowFog(xish, yish, x, y, FloorArt)
-                                ElseIf GraphicalMode = ASCII Then
-                                    MainForm.CANVAS.FillRectangle(Brushes.Black, xish, yish, TheRoomWidth, TheRoomHeight)
-                                    MainForm.CANVAS.DrawString(".", displayfont, Brushes.DarkGray, xish, yish)
-                                End If
-                                MainForm.MapDrawStatus(x, y) = NotHidden
-                                'draw floor with blood
-                            ElseIf MainForm.Map(x, y) = SpecialFloor And MainForm.MapDrawStatus(x, y) <> NotHidden Then
-                                If GraphicalMode = Tiled Then
-                                    ShowFog(xish, yish, x, y, FilterImageRed(FloorArt))
-                                ElseIf GraphicalMode = ASCII Then
-                                    MainForm.CANVAS.FillRectangle(Brushes.Black, xish, yish, TheRoomWidth, TheRoomHeight)
-                                    MainForm.CANVAS.DrawString("x", displayfont, Brushes.Red, xish, yish)
-                                End If
-                                MainForm.MapDrawStatus(x, y) = NotHidden
-                                'draw stairs up
-                            ElseIf MainForm.Map(x, y) = StairsUp And MainForm.MapDrawStatus(x, y) <> NotHidden Then
-                                If GraphicalMode = Tiled Then
-                                    MainForm.CANVAS.DrawImage(My.Resources.StairsUp, xish, yish, TheRoomWidth, TheRoomHeight)
-                                ElseIf GraphicalMode = ASCII Then
-                                    MainForm.CANVAS.FillRectangle(Brushes.Black, xish, yish, TheRoomWidth, TheRoomHeight)
-                                    MainForm.CANVAS.DrawString("<", displayfont, Brushes.DarkGray, xish, yish)
-                                End If
-                                MainForm.MapDrawStatus(x, y) = NotHidden
-                                'draw stairs down
-                            ElseIf MainForm.Map(x, y) = StairsDown And MainForm.MapDrawStatus(x, y) <> NotHidden Then
-                                If GraphicalMode = Tiled Then
-                                    MainForm.CANVAS.DrawImage(My.Resources.StairsDown, xish, yish, TheRoomWidth, TheRoomHeight)
-                                ElseIf GraphicalMode = ASCII Then
-                                    MainForm.CANVAS.FillRectangle(Brushes.Black, xish, yish, TheRoomWidth, TheRoomHeight)
-                                    MainForm.CANVAS.DrawString(">", displayfont, Brushes.DarkGray, xish, yish)
-                                End If
-                                MainForm.MapDrawStatus(x, y) = NotHidden
-                            ElseIf MainForm.Map(x, y) = Lava And MainForm.MapDrawStatus(x, y) <> NotHidden Then
-                                If GraphicalMode = Tiled Then
-                                    MainForm.CANVAS.DrawImage(FilterImageWall(FloorArt, My.Resources.Lava, True, True, False, False), xish, yish, TheRoomWidth, TheRoomHeight)
-                                ElseIf GraphicalMode = ASCII Then
-                                    MainForm.CANVAS.FillRectangle(Brushes.Black, xish, yish, TheRoomWidth, TheRoomHeight)
-                                    MainForm.CANVAS.DrawString("~", displayfont, Brushes.Red, xish, yish)
-                                End If
-                                MainForm.MapDrawStatus(x, y) = NotHidden
-                            ElseIf MainForm.Map(x, y) = Water And MainForm.MapDrawStatus(x, y) <> NotHidden Then
-                                If GraphicalMode = Tiled Then
-                                    MainForm.CANVAS.DrawImage(FilterImageWater(FloorArt, My.Resources.Water), xish, yish, TheRoomWidth, TheRoomHeight)
-                                ElseIf GraphicalMode = ASCII Then
-                                    MainForm.CANVAS.FillRectangle(Brushes.Black, xish, yish, TheRoomWidth, TheRoomHeight)
-                                    MainForm.CANVAS.DrawString("~", displayfont, Brushes.Blue, xish, yish)
-                                End If
-                                MainForm.MapDrawStatus(x, y) = NotHidden
-                            ElseIf MainForm.Map(x, y) = Ice And MainForm.MapDrawStatus(x, y) <> NotHidden Then
-                                If GraphicalMode = Tiled Then
-                                    MainForm.CANVAS.DrawImage(FilterImageWater(FloorArt, My.Resources.Ice), xish, yish, TheRoomWidth, TheRoomHeight)
-                                ElseIf GraphicalMode = ASCII Then
-                                    MainForm.CANVAS.FillRectangle(Brushes.Black, xish, yish, TheRoomWidth, TheRoomHeight)
-                                    MainForm.CANVAS.DrawString("#", displayfont, Brushes.Cyan, xish, yish)
-                                End If
-                                MainForm.MapDrawStatus(x, y) = NotHidden
-                            End If
+                            DrawTile(x, y, xish, yish, TheRoomWidth, TheRoomHeight, GraphicalMode, WallArt, FloorArt)
                         End If
                         'if map is occupied, show enemy
                         If MainForm.MapOccupied(x, y) > 0 Then
-                            ShowEnemy(MainForm.MapOccupied(x, y), xish, yish, x, y)
+                            LOSMap(x, y) = Redraw
                             MobilePlaced = True
-                            MainForm.MapDrawStatus(x, y) = Hidden
-                            MainForm.MapDrawStatusPlus(x, y) = 0
+                            ShowEnemy(MainForm.MapOccupied(x, y), xish, yish, x, y)
                         Else
                             'if map isn't occupied by mobiles, is it occupied by items, if so show items (prioritize enemy showing over items)
                             If MainForm.ItemOccupied(x, y) > 0 Then
+                                LOSMap(x, y) = Redraw
                                 ShowItem(xish, yish, x, y)
-                                MainForm.MapDrawStatusPlus(x, y) = 0
                             End If
-                            MainForm.MapDrawStatus(x, y) = Hidden
                         End If
                         'player can be shown over items for better visibility
                         If x = PlayerPosX And y = PlayerposY Then
+                            LOSMap(x, y) = Redraw
                             MainForm.CANVAS.DrawString("@", displayfont, Brushes.LimeGreen, xish, yish)
-                            MainForm.MapDrawStatus(x, y) = Hidden
-                            MainForm.MapDrawStatusPlus(x, y) = 0
                         End If
                         MainForm.MapShown(x, y) = True
-                    End If
-                ElseIf MainForm.MapShown(x, y) = True And MainForm.MapDrawStatus(x, y) <> Shadowed Or ChangedMode = True And MainForm.MapShown(x, y) = True Then
+                    ElseIf MainForm.MapShown(x, y) = True Then
+                        'not within the visual sight of the player, but was visited, so should just be fogged
+                        Dim semiTransBrush As SolidBrush = New SolidBrush(Color.FromArgb(150, 0, 0, 0))
+                        If LOSMap(x, y) <> Shadowed Then
+                            LOSMap(x, y) = Shadowed
+                            'draw wall
+                            DrawTile(x, y, xish, yish, TheRoomWidth, TheRoomHeight, GraphicalMode, WallArt, FloorArt)
+                            'shadow the area
+                            MainForm.MapShown(x, y) = True
+                            MainForm.CANVAS.FillRectangle(semiTransBrush, xish, yish, TheRoomWidth, TheRoomHeight)
+                        End If
+                        End If
+                ElseIf MainForm.MapShown(x, y) = True Then
                     'not within the visual sight of the player, but was visited, so should just be fogged
                     Dim semiTransBrush As SolidBrush = New SolidBrush(Color.FromArgb(150, 0, 0, 0))
-                    If MainForm.MapDrawStatus(x, y) = 0 Then
-                        MainForm.MapDrawStatusPlus(x, y) = 0
-                    End If
-                    If MainForm.MapDrawStatusPlus(x, y) = 0 Then
-                        MainForm.MapDrawStatusPlus(x, y) += 2
-                        'draw wall
-                        If MainForm.Map(x, y) = Wall And MainForm.MapDrawStatus(x, y) <> Shadowed Then
-                            If GraphicalMode = Tiled Then
-                                MainForm.CANVAS.DrawImage(FilterImageWall(FloorArt, WallArt, MainForm.MapBlur(x, y, 2), MainForm.MapBlur(x, y, 1), MainForm.MapBlur(x, y, 0), MainForm.MapBlur(x, y, 3)), xish, yish, TheRoomWidth, TheRoomHeight)
-                            ElseIf GraphicalMode = ASCII Then
-                                MainForm.CANVAS.FillRectangle(Brushes.Black, xish, yish, TheRoomWidth, TheRoomHeight)
-                                MainForm.CANVAS.DrawString("#", displayfont, Brushes.DarkGray, xish, yish)
-                            End If
-                            MainForm.MapDrawStatus(x, y) = Shadowed
-                            'draw floor
-                        ElseIf MainForm.Map(x, y) = Floor And MainForm.MapDrawStatus(x, y) <> Shadowed Then
-                            If GraphicalMode = Tiled Then
-                                ShowFog(xish, yish, x, y, FloorArt)
-                            ElseIf GraphicalMode = ASCII Then
-                                MainForm.CANVAS.FillRectangle(Brushes.Black, xish, yish, TheRoomWidth, TheRoomHeight)
-                                MainForm.CANVAS.DrawString(".", displayfont, Brushes.DarkGray, xish, yish)
-                            End If
-                            MainForm.MapDrawStatus(x, y) = Shadowed
-                            'draw floor with blood
-                        ElseIf MainForm.Map(x, y) = SpecialFloor And MainForm.MapDrawStatus(x, y) <> Shadowed Then
-                            If GraphicalMode = Tiled Then
-                                ShowFog(xish, yish, x, y, FilterImageRed(FloorArt))
-                            ElseIf GraphicalMode = ASCII Then
-                                MainForm.CANVAS.FillRectangle(Brushes.Black, xish, yish, TheRoomWidth, TheRoomHeight)
-                                MainForm.CANVAS.DrawString("x", displayfont, Brushes.DarkRed, xish, yish)
-                            End If
-                            MainForm.MapDrawStatus(x, y) = Shadowed
-                            'draw stairs up
-                        ElseIf MainForm.Map(x, y) = StairsUp And MainForm.MapDrawStatus(x, y) <> Shadowed Then
-                            If GraphicalMode = Tiled Then
-                                MainForm.CANVAS.DrawImage(My.Resources.StairsUp, xish, yish, TheRoomWidth, TheRoomHeight)
-                            ElseIf GraphicalMode = ASCII Then
-                                MainForm.CANVAS.FillRectangle(Brushes.Black, xish, yish, TheRoomWidth, TheRoomHeight)
-                                MainForm.CANVAS.DrawString("<", displayfont, Brushes.DarkGray, xish, yish)
-                            End If
-                            MainForm.MapDrawStatus(x, y) = Shadowed
-                            'draw stairs down
-                        ElseIf MainForm.Map(x, y) = StairsDown And MainForm.MapDrawStatus(x, y) <> Shadowed Then
-                            If GraphicalMode = Tiled Then
-                                MainForm.CANVAS.DrawImage(My.Resources.StairsDown, xish, yish, TheRoomWidth, TheRoomHeight)
-                            ElseIf GraphicalMode = ASCII Then
-                                MainForm.CANVAS.FillRectangle(Brushes.Black, xish, yish, TheRoomWidth, TheRoomHeight)
-                                MainForm.CANVAS.DrawString(">", displayfont, Brushes.DarkGray, xish, yish)
-                            End If
-                            MainForm.MapDrawStatus(x, y) = Shadowed
-                        ElseIf MainForm.Map(x, y) = Lava And MainForm.MapDrawStatus(x, y) <> Shadowed Then
-                            If GraphicalMode = Tiled Then
-                                MainForm.CANVAS.DrawImage(FilterImageWall(FloorArt, My.Resources.Lava, True, True, False, False), xish, yish, TheRoomWidth, TheRoomHeight)
-                            ElseIf GraphicalMode = ASCII Then
-                                MainForm.CANVAS.FillRectangle(Brushes.Black, xish, yish, TheRoomWidth, TheRoomHeight)
-                                MainForm.CANVAS.DrawString("~", displayfont, Brushes.DarkRed, xish, yish)
-                            End If
-                            MainForm.MapDrawStatus(x, y) = Shadowed
-                        ElseIf MainForm.Map(x, y) = Water And MainForm.MapDrawStatus(x, y) <> Shadowed Then
-                            If GraphicalMode = Tiled Then
-                                MainForm.CANVAS.DrawImage(FilterImageWater(FloorArt, My.Resources.Water), xish, yish, TheRoomWidth, TheRoomHeight)
-                            ElseIf GraphicalMode = ASCII Then
-                                MainForm.CANVAS.FillRectangle(Brushes.Black, xish, yish, TheRoomWidth, TheRoomHeight)
-                                MainForm.CANVAS.DrawString("~", displayfont, Brushes.DarkBlue, xish, yish)
-                            End If
-                            MainForm.MapDrawStatus(x, y) = Shadowed
-                        ElseIf MainForm.Map(x, y) = Ice And MainForm.MapDrawStatus(x, y) <> Shadowed Then
-                            If GraphicalMode = Tiled Then
-                                MainForm.CANVAS.DrawImage(FilterImageWater(FloorArt, My.Resources.Ice), xish, yish, TheRoomWidth, TheRoomHeight)
-                            ElseIf GraphicalMode = ASCII Then
-                                MainForm.CANVAS.FillRectangle(Brushes.Black, xish, yish, TheRoomWidth, TheRoomHeight)
-                                MainForm.CANVAS.DrawString("#", displayfont, Brushes.DarkCyan, xish, yish)
-                            End If
-                            MainForm.MapDrawStatus(x, y) = Shadowed
-                        End If
+                    If LOSMap(x, y) <> Shadowed Then
+                        LOSMap(x, y) = Shadowed
+                        DrawTile(x, y, xish, yish, TheRoomWidth, TheRoomHeight, GraphicalMode, WallArt, FloorArt)
                         'shadow the area
                         MainForm.MapShown(x, y) = True
                         MainForm.CANVAS.FillRectangle(semiTransBrush, xish, yish, TheRoomWidth, TheRoomHeight)
@@ -566,6 +435,69 @@
             MainForm.MobilePresent=false
         End If
         MainForm.CreateGraphics.DrawImage(MainForm.PAD, 0, 0)
+    End Sub
+    Sub DrawTile(ByVal x As Short, ByVal y As Short, ByVal xish As Short, ByVal yish As Short, ByVal TheRoomWidth As Short, ByVal TheRoomHeight As Short, ByVal GraphicalMode As Boolean, ByVal wallart As Bitmap, ByVal floorart As Bitmap)
+        If MainForm.Map(x, y) = Wall Then
+            If GraphicalMode = Tiled Then
+                MainForm.CANVAS.DrawImage(FilterImageWall(FloorArt, WallArt, MainForm.MapBlur(x, y, 2), MainForm.MapBlur(x, y, 1), MainForm.MapBlur(x, y, 0), MainForm.MapBlur(x, y, 3)), xish, yish, TheRoomWidth, TheRoomHeight)
+            ElseIf GraphicalMode = ASCII Then
+                MainForm.CANVAS.FillRectangle(Brushes.Black, xish, yish, TheRoomWidth, TheRoomHeight)
+                MainForm.CANVAS.DrawString("#", displayfont, Brushes.DarkGray, xish, yish)
+            End If
+            'draw floor
+        ElseIf MainForm.Map(x, y) = Floor Then
+            If GraphicalMode = Tiled Then
+                ShowFog(xish, yish, x, y, FloorArt)
+            ElseIf GraphicalMode = ASCII Then
+                MainForm.CANVAS.FillRectangle(Brushes.Black, xish, yish, TheRoomWidth, TheRoomHeight)
+                MainForm.CANVAS.DrawString(".", displayfont, Brushes.DarkGray, xish, yish)
+            End If
+            'draw floor with blood
+        ElseIf MainForm.Map(x, y) = SpecialFloor Then
+            If GraphicalMode = Tiled Then
+                ShowFog(xish, yish, x, y, FilterImageRed(FloorArt))
+            ElseIf GraphicalMode = ASCII Then
+                MainForm.CANVAS.FillRectangle(Brushes.Black, xish, yish, TheRoomWidth, TheRoomHeight)
+                MainForm.CANVAS.DrawString("x", displayfont, Brushes.DarkRed, xish, yish)
+            End If
+            'draw stairs up
+        ElseIf MainForm.Map(x, y) = StairsUp Then
+            If GraphicalMode = Tiled Then
+                MainForm.CANVAS.DrawImage(My.Resources.StairsUp, xish, yish, TheRoomWidth, TheRoomHeight)
+            ElseIf GraphicalMode = ASCII Then
+                MainForm.CANVAS.FillRectangle(Brushes.Black, xish, yish, TheRoomWidth, TheRoomHeight)
+                MainForm.CANVAS.DrawString("<", displayfont, Brushes.DarkGray, xish, yish)
+            End If
+            'draw stairs down
+        ElseIf MainForm.Map(x, y) = StairsDown Then
+            If GraphicalMode = Tiled Then
+                MainForm.CANVAS.DrawImage(My.Resources.StairsDown, xish, yish, TheRoomWidth, TheRoomHeight)
+            ElseIf GraphicalMode = ASCII Then
+                MainForm.CANVAS.FillRectangle(Brushes.Black, xish, yish, TheRoomWidth, TheRoomHeight)
+                MainForm.CANVAS.DrawString(">", displayfont, Brushes.DarkGray, xish, yish)
+            End If
+        ElseIf MainForm.Map(x, y) = Lava Then
+            If GraphicalMode = Tiled Then
+                MainForm.CANVAS.DrawImage(FilterImageWall(FloorArt, My.Resources.Lava, True, True, False, False), xish, yish, TheRoomWidth, TheRoomHeight)
+            ElseIf GraphicalMode = ASCII Then
+                MainForm.CANVAS.FillRectangle(Brushes.Black, xish, yish, TheRoomWidth, TheRoomHeight)
+                MainForm.CANVAS.DrawString("~", displayfont, Brushes.DarkRed, xish, yish)
+            End If
+        ElseIf MainForm.Map(x, y) = Water Then
+            If GraphicalMode = Tiled Then
+                MainForm.CANVAS.DrawImage(FilterImageWater(FloorArt, My.Resources.Water), xish, yish, TheRoomWidth, TheRoomHeight)
+            ElseIf GraphicalMode = ASCII Then
+                MainForm.CANVAS.FillRectangle(Brushes.Black, xish, yish, TheRoomWidth, TheRoomHeight)
+                MainForm.CANVAS.DrawString("~", displayfont, Brushes.DarkBlue, xish, yish)
+            End If
+        ElseIf MainForm.Map(x, y) = Ice Then
+            If GraphicalMode = Tiled Then
+                MainForm.CANVAS.DrawImage(FilterImageWater(FloorArt, My.Resources.Ice), xish, yish, TheRoomWidth, TheRoomHeight)
+            ElseIf GraphicalMode = ASCII Then
+                MainForm.CANVAS.FillRectangle(Brushes.Black, xish, yish, TheRoomWidth, TheRoomHeight)
+                MainForm.CANVAS.DrawString("#", displayfont, Brushes.DarkCyan, xish, yish)
+            End If
+        End If
     End Sub
     Sub SortEnemyRangeList()
         Dim MobileNumber As Short = 0
