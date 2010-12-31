@@ -89,6 +89,9 @@ Partial Class MainForm
         Me.Comment2 = New System.Windows.Forms.PictureBox()
         Me.Comment1 = New System.Windows.Forms.PictureBox()
         Me.Comment11 = New System.Windows.Forms.PictureBox()
+        Me.GroupBox1 = New System.Windows.Forms.GroupBox()
+        Me.Panel2 = New System.Windows.Forms.Panel()
+        Me.Label13 = New System.Windows.Forms.Label()
         Me.HealthBar = New Exploring_The_Bleak.MyProgBar()
         Me.WillpowerBar = New Exploring_The_Bleak.MyProgBar()
         Me.Panel1.SuspendLayout()
@@ -110,6 +113,8 @@ Partial Class MainForm
         CType(Me.Comment2, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.Comment1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.Comment11, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.GroupBox1.SuspendLayout()
+        Me.Panel2.SuspendLayout()
         Me.SuspendLayout()
         '
         'Panel1
@@ -122,9 +127,9 @@ Partial Class MainForm
         Me.Panel1.Controls.Add(Me.Skill3)
         Me.Panel1.Controls.Add(Me.Skill2)
         Me.Panel1.Controls.Add(Me.Skill1)
-        Me.Panel1.Location = New System.Drawing.Point(892, 12)
+        Me.Panel1.Location = New System.Drawing.Point(899, 36)
         Me.Panel1.Name = "Panel1"
-        Me.Panel1.Size = New System.Drawing.Size(207, 458)
+        Me.Panel1.Size = New System.Drawing.Size(207, 461)
         Me.Panel1.TabIndex = 14
         '
         'DisplayText
@@ -149,7 +154,7 @@ Partial Class MainForm
         Me.Skill3Name.BackColor = System.Drawing.Color.FromArgb(CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer))
         Me.Skill3Name.Font = New System.Drawing.Font("Courier New", 6.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Skill3Name.ForeColor = System.Drawing.Color.FromArgb(CType(CType(224, Byte), Integer), CType(CType(224, Byte), Integer), CType(CType(224, Byte), Integer))
-        Me.Skill3Name.Location = New System.Drawing.Point(149, 99)
+        Me.Skill3Name.Location = New System.Drawing.Point(149, 100)
         Me.Skill3Name.Name = "Skill3Name"
         Me.Skill3Name.Size = New System.Drawing.Size(35, 12)
         Me.Skill3Name.TabIndex = 95
@@ -163,7 +168,7 @@ Partial Class MainForm
         Me.Skill2Name.BackColor = System.Drawing.Color.FromArgb(CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer))
         Me.Skill2Name.Font = New System.Drawing.Font("Courier New", 6.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Skill2Name.ForeColor = System.Drawing.Color.FromArgb(CType(CType(224, Byte), Integer), CType(CType(224, Byte), Integer), CType(CType(224, Byte), Integer))
-        Me.Skill2Name.Location = New System.Drawing.Point(85, 99)
+        Me.Skill2Name.Location = New System.Drawing.Point(85, 100)
         Me.Skill2Name.Name = "Skill2Name"
         Me.Skill2Name.Size = New System.Drawing.Size(35, 12)
         Me.Skill2Name.TabIndex = 94
@@ -177,7 +182,7 @@ Partial Class MainForm
         Me.Skill1Name.BackColor = System.Drawing.Color.FromArgb(CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer))
         Me.Skill1Name.Font = New System.Drawing.Font("Courier New", 6.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Skill1Name.ForeColor = System.Drawing.Color.FromArgb(CType(CType(224, Byte), Integer), CType(CType(224, Byte), Integer), CType(CType(224, Byte), Integer))
-        Me.Skill1Name.Location = New System.Drawing.Point(21, 99)
+        Me.Skill1Name.Location = New System.Drawing.Point(21, 100)
         Me.Skill1Name.Name = "Skill1Name"
         Me.Skill1Name.Size = New System.Drawing.Size(35, 12)
         Me.Skill1Name.TabIndex = 93
@@ -217,9 +222,9 @@ Partial Class MainForm
         Me.HelpInfo.BackColor = System.Drawing.Color.FromArgb(CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer))
         Me.HelpInfo.Font = New System.Drawing.Font("Courier New", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.HelpInfo.ForeColor = System.Drawing.Color.FromArgb(CType(CType(224, Byte), Integer), CType(CType(224, Byte), Integer), CType(CType(224, Byte), Integer))
-        Me.HelpInfo.Location = New System.Drawing.Point(262, 32)
+        Me.HelpInfo.Location = New System.Drawing.Point(6, 16)
         Me.HelpInfo.Name = "HelpInfo"
-        Me.HelpInfo.Size = New System.Drawing.Size(455, 378)
+        Me.HelpInfo.Size = New System.Drawing.Size(448, 378)
         Me.HelpInfo.TabIndex = 93
         Me.HelpInfo.Text = resources.GetString("HelpInfo.Text")
         Me.HelpInfo.Visible = False
@@ -267,7 +272,7 @@ Partial Class MainForm
         Me.LevelUpPanel.Controls.Add(Me.intadd)
         Me.LevelUpPanel.Controls.Add(Me.wisadd)
         Me.LevelUpPanel.ForeColor = System.Drawing.Color.White
-        Me.LevelUpPanel.Location = New System.Drawing.Point(403, 110)
+        Me.LevelUpPanel.Location = New System.Drawing.Point(12, 12)
         Me.LevelUpPanel.Name = "LevelUpPanel"
         Me.LevelUpPanel.Size = New System.Drawing.Size(283, 310)
         Me.LevelUpPanel.TabIndex = 94
@@ -624,10 +629,9 @@ Partial Class MainForm
         'ScoresBox
         '
         Me.ScoresBox.BackColor = System.Drawing.Color.FromArgb(CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer))
-        Me.ScoresBox.BackgroundImage = CType(resources.GetObject("ScoresBox.BackgroundImage"), System.Drawing.Image)
         Me.ScoresBox.Controls.Add(Me.Output)
         Me.ScoresBox.ForeColor = System.Drawing.Color.White
-        Me.ScoresBox.Location = New System.Drawing.Point(68, 58)
+        Me.ScoresBox.Location = New System.Drawing.Point(12, 12)
         Me.ScoresBox.Name = "ScoresBox"
         Me.ScoresBox.Size = New System.Drawing.Size(772, 520)
         Me.ScoresBox.TabIndex = 95
@@ -655,7 +659,7 @@ Partial Class MainForm
         Me.CharStats.BackColor = System.Drawing.Color.FromArgb(CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer))
         Me.CharStats.Controls.Add(Me.StatBox)
         Me.CharStats.ForeColor = System.Drawing.Color.White
-        Me.CharStats.Location = New System.Drawing.Point(253, 36)
+        Me.CharStats.Location = New System.Drawing.Point(12, 12)
         Me.CharStats.Name = "CharStats"
         Me.CharStats.Size = New System.Drawing.Size(193, 291)
         Me.CharStats.TabIndex = 96
@@ -684,7 +688,7 @@ Partial Class MainForm
         Me.SkillInfoBox.BackColor = System.Drawing.Color.FromArgb(CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer))
         Me.SkillInfoBox.Controls.Add(Me.SkillInfo)
         Me.SkillInfoBox.ForeColor = System.Drawing.Color.White
-        Me.SkillInfoBox.Location = New System.Drawing.Point(846, 140)
+        Me.SkillInfoBox.Location = New System.Drawing.Point(853, 164)
         Me.SkillInfoBox.Name = "SkillInfoBox"
         Me.SkillInfoBox.Size = New System.Drawing.Size(240, 172)
         Me.SkillInfoBox.TabIndex = 97
@@ -828,17 +832,51 @@ Partial Class MainForm
         Me.Comment11.TabStop = False
         Me.Comment11.Visible = False
         '
+        'GroupBox1
+        '
+        Me.GroupBox1.BackColor = System.Drawing.Color.FromArgb(CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer))
+        Me.GroupBox1.Controls.Add(Me.HelpInfo)
+        Me.GroupBox1.ForeColor = System.Drawing.Color.White
+        Me.GroupBox1.Location = New System.Drawing.Point(12, 12)
+        Me.GroupBox1.Name = "GroupBox1"
+        Me.GroupBox1.Size = New System.Drawing.Size(466, 406)
+        Me.GroupBox1.TabIndex = 97
+        Me.GroupBox1.TabStop = False
+        Me.GroupBox1.Text = "Help / Commands"
+        Me.GroupBox1.Visible = False
+        '
+        'Panel2
+        '
+        Me.Panel2.BackColor = System.Drawing.Color.FromArgb(CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer))
+        Me.Panel2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
+        Me.Panel2.Controls.Add(Me.Label13)
+        Me.Panel2.Location = New System.Drawing.Point(899, 6)
+        Me.Panel2.Name = "Panel2"
+        Me.Panel2.Size = New System.Drawing.Size(207, 24)
+        Me.Panel2.TabIndex = 98
+        '
+        'Label13
+        '
+        Me.Label13.AutoSize = True
+        Me.Label13.Font = New System.Drawing.Font("Courier New", 18.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label13.ForeColor = System.Drawing.Color.White
+        Me.Label13.Location = New System.Drawing.Point(89, -1)
+        Me.Label13.Name = "Label13"
+        Me.Label13.Size = New System.Drawing.Size(26, 27)
+        Me.Label13.TabIndex = 0
+        Me.Label13.Text = "X"
+        '
         'HealthBar
         '
         Me.HealthBar.BackColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(192, Byte), Integer), CType(CType(192, Byte), Integer))
         Me.HealthBar.Caption = "Health Bar"
         Me.HealthBar.Enabled = False
         Me.HealthBar.ForeColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(128, Byte), Integer), CType(CType(128, Byte), Integer))
-        Me.HealthBar.Location = New System.Drawing.Point(899, 18)
+        Me.HealthBar.Location = New System.Drawing.Point(906, 42)
         Me.HealthBar.Max = 100
         Me.HealthBar.Min = 0
         Me.HealthBar.Name = "HealthBar"
-        Me.HealthBar.Size = New System.Drawing.Size(193, 15)
+        Me.HealthBar.Size = New System.Drawing.Size(193, 18)
         Me.HealthBar.TabIndex = 12
         Me.HealthBar.Value = 70
         '
@@ -848,11 +886,11 @@ Partial Class MainForm
         Me.WillpowerBar.Caption = "Mana Bar"
         Me.WillpowerBar.Enabled = False
         Me.WillpowerBar.ForeColor = System.Drawing.Color.FromArgb(CType(CType(128, Byte), Integer), CType(CType(128, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.WillpowerBar.Location = New System.Drawing.Point(899, 36)
+        Me.WillpowerBar.Location = New System.Drawing.Point(906, 60)
         Me.WillpowerBar.Max = 100
         Me.WillpowerBar.Min = 0
         Me.WillpowerBar.Name = "WillpowerBar"
-        Me.WillpowerBar.Size = New System.Drawing.Size(193, 16)
+        Me.WillpowerBar.Size = New System.Drawing.Size(193, 19)
         Me.WillpowerBar.TabIndex = 13
         Me.WillpowerBar.Value = 30
         '
@@ -862,11 +900,12 @@ Partial Class MainForm
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.Color.Black
         Me.ClientSize = New System.Drawing.Size(1111, 852)
+        Me.Controls.Add(Me.Panel2)
+        Me.Controls.Add(Me.GroupBox1)
         Me.Controls.Add(Me.SkillInfoBox)
         Me.Controls.Add(Me.CharStats)
         Me.Controls.Add(Me.ScoresBox)
         Me.Controls.Add(Me.LevelUpPanel)
-        Me.Controls.Add(Me.HelpInfo)
         Me.Controls.Add(Me.Comment10)
         Me.Controls.Add(Me.Comment9)
         Me.Controls.Add(Me.Comment8)
@@ -881,7 +920,7 @@ Partial Class MainForm
         Me.Controls.Add(Me.Comment1)
         Me.Controls.Add(Me.Comment11)
         Me.Controls.Add(Me.Panel1)
-        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow
+        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None
         Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
         Me.KeyPreview = True
         Me.MaximizeBox = False
@@ -910,8 +949,11 @@ Partial Class MainForm
         CType(Me.Comment2, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.Comment1, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.Comment11, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.GroupBox1.ResumeLayout(False)
+        Me.GroupBox1.PerformLayout()
+        Me.Panel2.ResumeLayout(False)
+        Me.Panel2.PerformLayout()
         Me.ResumeLayout(False)
-        Me.PerformLayout()
 
     End Sub
     Friend WithEvents Comment11 As System.Windows.Forms.PictureBox
@@ -982,5 +1024,8 @@ Partial Class MainForm
     Friend WithEvents DisplayText As System.Windows.Forms.RichTextBox
     Friend WithEvents SkillInfoBox As System.Windows.Forms.GroupBox
     Friend WithEvents SkillInfo As System.Windows.Forms.RichTextBox
+    Friend WithEvents GroupBox1 As System.Windows.Forms.GroupBox
+    Friend WithEvents Panel2 As System.Windows.Forms.Panel
+    Friend WithEvents Label13 As System.Windows.Forms.Label
 
 End Class

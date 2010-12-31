@@ -97,6 +97,8 @@ Partial Class ChooseCharacter
         Me.Woodsman = New System.Windows.Forms.RadioButton()
         Me.Priest = New System.Windows.Forms.RadioButton()
         Me.Button1 = New System.Windows.Forms.Button()
+        Me.Panel2 = New System.Windows.Forms.Panel()
+        Me.Button2 = New System.Windows.Forms.Button()
         Me.TabControl1.SuspendLayout()
         Me.BasicTab.SuspendLayout()
         Me.GroupBox2.SuspendLayout()
@@ -108,6 +110,7 @@ Partial Class ChooseCharacter
         CType(Me.Skill3, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.Skill2, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.Skill1, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.Panel2.SuspendLayout()
         Me.SuspendLayout()
         '
         'Sex_Neutral
@@ -157,7 +160,7 @@ Partial Class ChooseCharacter
         Me.TabControl1.Controls.Add(Me.BasicTab)
         Me.TabControl1.Controls.Add(Me.RaceTab)
         Me.TabControl1.Controls.Add(Me.ClassTab)
-        Me.TabControl1.Location = New System.Drawing.Point(0, 1)
+        Me.TabControl1.Location = New System.Drawing.Point(5, 4)
         Me.TabControl1.Name = "TabControl1"
         Me.TabControl1.SelectedIndex = 0
         Me.TabControl1.Size = New System.Drawing.Size(386, 367)
@@ -883,22 +886,42 @@ Partial Class ChooseCharacter
         '
         'Button1
         '
-        Me.Button1.Location = New System.Drawing.Point(388, 1)
+        Me.Button1.Location = New System.Drawing.Point(399, 28)
         Me.Button1.Name = "Button1"
-        Me.Button1.Size = New System.Drawing.Size(52, 367)
+        Me.Button1.Size = New System.Drawing.Size(52, 345)
         Me.Button1.TabIndex = 2
         Me.Button1.Text = "Next"
         Me.Button1.UseVisualStyleBackColor = True
+        '
+        'Panel2
+        '
+        Me.Panel2.BackColor = System.Drawing.Color.Black
+        Me.Panel2.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D
+        Me.Panel2.Controls.Add(Me.Button2)
+        Me.Panel2.Controls.Add(Me.TabControl1)
+        Me.Panel2.Location = New System.Drawing.Point(0, 0)
+        Me.Panel2.Name = "Panel2"
+        Me.Panel2.Size = New System.Drawing.Size(458, 383)
+        Me.Panel2.TabIndex = 40
+        '
+        'Button2
+        '
+        Me.Button2.Location = New System.Drawing.Point(397, 3)
+        Me.Button2.Name = "Button2"
+        Me.Button2.Size = New System.Drawing.Size(52, 23)
+        Me.Button2.TabIndex = 20
+        Me.Button2.Text = "X"
+        Me.Button2.UseVisualStyleBackColor = True
         '
         'ChooseCharacter
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(440, 369)
+        Me.ClientSize = New System.Drawing.Size(457, 381)
         Me.ControlBox = False
-        Me.Controls.Add(Me.TabControl1)
         Me.Controls.Add(Me.Button1)
-        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow
+        Me.Controls.Add(Me.Panel2)
+        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None
         Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
         Me.KeyPreview = True
         Me.MaximizeBox = False
@@ -920,6 +943,7 @@ Partial Class ChooseCharacter
         CType(Me.Skill3, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.Skill2, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.Skill1, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.Panel2.ResumeLayout(False)
         Me.ResumeLayout(False)
 
     End Sub
@@ -997,4 +1021,6 @@ Partial Class ChooseCharacter
     Friend WithEvents Woodsman As System.Windows.Forms.RadioButton
     Friend WithEvents Priest As System.Windows.Forms.RadioButton
     Friend WithEvents Button1 As System.Windows.Forms.Button
+    Friend WithEvents Panel2 As System.Windows.Forms.Panel
+    Friend WithEvents Button2 As System.Windows.Forms.Button
 End Class
