@@ -95,7 +95,9 @@ Public Class MainForm
     Public MobilePosX(9), MobilePosY(9), MobilePrevX(9), MobilePrevY(9), MobileLastMove(9), MobileType(9) As Short
     Public MobileHealth(9), MobileFlee(9), MobileStun(9), MobileClumsiness(9) As Short
     Public MobileVisible(9, 3) As Short
-    Public MobileExists As Boolean
+    Public MobOccupied(MapSize, MapSize) As Short '0-9 mobile vnum loc
+    Public MobileExists(MapSize, MapSize) As Boolean 'death flag
+    Public MobilePresent As Boolean 'generic mobile is presently on screen to prevent erronerous targeting or skills w/o mobs present
 
     Public ItemNum(9), ItemType(9), ItemOccupied(MapSize, MapSize) As Short
     Public ItemNameType(MapSize, MapSize), ItemShowType(MapSize, MapSize)
@@ -200,6 +202,21 @@ Public Class MainForm
     End Function
 #End Region
 #Region "Mobile Actions & Battle"
+    Function Mv(ByVal Mobnum As Short, ByVal x As Short, ByVal y As Short) 'meta mobile move, all movement passed lastly through here
+        Dim PreviousX As Short = MobilePosX(Mobnum)
+        Dim PreviousY As Short = MobilePosY(Mobnum)
+        If PreviousX >= 0 And PreviousY >= 0 Then
+            MobileExists(PreviousX, PreviousY) = False
+            MobOccupied(PreviousX, PreviousY) = 10
+            MapOccupied(PreviousX, PreviousY) = 0
+            MobilePosX(Mobnum) = PreviousX + x
+            MobilePosY(Mobnum) = PreviousY + y
+            MobileExists(MobilePosX(Mobnum), MobilePosY(Mobnum)) = True
+            MobOccupied(MobilePosX(Mobnum), MobilePosY(Mobnum)) = Mobnum
+            MapOccupied(MobilePosX(Mobnum), MobilePosY(Mobnum)) = MobileType(Mobnum)
+        End If
+        Return 0
+    End Function
     Function MoveMobile(ByVal MobNum As Short, ByVal MvType As Short)
         Dim MobileDead As Boolean = False
         Dim x As Short = MobilePosX(MobNum)
@@ -211,9 +228,7 @@ Public Class MainForm
                 MobileDead = True
             End If
             If MobileDead = False Then
-                MobilePosY(MobNum) -= 1
-                MapOccupied(MobilePosX(MobNum), MobilePosY(MobNum)) = MobileType(MobNum)
-                MapOccupied(MobilePrevX(MobNum), MobilePrevY(MobNum)) = 0
+                Mv(MobNum, 0, -1)
                 MobileLastMove(MobNum) = North
             End If
         ElseIf MvType = East And MobilePosX(MobNum) < MapSize Then 'East movement
@@ -223,9 +238,7 @@ Public Class MainForm
                 MobileDead = True
             End If
             If MobileDead = False Then
-                MobilePosX(MobNum) += 1
-                MapOccupied(MobilePosX(MobNum), MobilePosY(MobNum)) = MobileType(MobNum)
-                MapOccupied(MobilePrevX(MobNum), MobilePrevY(MobNum)) = 0
+                Mv(MobNum, 1, 0)
                 MobileLastMove(MobNum) = East
             End If
         ElseIf MvType = South And MobilePosY(MobNum) < MapSize Then 'south movement
@@ -235,9 +248,7 @@ Public Class MainForm
                 MobileDead = True
             End If
             If MobileDead = False Then
-                MobilePosY(MobNum) += 1
-                MapOccupied(MobilePosX(MobNum), MobilePosY(MobNum)) = MobileType(MobNum)
-                MapOccupied(MobilePrevX(MobNum), MobilePrevY(MobNum)) = 0
+                Mv(MobNum, 0, 1)
                 MobileLastMove(MobNum) = South
             End If
         ElseIf MvType = West And MobilePosX(MobNum) > 0 Then 'west movement
@@ -247,23 +258,19 @@ Public Class MainForm
                 MobileDead = True
             End If
             If MobileDead = False Then
-                MobilePosX(MobNum) -= 1
-                MapOccupied(MobilePosX(MobNum), MobilePosY(MobNum)) = MobileType(MobNum)
-                MapOccupied(MobilePrevX(MobNum), MobilePrevY(MobNum)) = 0 'mobile moved, previous position is blank
+                Mv(MobNum, -1, 0)
                 MobileLastMove(MobNum) = West 'dictates the mobiles last movement direction for pattern-making movements
             End If
         End If
         Return 0
     End Function
     Function KillMob(ByVal Mobnum As Short, Optional ByVal MobString As String = "Enemy")
-        If MobilePosX(Mobnum) < 26 And MobilePosY(Mobnum) < 26 Then 'prevent index errors, we set off-map mobiles when they're dead
+        If MobString <> "SILENCE MOB KILL" Then
             If Map(MobilePosX(Mobnum), MobilePosY(Mobnum)) = Floor Then
                 Map(MobilePosX(Mobnum), MobilePosY(Mobnum)) = SpecialFloor
             End If
-        End If
-        If MobString <> "SILENCE MOB KILL" Then
-            MapOccupied(MobilePosX(Mobnum), MobilePosY(Mobnum)) = False
-            MobilePosX(Mobnum) = MapSize + 1 : MobilePosY(Mobnum) = MapSize + 1
+            MapOccupied(MobilePosX(Mobnum), MobilePosY(Mobnum)) = False 'clears mob type
+            MobileExists(MobilePosX(Mobnum), MobilePosY(Mobnum)) = False 'kills mob
             MobileHealth(Mobnum) = 0
             PlayerExperience += MobileType(Mobnum)  'mobiletype distinguishes it's difficulty and therefor applys likewise to experience gained.
             If PlayerExperience >= 100 Then
@@ -272,7 +279,8 @@ Public Class MainForm
             SND(UCase(Mid(MobString, 1, 1)) + Mid(MobString, 2, Len(MobString)) + " is dead.")
         Else
             MobileHealth(Mobnum) = 0
-            MapOccupied(MobilePosX(Mobnum), MobilePosY(Mobnum)) = False
+            MapOccupied(MobilePosX(Mobnum), MobilePosY(Mobnum)) = False 'clears mob type
+            MobileExists(MobilePosX(Mobnum), MobilePosY(Mobnum)) = False 'kills mob
             MobilePosX(Mobnum) = MapSize + 1 : MobilePosY(Mobnum) = MapSize + 1
         End If
         Return 0
@@ -817,6 +825,7 @@ Public Class MainForm
         If TheRoomHeight > TheRoomWidth Then TheRoomHeight = TheRoomWidth 'ensures that the window is scaled to the smallest of the two
         If TheRoomWidth > TheRoomHeight Then TheRoomWidth = TheRoomHeight 'ensures that the window is scaled to the smallest of the two
         Panel1.Left = Me.Width - Panel1.Width - 15 'sorts the panels width to the width of the window
+        Panel2.Left = Panel1.Left
         HealthBar.Left = Me.Width - Panel1.Width - 10 'arranges the healthbar
         WillpowerBar.Left = Me.Width - Panel1.Width - 10 'arrange the willpowerbar according to the panel
         StatBox.Left = Me.Width - Panel1.Width - 10 'arrange the statbox according tot he panel
@@ -1074,6 +1083,7 @@ Public Class MainForm
                 RandomPosY = RandomNum.Next(1, MapSize - 1) 'don't want to start a mobile on the edge of the map... just because it doesn't look pretty
                 If Map(RandomPosX, RandomPosY) = 1 Then
                     MapOccupied(RandomPosX, RandomPosY) = RandomMobType 'assign mobiles random type
+                    MobOccupied(RandomPosX, RandomPosY) = MobileNumber
                     MobilePosX(MobileNumber) = RandomPosX : MobilePosY(MobileNumber) = RandomPosY
                     MobilePrevX(MobileNumber) = RandomPosX : MobilePrevY(MobileNumber) = RandomPosY
                     MobileType(MobileNumber) = RandomMobType
@@ -1108,6 +1118,7 @@ Public Class MainForm
                         MobileType(MobileNumber) = 1
                         MapOccupied(RandomPosX, RandomPosY) = 1
                     End If
+                    MobileExists(RandomPosX, RandomPosY) = True 'set mobile to living
                     FoundPosition = True
                 End If
             End While
@@ -1810,7 +1821,7 @@ Public Class MainForm
     Private Sub ProcessSKill(ByVal Skillname As String)
         If Skillname = "Fire Shield" Then
         ElseIf Skillname = "Wound" Then
-            If MobileExists = True Then
+            If MobilePresent = True Then
                 If PlayerCurWillpower >= 20 Then
                     SND("Wound in what direction?")
                     SkillType = "Wound"
@@ -1834,7 +1845,7 @@ Public Class MainForm
                 SND("Not enough willpower.")
             End If
         ElseIf Skillname = "Trip" Then
-            If MobileExists = True Then
+            If MobilePresent = True Then
                 If PlayerCurWillpower >= 10 Then
                     PlayerCurWillpower -= 10
                     SND("Trip in what direction?")
@@ -1848,7 +1859,7 @@ Public Class MainForm
                 SND("No enemies are around.")
             End If
         ElseIf Skillname = "Block" Then
-            If MobileExists = True Then
+            If MobilePresent = True Then
                 If PlayerCurWillpower >= 15 Then
                     PlayerCurWillpower -= 15
                     SND("You prepare to block attacks.")
@@ -1860,7 +1871,7 @@ Public Class MainForm
                 SND("No enemies are around.")
             End If
         ElseIf Skillname = "Double Slice" Then
-            If MobileExists = True Then
+            If MobilePresent = True Then
                 If PlayerCurWillpower >= 15 Then
                     PlayerCurWillpower -= 15
                     SND("Double Slice which direction?")
@@ -1874,7 +1885,7 @@ Public Class MainForm
                 SND("No enemies are around.")
             End If
         ElseIf Skillname = "Runestrike" Then
-            If MobileExists = True Then
+            If MobilePresent = True Then
                 If PlayerCurWillpower >= 20 Then
                     PlayerCurWillpower -= 20
                     SND("Runestrike which direction?")
@@ -1888,7 +1899,7 @@ Public Class MainForm
                 SND("No enemies are around.")
             End If
         ElseIf Skillname = "Empower" Then
-            If MobileExists = True Then
+            If MobilePresent = True Then
                 If PlayerCurHitpoints >= 31 Then
                     PlayerCurHitpoints -= 30
                     PlayerCurWillpower += 30
@@ -1900,7 +1911,7 @@ Public Class MainForm
                 SND("No enemies are around.")
             End If
         ElseIf Skillname = "Holy Bolt" Then
-            If MobileExists = True Then
+            If MobilePresent = True Then
                 If PlayerCurWillpower >= 20 Then
                     PlayerCurWillpower -= 20
                     SkillType = "Holy Bolt"
@@ -1914,16 +1925,23 @@ Public Class MainForm
             Else
                 SND("No enemies are around.")
             End If
-            ElseIf Skillname = "Fire Arrow" Then
+        ElseIf Skillname = "Fire Arrow" Then
+            If MobilePresent = True Then
                 If PlayerCurWillpower >= 15 Then
                     PlayerCurWillpower -= 15
                     SkillType = "Fire Arrow"
                     SKillGobalCooldown = 3
                     SetSkillsToCooldown()
+                    DrawingProcedures.TargetEnemy()
+                    SND("Press Spacebar to shoot.")
                 Else
                     SND("Not enough willpower.")
                 End If
-            ElseIf Skillname = "Leech" Then
+            Else
+                SND("No enemies are around.")
+            End If
+        ElseIf Skillname = "Leech" Then
+            If MobilePresent = True Then
                 If PlayerCurWillpower >= PlayerAttack Then
                     PlayerCurWillpower -= PlayerAttack
                     PlayerCurHitpoints += PlayerAttack
@@ -1932,7 +1950,11 @@ Public Class MainForm
                 Else
                     SND("Not enough willpower.")
                 End If
-            ElseIf Skillname = "Punch" Then
+            Else
+                SND("No enemies are around.")
+            End If
+        ElseIf Skillname = "Punch" Then
+            If MobilePresent = True Then
                 If PlayerCurWillpower >= 5 Then
                     SND("Punch in what direction?")
                     SkillType = "Punch"
@@ -1940,7 +1962,11 @@ Public Class MainForm
                 Else
                     SND("Not enough willpower.")
                 End If
-            ElseIf Skillname = "Kick" Then
+            Else
+                SND("No enemies are around.")
+            End If
+        ElseIf Skillname = "Kick" Then
+            If MobilePresent = True Then
                 If PlayerCurWillpower >= 5 Then
                     SND("Kick in what direction?")
                     SkillType = "Kick"
@@ -1948,7 +1974,11 @@ Public Class MainForm
                 Else
                     SND("Not enough willpower.")
                 End If
-            ElseIf Skillname = "Hit" Then
+            Else
+                SND("No enemies are around.")
+            End If
+        ElseIf Skillname = "Hit" Then
+            If MobilePresent = True Then
                 If PlayerCurWillpower >= 5 Then
                     SND("Hit in what direction?")
                     SkillType = "Hit"
@@ -1956,7 +1986,11 @@ Public Class MainForm
                 Else
                     SND("Not enough willpower.")
                 End If
-            ElseIf Skillname = "Strike" Then
+            Else
+                SND("No enemies are around.")
+            End If
+        ElseIf Skillname = "Strike" Then
+            If MobilePresent = True Then
                 If PlayerCurWillpower >= 5 Then
                     SND("Strike in what direction?")
                     SkillType = "Strike"
@@ -1964,7 +1998,11 @@ Public Class MainForm
                 Else
                     SND("Not enough willpower.")
                 End If
-            ElseIf Skillname = "Stab" Then
+            Else
+                SND("No enemies are around.")
+            End If
+        ElseIf Skillname = "Stab" Then
+            If MobilePresent = True Then
                 If PlayerCurWillpower >= 5 Then
                     SND("Stab in what direction?")
                     SkillType = "Stab"
@@ -1972,7 +2010,11 @@ Public Class MainForm
                 Else
                     SND("Not enough willpower.")
                 End If
-            ElseIf Skillname = "Slice" Then
+            Else
+                SND("No enemies are around.")
+            End If
+        ElseIf Skillname = "Slice" Then
+            If MobilePresent = True Then
                 If PlayerCurWillpower >= 5 Then
                     SND("Stab in what direction?")
                     SkillType = "Stab"
@@ -1980,26 +2022,36 @@ Public Class MainForm
                 Else
                     SND("Not enough willpower.")
                 End If
-            ElseIf Skillname = "Shoot" Then
+            Else
+                SND("No enemies are around.")
+            End If
+        ElseIf Skillname = "Shoot" Then
+            If MobilePresent = True Then
                 If PlayerCurWillpower >= 5 Then
                     SND("Shoot in what direction?")
                     SkillType = "Shoot"
                     PlayerCurWillpower -= 5
+                    DrawingProcedures.TargetEnemy()
+                    SND("Press Spacebar to shoot.")
                 Else
                     SND("Not enough willpower.")
                 End If
-            ElseIf Skillname = "Heal" Then
-                If PlayerCurWillpower >= 20 Then
-                    SND("You heal yourself.")
-                    PlayerCurWillpower -= 20
-                    PlayerCurHitpoints += 20
-                    If PlayerCurHitpoints >= PlayerHitpoints Then
-                        PlayerCurHitpoints = PlayerHitpoints
-                    End If
-                Else
-                    SND("Not enough willpower.")
+            Else
+                SND("No enemies are around.")
+            End If
+        ElseIf Skillname = "Heal" Then
+            If PlayerCurWillpower >= 20 Then
+                SND("You heal yourself.")
+                PlayerCurWillpower -= 20
+                PlayerCurHitpoints += 20
+                If PlayerCurHitpoints >= PlayerHitpoints Then
+                    PlayerCurHitpoints = PlayerHitpoints
                 End If
-            ElseIf Skillname = "Hide" Then
+            Else
+                SND("Not enough willpower.")
+            End If
+        ElseIf Skillname = "Hide" Then
+            If MobilePresent = True Then
                 If PlayerCurWillpower >= 10 Then
                     SND("You hide. Don't move.")
                     PlayerCurWillpower -= 10
@@ -2010,45 +2062,55 @@ Public Class MainForm
                 Else
                     SND("Not enough willpower.")
                 End If
-            ElseIf Skillname = "Bone Shield" Then
-                If PlayerCurWillpower >= 30 Then
-                    SND("You cast bone shield.")
-                    PlayerCurWillpower -= 30
-                    BoneShield = 5
-                    SKillGobalCooldown = 10
-                    SetSkillsToCooldown()
-                Else
-                    SND("Not enough willpower.")
-                End If
-            ElseIf Skillname = "Magic Shield" Then
-                If PlayerCurWillpower >= 30 Then
-                    SND("You cast magic shield.")
-                    PlayerCurWillpower -= 30
-                    MagicShield = 10
-                    SKillGobalCooldown = 10
-                    SetSkillsToCooldown()
-                Else
-                    SND("Not enough willpower.")
-                End If
-            ElseIf Skillname = "Counter" Then
-                If PlayerCurWillpower >= 15 Then
-                    SND("You cast counter")
-                    PlayerCurWillpower -= 15
-                    CounterAttack = 3
-                Else
-                    SND("Not enough willpower.")
-                End If
-            ElseIf Skillname = "Fireball" Then
+            Else
+                SND("No enemies, no need to hide.")
+            End If
+        ElseIf Skillname = "Bone Shield" Then
+            If PlayerCurWillpower >= 30 Then
+                SND("You cast bone shield.")
+                PlayerCurWillpower -= 30
+                BoneShield = 5
+                SKillGobalCooldown = 10
+                SetSkillsToCooldown()
+            Else
+                SND("Not enough willpower.")
+            End If
+        ElseIf Skillname = "Magic Shield" Then
+            If PlayerCurWillpower >= 30 Then
+                SND("You cast magic shield.")
+                PlayerCurWillpower -= 30
+                MagicShield = 10
+                SKillGobalCooldown = 10
+                SetSkillsToCooldown()
+            Else
+                SND("Not enough willpower.")
+            End If
+        ElseIf Skillname = "Counter" Then
+            If PlayerCurWillpower >= 15 Then
+                SND("You cast counter")
+                PlayerCurWillpower -= 15
+                CounterAttack = 3
+            Else
+                SND("Not enough willpower.")
+            End If
+        ElseIf Skillname = "Fireball" Then
+            If MobilePresent = True Then
                 If PlayerCurWillpower >= 30 Then
                     SND("Fireball in which direction?")
                     PlayerCurWillpower -= 30
                     SkillType = "Fireball"
                     SKillGobalCooldown = 3
                     SetSkillsToCooldown()
+                    DrawingProcedures.TargetEnemy()
+                    SND("Press Spacebar to cast.")
                 Else
                     SND("Not enough willpower.")
                 End If
-            ElseIf Skillname = "Clumsiness" Then
+            Else
+                SND("No enemies are around.")
+            End If
+        ElseIf Skillname = "Clumsiness" Then
+            If MobilePresent = True Then
                 If PlayerCurWillpower >= 20 Then
                     PlayerCurWillpower -= 20
                     SND("Clumsiness in what direction?")
@@ -2058,7 +2120,11 @@ Public Class MainForm
                 Else
                     SND("Not enough willpower.")
                 End If
-            ElseIf Skillname = "Immolate" Then
+            Else
+                SND("No enemies are around.")
+            End If
+        ElseIf Skillname = "Immolate" Then
+            If MobilePresent = True Then
                 If PlayerCurWillpower >= 20 Then
                     PlayerCurWillpower -= 20
                     SND("You cast Immolate.")
@@ -2068,7 +2134,11 @@ Public Class MainForm
                 Else
                     SND("Not enough willpower.")
                 End If
-            ElseIf Skillname = "Stun" Then
+            Else
+                SND("No enemies are around.")
+            End If
+        ElseIf Skillname = "Stun" Then
+            If MobilePresent = True Then
                 If PlayerCurWillpower >= 25 Then
                     SND("Stun in what direction?")
                     SkillType = "Stun"
@@ -2076,7 +2146,11 @@ Public Class MainForm
                 Else
                     SND("Not enough willpower.")
                 End If
-            ElseIf Skillname = "Sacrifice" Then
+            Else
+                SND("No enemies are around.")
+            End If
+        ElseIf Skillname = "Sacrifice" Then
+            If MobilePresent = True Then
                 If PlayerCurHitpoints >= 11 Then
                     PlayerCurHitpoints -= 10
                     SKillGobalCooldown = 5
@@ -2085,7 +2159,11 @@ Public Class MainForm
                 Else
                     SND("You would die.")
                 End If
-            ElseIf Skillname = "Backstab" Then
+            Else
+                SND("No enemies are around.")
+            End If
+        ElseIf Skillname = "Backstab" Then
+            If MobilePresent = True Then
                 If PlayerCurWillpower >= 25 Then
                     PlayerCurWillpower -= 25
                     SKillGobalCooldown = 5
@@ -2094,7 +2172,11 @@ Public Class MainForm
                 Else
                     SND("Not enough willpower.")
                 End If
-            ElseIf Skillname = "Triple Slice" Then
+            Else
+                SND("No enemies are around.")
+            End If
+        ElseIf Skillname = "Triple Slice" Then
+            If MobilePresent = True Then
                 If PlayerCurWillpower >= 30 Then
                     PlayerCurWillpower -= 30
                     SKillGobalCooldown = 4
@@ -2103,7 +2185,12 @@ Public Class MainForm
                 Else
                     SND("Not enough willpower.")
                 End If
-            ElseIf Skillname = "Whisper" Then
+
+            Else
+                SND("No enemies are around.")
+            End If
+        ElseIf Skillname = "Whisper" Then
+            If MobilePresent = True Then
                 If PlayerCurWillpower >= 50 Then
                     PlayerCurWillpower -= 50
                     SKillGobalCooldown = 10
@@ -2112,7 +2199,11 @@ Public Class MainForm
                 Else
                     SND("Not enough willpower.")
                 End If
-            ElseIf Skillname = "Silence" Then
+            Else
+                SND("No enemies are around.")
+            End If
+        ElseIf Skillname = "Silence" Then
+            If MobilePresent = True Then
                 If PlayerCurWillpower >= 50 Then
                     PlayerCurWillpower -= 50
                     SKillGobalCooldown = 10
@@ -2123,7 +2214,10 @@ Public Class MainForm
                 Else
                     SND("Not enough willpower.")
                 End If
+            Else
+                SND("No enemies are around.")
             End If
+        End If
             HealthBar.Caption = LTrim(Str(PlayerCurHitpoints)) + " / " + LTrim(Str(PlayerHitpoints)) + " HP"
             HealthBar.Value = PlayerCurHitpoints
             WillpowerBar.Caption = LTrim(Str(PlayerCurWillpower)) + " / " + LTrim(Str(PlayerWillpower)) + " WP"
@@ -2361,6 +2455,42 @@ Public Class MainForm
                     ReDraw()
                 ElseIf Map(PlayerPosX - 1, PlayerPosY) > 0 And MapOccupied(PlayerPosX - 1, PlayerPosY) <> 0 Then
                     PlayerHitLocation(PlayerPosX - 1, PlayerPosY)
+                    ReDraw()
+                End If
+            ElseIf e.KeyCode = Keys.NumPad7 And PlayerPosX > 0 And PlayerPosY > 0 Then
+                If Map(PlayerPosX - 1, PlayerPosY - 1) > 0 And MapOccupied(PlayerPosX - 1, PlayerPosY - 1) = 0 Then
+                    PlayerLastPosX = PlayerPosX : PlayerLastPosY = PlayerPosY
+                    PlayerPosX -= 1 : PlayerPosY -= 1
+                    ReDraw()
+                ElseIf Map(PlayerPosX - 1, PlayerPosY - 1) > 0 And MapOccupied(PlayerPosX - 1, PlayerPosY - 1) <> 0 Then
+                    PlayerHitLocation(PlayerPosX - 1, PlayerPosY - 1)
+                    ReDraw()
+                End If
+            ElseIf e.KeyCode = Keys.NumPad9 And PlayerPosX < MapSize And PlayerPosY > 0 Then
+                If Map(PlayerPosX + 1, PlayerPosY - 1) > 0 And MapOccupied(PlayerPosX + 1, PlayerPosY - 1) = 0 Then
+                    PlayerLastPosX = PlayerPosX : PlayerLastPosY = PlayerPosY
+                    PlayerPosX += 1 : PlayerPosY -= 1
+                    ReDraw()
+                ElseIf Map(PlayerPosX + 1, PlayerPosY - 1) > 0 And MapOccupied(PlayerPosX + 1, PlayerPosY - 1) <> 0 Then
+                    PlayerHitLocation(PlayerPosX + 1, PlayerPosY - 1)
+                    ReDraw()
+                End If
+            ElseIf e.KeyCode = Keys.NumPad3 And PlayerPosX < MapSize And PlayerPosY < MapSize Then
+                If Map(PlayerPosX + 1, PlayerPosY + 1) > 0 And MapOccupied(PlayerPosX + 1, PlayerPosY + 1) = 0 Then
+                    PlayerLastPosX = PlayerPosX : PlayerLastPosY = PlayerPosY
+                    PlayerPosX += 1 : PlayerPosY += 1
+                    ReDraw()
+                ElseIf Map(PlayerPosX + 1, PlayerPosY + 1) > 0 And MapOccupied(PlayerPosX + 1, PlayerPosY + 1) <> 0 Then
+                    PlayerHitLocation(PlayerPosX + 1, PlayerPosY + 1)
+                    ReDraw()
+                End If
+            ElseIf e.KeyCode = Keys.NumPad1 And PlayerPosX > 0 And PlayerPosY < MapSize Then
+                If Map(PlayerPosX - 1, PlayerPosY + 1) > 0 And MapOccupied(PlayerPosX - 1, PlayerPosY + 1) = 0 Then
+                    PlayerLastPosX = PlayerPosX : PlayerLastPosY = PlayerPosY
+                    PlayerPosX -= 1 : PlayerPosY += 1
+                    ReDraw()
+                ElseIf Map(PlayerPosX - 1, PlayerPosY + 1) > 0 And MapOccupied(PlayerPosX - 1, PlayerPosY + 1) <> 0 Then
+                    PlayerHitLocation(PlayerPosX - 1, PlayerPosY + 1)
                     ReDraw()
                 End If
             ElseIf e.KeyCode = Keys.Space Then
@@ -2673,9 +2803,15 @@ Public Class MainForm
         ElseIf Skill = "Heal" Then
             SkillInfoBox.Text = "Heal"
             SkillInfo.Text = "Heals 20 hitpoints. Costs 20 willpower. Causes a 5 round global cooldown of skills."
+        ElseIf Skill = "Shoot" Then
+            SkillInfoBox.Text = "Shoot"
+            SkillInfo.Text = "Basic ranged attack that damages target from afar for 1 damage. Costs 5 willpower."
+        ElseIf Skill = "Hide" Then
+            SkillInfoBox.Text = "Hide"
+            SkillInfo.Text = "Helpful skill that reduces all visibility instantly from enemies clearing all aggro tables. Costs willpower."
         ElseIf Skill = "Fire Arrow" Then
             SkillInfoBox.Text = "Fire Arrow"
-            SkillInfo.Text = "Strike target for 3 damage in addition to a regular attack. Costs 15 willpower. Causes a 3 round global cooldown of skills."
+            SkillInfo.Text = "Ranged strike that damages target for 3 in addition to a regular attack. Costs 15 willpower. Causes a 3 round global cooldown of skills."
         ElseIf Skill = "Kick" Then
             SkillInfoBox.Text = "Kick"
             SkillInfo.Text = "Basic attack plus 1 damage. Costs 5 willpower."
@@ -2687,13 +2823,13 @@ Public Class MainForm
             SkillInfo.Text = "Gravedigger receives hitpoints in the amount of his attack score, leeched from the enemy. Costs the gravediggers attack score in amount of willpower."
         ElseIf Skill = "Holy Bolt" Then
             SkillInfoBox.Text = "Holy Bolt"
-            SkillInfo.Text = "Strikes target for 10 damage in addition to a normal attack. Costs 20 willpower. Causes a 4 round global cooldown of skills."
+            SkillInfo.Text = "Ranged attack that strikes target for 10 damage in addition to a normal attack. Costs 20 willpower. Causes a 4 round global cooldown of skills."
         ElseIf Skill = "Magic Shield" Then
             SkillInfoBox.Text = "Magic Shield"
             SkillInfo.Text = "Reduces 1 damage from all attacks for 10 rounds. Costs 30 willpower. Causes a 10 round global cooldown of skills."
         ElseIf Skill = "Fireball" Then
             SkillInfoBox.Text = "Fireball"
-            SkillInfo.Text = "Attacks target for 10 damage in addition to a regular attack. Costs 30 willpower. Causes a 3 round global cooldown of skills."
+            SkillInfo.Text = "Ranged attack that damages target for 10 in addition to a regular attack. Costs 30 willpower. Causes a 3 round global cooldown of skills."
         ElseIf Skill = "Hit" Then
             SkillInfoBox.Text = "Hit"
             SkillInfo.Text = "Basic attack plus 1 damage. Costs 5 willpower."
@@ -2761,5 +2897,19 @@ Public Class MainForm
     End Sub
     Private Sub SkillRollOut(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Skill3.MouseLeave, Skill2.MouseLeave, Skill1.MouseLeave
         SkillInfoBox.Visible = False
+    End Sub
+    Private Sub Button2_Click(ByVal sender As System.Object, ByVal e As System.EventArgs)
+        Me.Close()
+        Me.Dispose()
+    End Sub
+    Private Sub ChangeColor(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Panel2.MouseEnter
+        Panel2.BackColor = Color.FromArgb(150, 150, 150)
+    End Sub
+    Private Sub ChangeColorDim(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Panel2.MouseLeave
+        Panel2.BackColor = Color.FromArgb(64, 64, 64)
+    End Sub
+    Private Sub CloseProgram(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Panel2.Click
+        Me.Close()
+        Me.Dispose()
     End Sub
 End Class

@@ -337,6 +337,8 @@
         '
         Dim xish, xishPLUS, yish, yishPLUS As Integer
         Dim RandomNum As New Random
+        'Mobile placed reduced the need to check for mobile targeting if nothings on screen, less overhead
+        Dim MobilePlaced As Boolean = False
         'lets reduce redundancy
         Dim WallArt As Bitmap
         Dim FloorArt As Bitmap
@@ -346,8 +348,6 @@
         Dim StartY As Short = PlayerposY - 5 : If StartY < 0 Then StartY = 0
         Dim FinishX As Short = PlayerPosX + 5 : If FinishX > Mapsize Then FinishX = Mapsize
         Dim FinishY As Short = PlayerposY + 5 : If FinishY > Mapsize Then FinishY = Mapsize
-        'reset whether mobile exists on current screen until found. determines whether range skill will be available.
-        MainForm.MobileExists = False
         If ChangedMode = True Then 'required to redraw entire map, used when grahpical mode is changed
             StartX = 0 : StartY = 0 : FinishX = Mapsize : FinishY = Mapsize
         End If
@@ -373,8 +373,8 @@
                 xishPLUS = Val(TheRoomWidth) * x + Val(ColumnsSpace) * x + 10 + Val(TheRoomWidth)
                 yishPLUS = Val(TheRoomHeight) * y + Val(RowSpace) * y + 10 + Val(TheRoomHeight)
                 If Math.Abs((PlayerPosX + PlayerposY) - (x + y)) <= 4 And Math.Abs((PlayerPosX - PlayerposY) - (x - y)) <= 4 Or MainForm.AdminVisible = True Then 'admin visible shows all
-                    'within range of player
-                    If IsVisible(x, y, PlayerPosX, PlayerposY) <= 1 Or IsVisible2(x, y, PlayerPosX, PlayerposY) <= 1 Or MainForm.AdminVisible = True Or ChangedMode = True And MainForm.MapShown(x, y) = True Then 'admin visible shows all, only process isvisible routines if it's within 4 of character so it doesn't process unnecessary squares too far from player
+                    'within range of player, only process isvisible routines if it's within 4 of character so it doesn't process unnecessary squares too far from player
+                    If IsVisible(x, y, PlayerPosX, PlayerposY) <= 1 Or IsVisible2(x, y, PlayerPosX, PlayerposY) <= 1 Or MainForm.AdminVisible = True Or ChangedMode = True And MainForm.MapShown(x, y) = True Then
                         'within range of player and is visible
                         If MainForm.MapDrawStatus(x, y) = Shadowed Then
                             MainForm.MapDrawStatusPlus(x, y) = 0
@@ -455,6 +455,7 @@
                         'if map is occupied, show enemy
                         If MainForm.MapOccupied(x, y) > 0 Then
                             ShowEnemy(MainForm.MapOccupied(x, y), xish, yish, x, y)
+                            MobilePlaced = True
                             MainForm.MapDrawStatus(x, y) = Hidden
                             MainForm.MapDrawStatusPlus(x, y) = 0
                         Else
@@ -473,13 +474,14 @@
                         End If
                         MainForm.MapShown(x, y) = True
                     End If
-                ElseIf MainForm.MapShown(x, y) = True And MainForm.MapDrawStatus(x, y) <> Shadowed Or ChangedMode = True And MainForm.MapShown(x, y) = True Then 'not within the visual sight of the player, but was visited, so should just be fogged
+                ElseIf MainForm.MapShown(x, y) = True And MainForm.MapDrawStatus(x, y) <> Shadowed Or ChangedMode = True And MainForm.MapShown(x, y) = True Then
+                    'not within the visual sight of the player, but was visited, so should just be fogged
                     Dim semiTransBrush As SolidBrush = New SolidBrush(Color.FromArgb(150, 0, 0, 0))
-                    If MainForm.MapDrawStatus(x, y) = Hidden Then
+                    If MainForm.MapDrawStatus(x, y) = 0 Then
                         MainForm.MapDrawStatusPlus(x, y) = 0
                     End If
                     If MainForm.MapDrawStatusPlus(x, y) = 0 Then
-                        MainForm.MapDrawStatusPlus(x, y) += 1
+                        MainForm.MapDrawStatusPlus(x, y) += 2
                         'draw wall
                         If MainForm.Map(x, y) = Wall And MainForm.MapDrawStatus(x, y) <> Shadowed Then
                             If GraphicalMode = Tiled Then
@@ -557,57 +559,67 @@
                 End If
             Next
         Next
-        SortEnemyRangeList() 'puts the closest enemy on 0
+        If MobilePlaced = True Then
+            MainForm.MobilePresent = True
+            SortEnemyRangeList() 'puts the closest enemy on 0
+        Else
+            MainForm.MobilePresent=false
+        End If
         MainForm.CreateGraphics.DrawImage(MainForm.PAD, 0, 0)
     End Sub
     Sub SortEnemyRangeList()
-        MainForm.MobileVisible(0, MobType) = 0 'shows that the mobile was processed, basically clears it for future processes
-        For x = 1 To 9 Step 1
-            If Math.Abs(MainForm.MobileVisible(x, MobXPosition) - MainForm.PlayerPosX) + Math.Abs(MainForm.MobileVisible(x, MobYPosition) - MainForm.PlayerPosY) < Math.Abs(MainForm.MobileVisible(x - 1, MobXPosition) - MainForm.PlayerPosX) + Math.Abs(MainForm.MobileVisible(x - 1, MobYPosition) - MainForm.PlayerPosY) And MainForm.MobileVisible(x, MobType) Or MainForm.MobileHealth(MainForm.MobileVisible(0, MobNumber)) <= 0 > 0 Then
-                MainForm.MobileVisible(0, MobXPosition) = MainForm.MobileVisible(x, MobXPosition)
-                MainForm.MobileVisible(0, MobYPosition) = MainForm.MobileVisible(x, MobYPosition)
-                MainForm.MobileVisible(0, MobNumber) = MainForm.MobileVisible(x, MobNumber)
-                MainForm.MobileVisible(x, MobType) = 0 'shows that the mobile was processed, basically clears it for future processes
+        Dim MobileNumber As Short = 0
+        MainForm.MobileVisible(0, MobType) = 0 'Clear the first targetable option before sort
+        For MobileNumber = 0 To 9 Step 1
+            'if the mobile is within range of player or current target is dead (Prioritizes next option before declaring a target fault)
+            If Math.Abs(MainForm.MobileVisible(MobileNumber, MobXPosition) - MainForm.PlayerPosX) + Math.Abs(MainForm.MobileVisible(MobileNumber, MobYPosition) - MainForm.PlayerPosY) < Math.Abs(MainForm.MobileVisible(0, MobXPosition) - MainForm.PlayerPosX) + Math.Abs(MainForm.MobileVisible(0, MobYPosition) - MainForm.PlayerPosY) And MainForm.MobileVisible(MobileNumber, MobType) Or MainForm.MobileHealth(MainForm.MobileVisible(0, MobNumber)) <= 0 Then
+                If MainForm.MobileHealth(MainForm.MobileVisible(MobileNumber, MobNumber)) > 0 Then 'ensures that the new target mob is alive! lol, no need
+                    MainForm.MobileVisible(0, MobXPosition) = MainForm.MobileVisible(MobileNumber, MobXPosition)
+                    MainForm.MobileVisible(0, MobYPosition) = MainForm.MobileVisible(MobileNumber, MobYPosition)
+                    MainForm.MobileVisible(0, MobNumber) = MainForm.MobileVisible(MobileNumber, MobNumber)
+                    MainForm.MobileVisible(MobileNumber, MobType) = 0 'shows that the mobile was processed, basically clears it for future processes
+                End If
             End If
         Next
     End Sub
     Sub ShowEnemy(ByVal EnemyNum As Short, ByVal xish As Short, ByVal yish As Short, ByVal x As Short, ByVal y As Short)
-        If MainForm.MapOccupied(x, y) = 1 Then 'creatures are currently being hidden in the shadows.
+        If EnemyNum = 1 Then 'creatures are currently being hidden in the shadows.
             MainForm.CANVAS.DrawString("r", displayfont, Brushes.Red, xish, yish) 'rat
-        ElseIf MainForm.MapOccupied(x, y) = 2 Then
+        ElseIf EnemyNum = 2 Then
             MainForm.CANVAS.DrawString("b", displayfont, Brushes.Red, xish, yish) 'bat
-        ElseIf MainForm.MapOccupied(x, y) = 3 Then
+        ElseIf EnemyNum = 3 Then
             MainForm.CANVAS.DrawString("i", displayfont, Brushes.Red, xish, yish) 'imp
-        ElseIf MainForm.MapOccupied(x, y) = 4 Then
+        ElseIf EnemyNum = 4 Then
             MainForm.CANVAS.DrawString("g", displayfont, Brushes.Red, xish, yish) 'goblin
-        ElseIf MainForm.MapOccupied(x, y) = 5 Then
+        ElseIf EnemyNum = 5 Then
             MainForm.CANVAS.DrawString("t", displayfont, Brushes.Red, xish, yish) 'troll
-        ElseIf MainForm.MapOccupied(x, y) = 6 Then
+        ElseIf EnemyNum = 6 Then
             MainForm.CANVAS.DrawString("o", displayfont, Brushes.Red, xish, yish) 'ogre
-        ElseIf MainForm.MapOccupied(x, y) = 7 Then
+        ElseIf EnemyNum = 7 Then
             MainForm.CANVAS.DrawString("c", displayfont, Brushes.Red, xish, yish) 'catoblepas
-        ElseIf MainForm.MapOccupied(x, y) = 8 Then
+        ElseIf EnemyNum = 8 Then
             MainForm.CANVAS.DrawString("p", displayfont, Brushes.Red, xish, yish) 'parandrus
-        ElseIf MainForm.MapOccupied(x, y) = 9 Then
+        ElseIf EnemyNum = 9 Then
             MainForm.CANVAS.DrawString("C", displayfont, Brushes.Red, xish, yish) 'Clurichuan
-        ElseIf MainForm.MapOccupied(x, y) = 10 Then
+        ElseIf EnemyNum = 10 Then
             MainForm.CANVAS.DrawString("d", displayfont, Brushes.Red, xish, yish) 'Dullahan
-        ElseIf MainForm.MapOccupied(x, y) = 11 Then
+        ElseIf EnemyNum = 11 Then
             MainForm.CANVAS.DrawString("G", displayfont, Brushes.Red, xish, yish) 'Golem
-        ElseIf MainForm.MapOccupied(x, y) = 12 Then
+        ElseIf EnemyNum = 12 Then
             MainForm.CANVAS.DrawString("s", displayfont, Brushes.Red, xish, yish) 'sceadugengan
-        ElseIf MainForm.MapOccupied(x, y) = 13 Then
+        ElseIf EnemyNum = 13 Then
             MainForm.CANVAS.DrawString("S", displayfont, Brushes.Red, xish, yish) 'Schilla
         End If
         'since map contains an enemy, throw that enemy and their details into a list that can be back-traced
         'this list is used for ranged weapons.
-        MainForm.MobileExists = True 'mob was found on screen. basically turns on range skills & auto-target (always nearest enemy)
         MainForm.MobileVisible(EnemyNum, MobXPosition) = x
         MainForm.MobileVisible(EnemyNum, MobYPosition) = y
-        MainForm.MobileVisible(EnemyNum, MobType) = MainForm.MapOccupied(x, y)
-        MainForm.MobileVisible(EnemyNum, MobNumber) = EnemyNum
+        MainForm.MobileVisible(EnemyNum, MobType) = EnemyNum
+        MainForm.MobileVisible(EnemyNum, MobNumber) = MainForm.MobOccupied(x, y)
     End Sub
     Sub TargetEnemy()
+        'to ensure all enemies within target list are still viable and alive, sort through list and null else
+        SortEnemyRangeList()
         '
         Dim Mapsize As Short = MainForm.MapSize
         Dim PlayerPosX As Short = MainForm.PlayerPosX
