@@ -8,6 +8,8 @@
     Const Boots As Short = 6
     Const Weapon As Short = 7
     Const Gold As Short = 8
+    Public Const Food As Short = 9
+    Public Const Water As Short = 10
     Public NameType As String
     Public ItemType As Short
     Public ShowType As String
@@ -21,7 +23,7 @@
         For ensure = 1 To seed Step 1
             RandomType = RandomItem.Next(1, 101)
         Next
-        If RandomType > 80 Then
+        If RandomType > 90 Then
             For Ensure = 1 To seed Step 1
                 Randomnum = RandomItem.Next(0, 68)
             Next
@@ -146,7 +148,7 @@
             ElseIf Randomnum = 67 Then : NameType = "Whip"
                 ItemType = Weapon : ShowType = "w"
             End If
-        ElseIf RandomType > 45 Then
+        ElseIf RandomType > 80 Then
             For Ensure = 1 To seed Step 1
                 Randomnum = RandomItem.Next(0, 140)
             Next
@@ -430,6 +432,15 @@
                 NameType = "Tower Shield" : ItemType = Arms : ShowType = "t"
             ElseIf Randomnum = 139 Then
                 NameType = "Kite Shield" : ItemType = Arms : ShowType = "k"
+            End If
+        ElseIf RandomType > 50 Then 'food or water
+            For Ensure = 1 To seed Step 1
+                Randomnum = RandomItem.Next(0, 2)
+            Next
+            If Randomnum = 0 Then : NameType = "Water"
+                ItemType = water : ShowType = "w"
+            ElseIf Randomnum = 1 Then : NameType = "Food"
+                ItemType = food : ShowType = "f"
             End If
         Else
             NameType = "Gold" : ItemType = Gold : ShowType = "g"

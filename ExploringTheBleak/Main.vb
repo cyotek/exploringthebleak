@@ -85,6 +85,7 @@ Public Class MainForm
     Public PlayerTurns As Long
     Public PlayerGold As Short
     Public PlayerDead As Boolean = False
+    Public PlayerTargeting As Boolean = False
 
     Public HighScores As String
 
@@ -97,7 +98,7 @@ Public Class MainForm
     Public MobileExists(MapSize, MapSize) As Boolean 'death flag
     Public MobilePresent As Boolean 'generic mobile is presently on screen to prevent erronerous targeting or skills w/o mobs present
 
-    Public ItemNum(9), ItemType(9), ItemOccupied(MapSize, MapSize) As Short
+    Public ItemNum(39), ItemType(39), ItemOccupied(MapSize, MapSize) As Short
     Public ItemNameType(MapSize, MapSize), ItemShowType(MapSize, MapSize)
     Public ItemInventoryType(19) As Short
     Public ItemInventoryName(19) As String
@@ -275,6 +276,44 @@ Public Class MainForm
                 LevelUp()
             End If
             SND(UCase(Mid(MobString, 1, 1)) + Mid(MobString, 2, Len(MobString)) + " is dead.")
+            '----------------Chance to drop items--------------
+            '50% depth 1-2, 40% 3-4, 30% 5-6, 20% 7+
+            Dim ItemNumber As Short
+            Dim ItemLocFound, DropSuccess As Boolean 'only make an item if there's room in item list, no more than 40 items created per map
+            Dim RandomNumber As New Random
+            Dim RandomValue As Short
+            For ItemNumber = 1 To ItemNum.Length Step 1
+                If ItemNum(ItemNumber) = 0 Then
+                    ItemNum(ItemNumber) = ItemNumber
+                    ItemLocFound = True
+                    Exit For
+                End If
+            Next
+            If ItemLocFound = True Then 'generate item possibility, there is a free item resource location
+                DropSuccess = False
+                RandomValue = RandomNumber.Next(1, 101)
+                If MapLevel < 3 Then
+                    If RandomValue > 50 Then DropSuccess = True
+                ElseIf MapLevel < 5 Then
+                    If RandomValue > 60 Then DropSuccess = True
+                ElseIf MapLevel < 7 Then
+                    If RandomValue > 70 Then DropSuccess = True
+                Else
+                    If RandomValue > 80 Then DropSuccess = True
+                End If
+                If DropSuccess = True Then 'item will be dropped, yay!
+                    'Public NameType As String
+                    'Public ItemType As Short
+                    'Public ShowType As String
+                    GenerateItem.GenerateRandomItem(ItemNumber)
+                    ItemType(ItemNumber) = GenerateItem.ItemType
+                    ItemShowType(MobilePosX(Mobnum), MobilePosY(Mobnum)) = GenerateItem.ShowType
+                    ItemNameType(MobilePosX(Mobnum), MobilePosY(Mobnum)) = GenerateItem.NameType
+                    SND(UCase(Mid(MobString, 1, 1)) + Mid(MobString, 2, Len(MobString)) + " drops " + GenerateItem.NameType + ".")
+                    ItemOccupied(MobilePosX(Mobnum), MobilePosY(Mobnum)) = ItemNum(ItemNumber)
+                    DrawingProcedures.LOSMap(MobilePosX(Mobnum), MobilePosY(Mobnum)) = DrawingProcedures.Redraw
+                End If
+            End If
         Else
             MobileHealth(Mobnum) = 0
             MapOccupied(MobilePosX(Mobnum), MobilePosY(Mobnum)) = False 'clears mob type
@@ -1012,11 +1051,8 @@ Public Class MainForm
         Dim FoundPosition As Boolean = False
         Dim MaxItems As Short = Math.Round(PlayerLUC / 2, 0)
         'clear previous map occupied first
-        For RandomPosX = 0 To MapSize Step 1
-            For RandomPosY = 0 To MapSize Step 1
-                ItemOccupied(RandomPosX, RandomPosY) = 0
-            Next
-        Next
+        System.Array.Clear(ItemOccupied, 0, ItemOccupied.Length)
+        System.Array.Clear(ItemNum, 0, ItemNum.Length) 'needs to be cleared if mobiles drop items
         'initiate population
         Dim Tries As Short = 0
         For ItemNumber = 0 To MaxItems Step 1
@@ -1751,15 +1787,18 @@ Public Class MainForm
         PlayerWillpower = Val(wpcur.Text)
         PlayerCurHitpoints = PlayerHitpoints
         PlayerCurWillpower = PlayerWillpower
+        PlayerDefense += Math.Round(PlayerCON / 5, 0) - Math.Round(PrevCon / 5, 0)
+        PlayerAttack += Math.Round(PlayerSTR / 5, 0) - Math.Round(PrevStr / 5, 0)
+        LevelUpPanel.Visible = False
+        RefreshStats()
+    End Sub
+    Public Sub RefreshStats()
         HealthBar.Caption = LTrim(Str(PlayerCurHitpoints)) + " / " + LTrim(Str(PlayerHitpoints)) + " HP"
         HealthBar.Value = PlayerCurHitpoints
         HealthBar.Max = PlayerHitpoints
         WillpowerBar.Caption = LTrim(Str(PlayerCurWillpower)) + " / " + LTrim(Str(PlayerWillpower)) + " WP"
         WillpowerBar.Value = PlayerCurWillpower
         WillpowerBar.Max = PlayerWillpower
-        PlayerDefense += Math.Round(PlayerCON / 5, 0) - Math.Round(PrevCon / 5, 0)
-        PlayerAttack += Math.Round(PlayerSTR / 5, 0) - Math.Round(PrevStr / 5, 0)
-        LevelUpPanel.Visible = False
     End Sub
 #End Region
 #Region "Skill Button Events"
@@ -1916,6 +1955,7 @@ Public Class MainForm
                     SetSkillsToCooldown()
                     DrawingProcedures.TargetEnemy()
                     SND("Press Spacebar to cast.")
+                    PlayerTargeting = True
                 Else
                     SND("Not enough willpower.")
                 End If
@@ -1931,6 +1971,7 @@ Public Class MainForm
                     SetSkillsToCooldown()
                     DrawingProcedures.TargetEnemy()
                     SND("Press Spacebar to shoot.")
+                    PlayerTargeting = True
                 Else
                     SND("Not enough willpower.")
                 End If
@@ -2030,6 +2071,7 @@ Public Class MainForm
                     PlayerCurWillpower -= 5
                     DrawingProcedures.TargetEnemy()
                     SND("Press Spacebar to shoot.")
+                    PlayerTargeting = True
                 Else
                     SND("Not enough willpower.")
                 End If
@@ -2100,6 +2142,7 @@ Public Class MainForm
                     SetSkillsToCooldown()
                     DrawingProcedures.TargetEnemy()
                     SND("Press Spacebar to cast.")
+                    PlayerTargeting = True
                 Else
                     SND("Not enough willpower.")
                 End If
@@ -2418,7 +2461,7 @@ Public Class MainForm
             If CommentBoxOpen = True Then
                 CloseCommentBox()
             End If
-            If e.KeyCode = Keys.Up And PlayerPosY > 0 Or e.KeyCode = Keys.NumPad8 And PlayerPosY > 0 Then
+            If e.KeyCode = Keys.Up And PlayerPosY > 0 And PlayerTargeting = False Or e.KeyCode = Keys.NumPad8 And PlayerPosY > 0 And PlayerTargeting = False Then
                 If Map(PlayerPosX, PlayerPosY - 1) > 0 And MapOccupied(PlayerPosX, PlayerPosY - 1) = 0 Then
                     PlayerLastPosX = PlayerPosX : PlayerLastPosY = PlayerPosY
                     PlayerPosY -= 1
@@ -2427,7 +2470,7 @@ Public Class MainForm
                     PlayerHitLocation(PlayerPosX, PlayerPosY - 1)
                     ReDraw()
                 End If
-            ElseIf e.KeyCode = Keys.Down And PlayerPosY < MapSize Or e.KeyCode = Keys.NumPad2 And PlayerPosY < MapSize Then
+            ElseIf e.KeyCode = Keys.Down And PlayerPosY < MapSize And PlayerTargeting = False Or e.KeyCode = Keys.NumPad2 And PlayerPosY < MapSize And PlayerTargeting = False Then
                 If Map(PlayerPosX, PlayerPosY + 1) > 0 And MapOccupied(PlayerPosX, PlayerPosY + 1) = 0 Then
                     PlayerLastPosX = PlayerPosX : PlayerLastPosY = PlayerPosY
                     PlayerPosY += 1
@@ -2436,7 +2479,7 @@ Public Class MainForm
                     PlayerHitLocation(PlayerPosX, PlayerPosY + 1)
                     ReDraw()
                 End If
-            ElseIf e.KeyCode = Keys.Right And PlayerPosX < MapSize Or e.KeyCode = Keys.NumPad6 And PlayerPosX < MapSize Then
+            ElseIf e.KeyCode = Keys.Right And PlayerPosX < MapSize And PlayerTargeting = False Or e.KeyCode = Keys.NumPad6 And PlayerPosX < MapSize And PlayerTargeting = False Then
                 If Map(PlayerPosX + 1, PlayerPosY) > 0 And MapOccupied(PlayerPosX + 1, PlayerPosY) = 0 Then
                     PlayerLastPosX = PlayerPosX : PlayerLastPosY = PlayerPosY
                     PlayerPosX += 1
@@ -2445,7 +2488,7 @@ Public Class MainForm
                     PlayerHitLocation(PlayerPosX + 1, PlayerPosY)
                     ReDraw()
                 End If
-            ElseIf e.KeyCode = Keys.Left And PlayerPosX > 0 Or e.KeyCode = Keys.NumPad4 And PlayerPosX > 0 Then
+            ElseIf e.KeyCode = Keys.Left And PlayerPosX > 0 And PlayerTargeting = False Or e.KeyCode = Keys.NumPad4 And PlayerPosX > 0 And PlayerTargeting = False Then
                 If Map(PlayerPosX - 1, PlayerPosY) > 0 And MapOccupied(PlayerPosX - 1, PlayerPosY) = 0 Then
                     PlayerLastPosX = PlayerPosX : PlayerLastPosY = PlayerPosY
                     PlayerPosX -= 1
@@ -2454,7 +2497,7 @@ Public Class MainForm
                     PlayerHitLocation(PlayerPosX - 1, PlayerPosY)
                     ReDraw()
                 End If
-            ElseIf e.KeyCode = Keys.NumPad7 And PlayerPosX > 0 And PlayerPosY > 0 Then
+            ElseIf e.KeyCode = Keys.NumPad7 And PlayerPosX > 0 And PlayerPosY > 0 And PlayerTargeting = False Then
                 If Map(PlayerPosX - 1, PlayerPosY - 1) > 0 And MapOccupied(PlayerPosX - 1, PlayerPosY - 1) = 0 Then
                     PlayerLastPosX = PlayerPosX : PlayerLastPosY = PlayerPosY
                     PlayerPosX -= 1 : PlayerPosY -= 1
@@ -2463,7 +2506,7 @@ Public Class MainForm
                     PlayerHitLocation(PlayerPosX - 1, PlayerPosY - 1)
                     ReDraw()
                 End If
-            ElseIf e.KeyCode = Keys.NumPad9 And PlayerPosX < MapSize And PlayerPosY > 0 Then
+            ElseIf e.KeyCode = Keys.NumPad9 And PlayerPosX < MapSize And PlayerPosY > 0 And PlayerTargeting = False Then
                 If Map(PlayerPosX + 1, PlayerPosY - 1) > 0 And MapOccupied(PlayerPosX + 1, PlayerPosY - 1) = 0 Then
                     PlayerLastPosX = PlayerPosX : PlayerLastPosY = PlayerPosY
                     PlayerPosX += 1 : PlayerPosY -= 1
@@ -2472,7 +2515,7 @@ Public Class MainForm
                     PlayerHitLocation(PlayerPosX + 1, PlayerPosY - 1)
                     ReDraw()
                 End If
-            ElseIf e.KeyCode = Keys.NumPad3 And PlayerPosX < MapSize And PlayerPosY < MapSize Then
+            ElseIf e.KeyCode = Keys.NumPad3 And PlayerPosX < MapSize And PlayerPosY < MapSize And PlayerTargeting = False Then
                 If Map(PlayerPosX + 1, PlayerPosY + 1) > 0 And MapOccupied(PlayerPosX + 1, PlayerPosY + 1) = 0 Then
                     PlayerLastPosX = PlayerPosX : PlayerLastPosY = PlayerPosY
                     PlayerPosX += 1 : PlayerPosY += 1
@@ -2481,7 +2524,7 @@ Public Class MainForm
                     PlayerHitLocation(PlayerPosX + 1, PlayerPosY + 1)
                     ReDraw()
                 End If
-            ElseIf e.KeyCode = Keys.NumPad1 And PlayerPosX > 0 And PlayerPosY < MapSize Then
+            ElseIf e.KeyCode = Keys.NumPad1 And PlayerPosX > 0 And PlayerPosY < MapSize And PlayerTargeting = False Then
                 If Map(PlayerPosX - 1, PlayerPosY + 1) > 0 And MapOccupied(PlayerPosX - 1, PlayerPosY + 1) = 0 Then
                     PlayerLastPosX = PlayerPosX : PlayerLastPosY = PlayerPosY
                     PlayerPosX -= 1 : PlayerPosY += 1
@@ -2490,9 +2533,40 @@ Public Class MainForm
                     PlayerHitLocation(PlayerPosX - 1, PlayerPosY + 1)
                     ReDraw()
                 End If
-            ElseIf e.KeyCode = Keys.Space Then
+            ElseIf e.KeyCode = Keys.Up And PlayerTargeting = True Then
+                If MobileVisible(0, 1) > 0 Then
+                    DrawingProcedures.TargetEnemy(True)
+                    DrawingProcedures.LOSMap(MobileVisible(0, 0), MobileVisible(0, 1)) = DrawingProcedures.Redraw 'make sure that tile is redrawn next round to remove black box
+                    MobileVisible(0, 1) -= 1
+                    DrawingProcedures.TargetEnemy(False) 'just dictated false for visibility reasons
+                End If
+            ElseIf e.KeyCode = Keys.Down And PlayerTargeting = True Then
+                If MobileVisible(0, 1) < MapSize Then
+                    DrawingProcedures.TargetEnemy(True)
+                    DrawingProcedures.LOSMap(MobileVisible(0, 0), MobileVisible(0, 1)) = DrawingProcedures.Redraw 'make sure that tile is redrawn next round to remove black box
+                    MobileVisible(0, 1) += 1
+                    DrawingProcedures.TargetEnemy(False) 'just dictated false for visibility reasons
+                End If
+            ElseIf e.KeyCode = Keys.Right And PlayerTargeting = True Then
+                If MobileVisible(0, 0) < MapSize Then
+                    DrawingProcedures.TargetEnemy(True)
+                    DrawingProcedures.LOSMap(MobileVisible(0, 0), MobileVisible(0, 1)) = DrawingProcedures.Redraw 'make sure that tile is redrawn next round to remove black box
+                    MobileVisible(0, 0) += 1
+                    DrawingProcedures.TargetEnemy(False) 'just dictated false for visibility reasons
+                End If
+            ElseIf e.KeyCode = Keys.Left And PlayerTargeting = True Then
+                If MobileVisible(0, 0) > 0 Then
+                    DrawingProcedures.TargetEnemy(True)
+                    DrawingProcedures.LOSMap(MobileVisible(0, 0), MobileVisible(0, 1)) = DrawingProcedures.Redraw 'make sure that tile is redrawn next round to remove black box
+                    MobileVisible(0, 0) -= 1
+                    DrawingProcedures.TargetEnemy(False) 'just dictated false for visibility reasons
+                End If
+            ElseIf e.KeyCode = Keys.Space And PlayerTargeting = True Then
                 PlayerHitLocation(MobileVisible(0, 0), MobileVisible(0, 1))
+                PlayerTargeting = False
                 ReDraw()
+            ElseIf e.KeyCode = Keys.Space And PlayerTargeting = False Then
+                SND("You are not targeting anything.")
             ElseIf e.KeyCode = Keys.NumPad5 Then
                 If PlayerCurHitpoints < PlayerHitpoints Then
                     PlayerCurHitpoints += 1
@@ -2594,9 +2668,9 @@ Public Class MainForm
                         DrawingProcedures.LOSMap(x, y) = Hidden
                     Next
                 Next
-                DrawingProcedures.changedmode = True
+                DrawingProcedures.ChangedMode = True
                 If PlayerTurns > 0 Then DrawingProcedures.DrawMap(GraphicalMode)
-                DrawingProcedures.changedmode = False
+                DrawingProcedures.ChangedMode = False
             ElseIf e.KeyCode = Keys.OemPeriod And e.Shift = True Then 'go down
                 If Map(PlayerPosX, PlayerPosY) = 3 Then 'exit
                     Dim tmp1 As Short

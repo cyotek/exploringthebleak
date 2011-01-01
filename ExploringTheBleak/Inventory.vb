@@ -132,7 +132,19 @@
             MainForm.PlayerEquipHands = Weapon
             MainForm.PlayerEquipQHands = MainForm.ItemInventoryQuality(Control - 1)
             MainForm.PlayerAttack = MainForm.PlayerAttack + MainForm.PlayerEquipQHands - PreviousItemQuality
+        ElseIf MainForm.ItemInventoryType(Control - 1) = GenerateItem.Food Then
+            Dim temphp As Integer = MainForm.PlayerCurHitpoints
+            MainForm.PlayerCurHitpoints += (5 * (MainForm.ItemInventoryQuality(Control - 1) + 1))
+            If MainForm.PlayerCurHitpoints > MainForm.PlayerHitpoints Then MainForm.PlayerCurHitpoints = MainForm.PlayerHitpoints
+            MainForm.SND("You were healed for " + LTrim(Str(MainForm.PlayerCurHitpoints - temphp)) + ".")
+        ElseIf MainForm.ItemInventoryType(Control - 1) = GenerateItem.Water Then
+            Dim tempwp As Integer = MainForm.PlayerCurWillpower
+            MainForm.PlayerCurWillpower += (5 * (MainForm.ItemInventoryQuality(Control - 1) + 1))
+            If MainForm.PlayerCurWillpower > MainForm.PlayerWillpower Then MainForm.PlayerCurWillpower = MainForm.PlayerWillpower
+            MainForm.SND("You were energized for " + LTrim(Str(MainForm.PlayerCurWillpower - tempwp)) + ".")
         End If
+        MainForm.ReDraw() 'cause a tick every time something is drank, eaten, or worn
+        MainForm.RefreshStats()
         MainForm.ItemInventoryType(Control - 1) = 0 'after item is worn, remove from inventory
         MainForm.ItemInventoryName(Control - 1) = "" 'that includes it's string
         MainForm.ItemInventoryQuality(Control - 1) = 0

@@ -32,10 +32,10 @@
     Const Gold As Short = 8
     Const TheEverspark As Short = 50
 
-    Const Hidden As Short = 0 'used for MapDrawStatus, prevents recursive drawing on something already visible
-    Const Visible As Short = 1 'ditto
-    Const Shadowed As Short = 2 'ditto again
-    Const Redraw As Short = 3 'forces redraw no matter what
+    Public Const Hidden As Short = 0 'used for MapDrawStatus, prevents recursive drawing on something already visible
+    Public Const Visible As Short = 1 'ditto
+    Public Const Shadowed As Short = 2 'ditto again
+    Public Const Redraw As Short = 3 'forces redraw no matter what
 
     Const TotalEnvironmentTypes As Short = 10
 
@@ -549,7 +549,7 @@
         MainForm.MobileVisible(EnemyNum, MobType) = EnemyNum
         MainForm.MobileVisible(EnemyNum, MobNumber) = MainForm.MobOccupied(x, y)
     End Sub
-    Sub TargetEnemy()
+    Sub TargetEnemy(Optional ByVal clear As Boolean = False)
         'to ensure all enemies within target list are still viable and alive, sort through list and null else
         SortEnemyRangeList()
         '
@@ -566,7 +566,11 @@
         Dim xish As Short = TheRoomWidth * x + ColumnsSpace * x + 10
         Dim yish As Short = TheRoomHeight * y + RowSpace * y + 10
         '
-        MainForm.CANVAS.DrawRectangle(Pens.IndianRed, xish, yish, TheRoomWidth - 2, TheRoomHeight - 2)
+        If clear = False Then
+            MainForm.CANVAS.DrawRectangle(Pens.IndianRed, xish, yish, TheRoomWidth - 2, TheRoomHeight - 2)
+        ElseIf clear = True Then
+            MainForm.CANVAS.DrawRectangle(Pens.Black, xish, yish, TheRoomWidth - 2, TheRoomHeight - 2)
+        End If
         MainForm.CreateGraphics.DrawImage(MainForm.PAD, 0, 0)
     End Sub
     Sub ShowItem(ByVal xish As Short, ByVal yish As Short, ByVal x As Short, ByVal y As Short)
@@ -576,6 +580,10 @@
             MainForm.CANVAS.DrawString("E", displayfont, Brushes.White, xish, yish)
         ElseIf MainForm.ItemType(MainForm.ItemOccupied(x, y)) = Weapon Then
             MainForm.CANVAS.DrawString("g", displayfont, Brushes.DarkCyan, xish, yish)
+        ElseIf MainForm.ItemType(MainForm.ItemOccupied(x, y)) = GenerateItem.food Then
+            MainForm.CANVAS.DrawString("f", displayfont, Brushes.LightYellow, xish, yish)
+        ElseIf MainForm.ItemType(MainForm.ItemOccupied(x, y)) = GenerateItem.Water Then
+            MainForm.CANVAS.DrawString("w", displayfont, Brushes.Blue, xish, yish)
         Else
             MainForm.CANVAS.DrawString(MainForm.ItemShowType(x, y), displayfont, Brushes.Green, xish, yish)
         End If
