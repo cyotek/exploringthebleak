@@ -13,22 +13,22 @@
     Function AddToInventory(ByVal VNUM As Short)
         Dim TestRoom As Short = 0
         Dim FoundRoom As Boolean = False
-        If MainForm.ItemType(VNUM) = TheEverspark Then 'player picked up the everspark, thus ending the game
+        If MainForm.ItemType(MainForm.MapLevel, VNUM) = TheEverspark Then 'player picked up the everspark, thus ending the game
             MainForm.Comment11.Visible = True
             MainForm.PlayerDead = True
             FoundRoom = True
-        ElseIf MainForm.ItemType(VNUM) = Gold Then 'set foundroom to true so gold isn't added the inventory instead of the total
+        ElseIf MainForm.ItemType(MainForm.MapLevel, VNUM) = Gold Then 'set foundroom to true so gold isn't added the inventory instead of the total
             Dim GoldAmount As New Random
             Dim GoldAmt As Integer = GoldAmount.Next(1, 9)
             FoundRoom = True
             MainForm.PlayerGold += GoldAmt * MainForm.MapLevel
-            MainForm.ItemNameType(MainForm.PlayerPosX, MainForm.PlayerPosY) = LTrim(Str(GoldAmt * MainForm.MapLevel)) + " gold"
+            MainForm.ItemNameType(MainForm.MapLevel, MainForm.PlayerPosX, MainForm.PlayerPosY) = LTrim(Str(GoldAmt * MainForm.MapLevel)) + " gold"
         End If
         If FoundRoom = False Then
             For TestRoom = 0 To 19 Step 1
                 If MainForm.ItemInventoryType(TestRoom) = 0 Then
-                    MainForm.ItemInventoryType(TestRoom) = MainForm.ItemType(VNUM)
-                    MainForm.ItemInventoryName(TestRoom) = MainForm.ItemNameType(MainForm.PlayerPosX, MainForm.PlayerPosY)
+                    MainForm.ItemInventoryType(TestRoom) = MainForm.ItemType(MainForm.MapLevel, VNUM)
+                    MainForm.ItemInventoryName(TestRoom) = MainForm.ItemNameType(MainForm.MapLevel, MainForm.PlayerPosX, MainForm.PlayerPosY)
                     '75%chance for no +, 25% to add +1 each round, but can't exceed level number in +
                     Dim FoundQuality As Boolean = False
                     Dim QualityRandom As New Random
@@ -52,9 +52,9 @@
         If FoundRoom = False Then
             MainForm.SND("You don't have enough room.")
         Else
-            MainForm.SND("You pick up " + MainForm.ItemNameType(MainForm.PlayerPosX, MainForm.PlayerPosY) + ".")
-            MainForm.ItemType(MainForm.ItemOccupied(MainForm.PlayerPosX, MainForm.PlayerPosY)) = 0
-            MainForm.ItemOccupied(MainForm.PlayerPosX, MainForm.PlayerPosY) = 0
+            MainForm.SND("You pick up " + MainForm.ItemNameType(MainForm.MapLevel, MainForm.PlayerPosX, MainForm.PlayerPosY) + ".")
+            MainForm.ItemType(MainForm.MapLevel, MainForm.ItemOccupied(MainForm.MapLevel, MainForm.PlayerPosX, MainForm.PlayerPosY)) = 0
+            MainForm.ItemOccupied(MainForm.MapLevel, MainForm.PlayerPosX, MainForm.PlayerPosY) = 0
             If MainForm.PlayerDead = True Then
                 MainForm.SND("Game Over.")
                 MainForm.SNDScores()

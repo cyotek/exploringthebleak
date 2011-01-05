@@ -90,8 +90,25 @@ Partial Class MainForm
         Me.Comment1 = New System.Windows.Forms.PictureBox()
         Me.Comment11 = New System.Windows.Forms.PictureBox()
         Me.GroupBox1 = New System.Windows.Forms.GroupBox()
-        Me.Panel2 = New System.Windows.Forms.Panel()
-        Me.Label13 = New System.Windows.Forms.Label()
+        Me.MenuStrip1 = New System.Windows.Forms.MenuStrip()
+        Me.FileToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.NewGameToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripMenuItem2 = New System.Windows.Forms.ToolStripSeparator()
+        Me.GraphicModeToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.GraphicModeOn = New System.Windows.Forms.ToolStripMenuItem()
+        Me.GraphicModeOff = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ImageFilterToggle = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ImageFilterOn = New System.Windows.Forms.ToolStripMenuItem()
+        Me.IMageFilterOff = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripMenuItem1 = New System.Windows.Forms.ToolStripSeparator()
+        Me.ExitGameToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ControlsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ShowInventoryToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripSeparator1 = New System.Windows.Forms.ToolStripSeparator()
+        Me.ShowToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToggleCharacterStatsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ShowHideActivityLogToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.HelpToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.HealthBar = New Exploring_The_Bleak.MyProgBar()
         Me.WillpowerBar = New Exploring_The_Bleak.MyProgBar()
         Me.Panel1.SuspendLayout()
@@ -114,7 +131,7 @@ Partial Class MainForm
         CType(Me.Comment1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.Comment11, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.GroupBox1.SuspendLayout()
-        Me.Panel2.SuspendLayout()
+        Me.MenuStrip1.SuspendLayout()
         Me.SuspendLayout()
         '
         'Panel1
@@ -127,7 +144,7 @@ Partial Class MainForm
         Me.Panel1.Controls.Add(Me.Skill3)
         Me.Panel1.Controls.Add(Me.Skill2)
         Me.Panel1.Controls.Add(Me.Skill1)
-        Me.Panel1.Location = New System.Drawing.Point(899, 36)
+        Me.Panel1.Location = New System.Drawing.Point(900, 28)
         Me.Panel1.Name = "Panel1"
         Me.Panel1.Size = New System.Drawing.Size(207, 461)
         Me.Panel1.TabIndex = 14
@@ -272,7 +289,7 @@ Partial Class MainForm
         Me.LevelUpPanel.Controls.Add(Me.intadd)
         Me.LevelUpPanel.Controls.Add(Me.wisadd)
         Me.LevelUpPanel.ForeColor = System.Drawing.Color.White
-        Me.LevelUpPanel.Location = New System.Drawing.Point(12, 12)
+        Me.LevelUpPanel.Location = New System.Drawing.Point(3, 25)
         Me.LevelUpPanel.Name = "LevelUpPanel"
         Me.LevelUpPanel.Size = New System.Drawing.Size(283, 310)
         Me.LevelUpPanel.TabIndex = 94
@@ -631,7 +648,7 @@ Partial Class MainForm
         Me.ScoresBox.BackColor = System.Drawing.Color.FromArgb(CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer))
         Me.ScoresBox.Controls.Add(Me.Output)
         Me.ScoresBox.ForeColor = System.Drawing.Color.White
-        Me.ScoresBox.Location = New System.Drawing.Point(12, 12)
+        Me.ScoresBox.Location = New System.Drawing.Point(3, 25)
         Me.ScoresBox.Name = "ScoresBox"
         Me.ScoresBox.Size = New System.Drawing.Size(772, 520)
         Me.ScoresBox.TabIndex = 95
@@ -659,7 +676,7 @@ Partial Class MainForm
         Me.CharStats.BackColor = System.Drawing.Color.FromArgb(CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer))
         Me.CharStats.Controls.Add(Me.StatBox)
         Me.CharStats.ForeColor = System.Drawing.Color.White
-        Me.CharStats.Location = New System.Drawing.Point(12, 12)
+        Me.CharStats.Location = New System.Drawing.Point(3, 23)
         Me.CharStats.Name = "CharStats"
         Me.CharStats.Size = New System.Drawing.Size(193, 291)
         Me.CharStats.TabIndex = 96
@@ -688,7 +705,7 @@ Partial Class MainForm
         Me.SkillInfoBox.BackColor = System.Drawing.Color.FromArgb(CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer))
         Me.SkillInfoBox.Controls.Add(Me.SkillInfo)
         Me.SkillInfoBox.ForeColor = System.Drawing.Color.White
-        Me.SkillInfoBox.Location = New System.Drawing.Point(853, 164)
+        Me.SkillInfoBox.Location = New System.Drawing.Point(854, 156)
         Me.SkillInfoBox.Name = "SkillInfoBox"
         Me.SkillInfoBox.Size = New System.Drawing.Size(240, 172)
         Me.SkillInfoBox.TabIndex = 97
@@ -837,7 +854,7 @@ Partial Class MainForm
         Me.GroupBox1.BackColor = System.Drawing.Color.FromArgb(CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer))
         Me.GroupBox1.Controls.Add(Me.HelpInfo)
         Me.GroupBox1.ForeColor = System.Drawing.Color.White
-        Me.GroupBox1.Location = New System.Drawing.Point(12, 12)
+        Me.GroupBox1.Location = New System.Drawing.Point(3, 27)
         Me.GroupBox1.Name = "GroupBox1"
         Me.GroupBox1.Size = New System.Drawing.Size(466, 406)
         Me.GroupBox1.TabIndex = 97
@@ -845,26 +862,134 @@ Partial Class MainForm
         Me.GroupBox1.Text = "Help / Commands"
         Me.GroupBox1.Visible = False
         '
-        'Panel2
+        'MenuStrip1
         '
-        Me.Panel2.BackColor = System.Drawing.Color.FromArgb(CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer))
-        Me.Panel2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
-        Me.Panel2.Controls.Add(Me.Label13)
-        Me.Panel2.Location = New System.Drawing.Point(899, 6)
-        Me.Panel2.Name = "Panel2"
-        Me.Panel2.Size = New System.Drawing.Size(207, 24)
-        Me.Panel2.TabIndex = 98
+        Me.MenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.FileToolStripMenuItem, Me.ControlsToolStripMenuItem, Me.HelpToolStripMenuItem})
+        Me.MenuStrip1.Location = New System.Drawing.Point(0, 0)
+        Me.MenuStrip1.Name = "MenuStrip1"
+        Me.MenuStrip1.Size = New System.Drawing.Size(1111, 24)
+        Me.MenuStrip1.TabIndex = 98
+        Me.MenuStrip1.Text = "MenuStrip1"
         '
-        'Label13
+        'FileToolStripMenuItem
         '
-        Me.Label13.AutoSize = True
-        Me.Label13.Font = New System.Drawing.Font("Courier New", 18.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label13.ForeColor = System.Drawing.Color.White
-        Me.Label13.Location = New System.Drawing.Point(89, -1)
-        Me.Label13.Name = "Label13"
-        Me.Label13.Size = New System.Drawing.Size(26, 27)
-        Me.Label13.TabIndex = 0
-        Me.Label13.Text = "X"
+        Me.FileToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.NewGameToolStripMenuItem, Me.ToolStripMenuItem2, Me.GraphicModeToolStripMenuItem, Me.ImageFilterToggle, Me.ToolStripMenuItem1, Me.ExitGameToolStripMenuItem})
+        Me.FileToolStripMenuItem.Name = "FileToolStripMenuItem"
+        Me.FileToolStripMenuItem.Size = New System.Drawing.Size(37, 20)
+        Me.FileToolStripMenuItem.Text = "&File"
+        '
+        'NewGameToolStripMenuItem
+        '
+        Me.NewGameToolStripMenuItem.Name = "NewGameToolStripMenuItem"
+        Me.NewGameToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F4
+        Me.NewGameToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
+        Me.NewGameToolStripMenuItem.Text = "&New Game"
+        '
+        'ToolStripMenuItem2
+        '
+        Me.ToolStripMenuItem2.Name = "ToolStripMenuItem2"
+        Me.ToolStripMenuItem2.Size = New System.Drawing.Size(177, 6)
+        '
+        'GraphicModeToolStripMenuItem
+        '
+        Me.GraphicModeToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.GraphicModeOn, Me.GraphicModeOff})
+        Me.GraphicModeToolStripMenuItem.Name = "GraphicModeToolStripMenuItem"
+        Me.GraphicModeToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
+        Me.GraphicModeToolStripMenuItem.Text = "Graphic Mode"
+        '
+        'GraphicModeOn
+        '
+        Me.GraphicModeOn.Checked = True
+        Me.GraphicModeOn.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.GraphicModeOn.Name = "GraphicModeOn"
+        Me.GraphicModeOn.Size = New System.Drawing.Size(120, 22)
+        Me.GraphicModeOn.Text = "Graphics"
+        '
+        'GraphicModeOff
+        '
+        Me.GraphicModeOff.Name = "GraphicModeOff"
+        Me.GraphicModeOff.Size = New System.Drawing.Size(120, 22)
+        Me.GraphicModeOff.Text = "ASCII"
+        '
+        'ImageFilterToggle
+        '
+        Me.ImageFilterToggle.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ImageFilterOn, Me.IMageFilterOff})
+        Me.ImageFilterToggle.Name = "ImageFilterToggle"
+        Me.ImageFilterToggle.Size = New System.Drawing.Size(180, 22)
+        Me.ImageFilterToggle.Text = "Image Filter"
+        '
+        'ImageFilterOn
+        '
+        Me.ImageFilterOn.Checked = True
+        Me.ImageFilterOn.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.ImageFilterOn.Name = "ImageFilterOn"
+        Me.ImageFilterOn.Size = New System.Drawing.Size(152, 22)
+        Me.ImageFilterOn.Text = "On"
+        '
+        'IMageFilterOff
+        '
+        Me.IMageFilterOff.Name = "IMageFilterOff"
+        Me.IMageFilterOff.Size = New System.Drawing.Size(152, 22)
+        Me.IMageFilterOff.Text = "Off"
+        '
+        'ToolStripMenuItem1
+        '
+        Me.ToolStripMenuItem1.Name = "ToolStripMenuItem1"
+        Me.ToolStripMenuItem1.Size = New System.Drawing.Size(177, 6)
+        '
+        'ExitGameToolStripMenuItem
+        '
+        Me.ExitGameToolStripMenuItem.Name = "ExitGameToolStripMenuItem"
+        Me.ExitGameToolStripMenuItem.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.[End]), System.Windows.Forms.Keys)
+        Me.ExitGameToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
+        Me.ExitGameToolStripMenuItem.Text = "E&xit Game"
+        '
+        'ControlsToolStripMenuItem
+        '
+        Me.ControlsToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ShowInventoryToolStripMenuItem, Me.ToolStripSeparator1, Me.ShowToolStripMenuItem, Me.ToggleCharacterStatsToolStripMenuItem, Me.ShowHideActivityLogToolStripMenuItem})
+        Me.ControlsToolStripMenuItem.Name = "ControlsToolStripMenuItem"
+        Me.ControlsToolStripMenuItem.Size = New System.Drawing.Size(64, 20)
+        Me.ControlsToolStripMenuItem.Text = "&Controls"
+        '
+        'ShowInventoryToolStripMenuItem
+        '
+        Me.ShowInventoryToolStripMenuItem.Name = "ShowInventoryToolStripMenuItem"
+        Me.ShowInventoryToolStripMenuItem.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.I), System.Windows.Forms.Keys)
+        Me.ShowInventoryToolStripMenuItem.Size = New System.Drawing.Size(212, 22)
+        Me.ShowInventoryToolStripMenuItem.Text = "&Inventory"
+        '
+        'ToolStripSeparator1
+        '
+        Me.ToolStripSeparator1.Name = "ToolStripSeparator1"
+        Me.ToolStripSeparator1.Size = New System.Drawing.Size(209, 6)
+        '
+        'ShowToolStripMenuItem
+        '
+        Me.ShowToolStripMenuItem.Name = "ShowToolStripMenuItem"
+        Me.ShowToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F1
+        Me.ShowToolStripMenuItem.Size = New System.Drawing.Size(212, 22)
+        Me.ShowToolStripMenuItem.Text = "Toggle &Scores"
+        '
+        'ToggleCharacterStatsToolStripMenuItem
+        '
+        Me.ToggleCharacterStatsToolStripMenuItem.Name = "ToggleCharacterStatsToolStripMenuItem"
+        Me.ToggleCharacterStatsToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F2
+        Me.ToggleCharacterStatsToolStripMenuItem.Size = New System.Drawing.Size(212, 22)
+        Me.ToggleCharacterStatsToolStripMenuItem.Text = "Toggle &Character Stats"
+        '
+        'ShowHideActivityLogToolStripMenuItem
+        '
+        Me.ShowHideActivityLogToolStripMenuItem.Name = "ShowHideActivityLogToolStripMenuItem"
+        Me.ShowHideActivityLogToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F3
+        Me.ShowHideActivityLogToolStripMenuItem.Size = New System.Drawing.Size(212, 22)
+        Me.ShowHideActivityLogToolStripMenuItem.Text = "Toggle Activity &Log"
+        '
+        'HelpToolStripMenuItem
+        '
+        Me.HelpToolStripMenuItem.Name = "HelpToolStripMenuItem"
+        Me.HelpToolStripMenuItem.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.H), System.Windows.Forms.Keys)
+        Me.HelpToolStripMenuItem.Size = New System.Drawing.Size(44, 20)
+        Me.HelpToolStripMenuItem.Text = "&Help"
         '
         'HealthBar
         '
@@ -872,7 +997,7 @@ Partial Class MainForm
         Me.HealthBar.Caption = "Health Bar"
         Me.HealthBar.Enabled = False
         Me.HealthBar.ForeColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(128, Byte), Integer), CType(CType(128, Byte), Integer))
-        Me.HealthBar.Location = New System.Drawing.Point(906, 42)
+        Me.HealthBar.Location = New System.Drawing.Point(907, 34)
         Me.HealthBar.Max = 100
         Me.HealthBar.Min = 0
         Me.HealthBar.Name = "HealthBar"
@@ -886,7 +1011,7 @@ Partial Class MainForm
         Me.WillpowerBar.Caption = "Mana Bar"
         Me.WillpowerBar.Enabled = False
         Me.WillpowerBar.ForeColor = System.Drawing.Color.FromArgb(CType(CType(128, Byte), Integer), CType(CType(128, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.WillpowerBar.Location = New System.Drawing.Point(906, 60)
+        Me.WillpowerBar.Location = New System.Drawing.Point(907, 52)
         Me.WillpowerBar.Max = 100
         Me.WillpowerBar.Min = 0
         Me.WillpowerBar.Name = "WillpowerBar"
@@ -900,7 +1025,6 @@ Partial Class MainForm
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.Color.Black
         Me.ClientSize = New System.Drawing.Size(1111, 852)
-        Me.Controls.Add(Me.Panel2)
         Me.Controls.Add(Me.GroupBox1)
         Me.Controls.Add(Me.SkillInfoBox)
         Me.Controls.Add(Me.CharStats)
@@ -920,9 +1044,11 @@ Partial Class MainForm
         Me.Controls.Add(Me.Comment1)
         Me.Controls.Add(Me.Comment11)
         Me.Controls.Add(Me.Panel1)
-        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow
+        Me.Controls.Add(Me.MenuStrip1)
+        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D
         Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
         Me.KeyPreview = True
+        Me.MainMenuStrip = Me.MenuStrip1
         Me.MaximizeBox = False
         Me.Name = "MainForm"
         Me.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide
@@ -951,9 +1077,10 @@ Partial Class MainForm
         CType(Me.Comment11, System.ComponentModel.ISupportInitialize).EndInit()
         Me.GroupBox1.ResumeLayout(False)
         Me.GroupBox1.PerformLayout()
-        Me.Panel2.ResumeLayout(False)
-        Me.Panel2.PerformLayout()
+        Me.MenuStrip1.ResumeLayout(False)
+        Me.MenuStrip1.PerformLayout()
         Me.ResumeLayout(False)
+        Me.PerformLayout()
 
     End Sub
     Friend WithEvents Comment11 As System.Windows.Forms.PictureBox
@@ -1025,7 +1152,24 @@ Partial Class MainForm
     Friend WithEvents SkillInfoBox As System.Windows.Forms.GroupBox
     Friend WithEvents SkillInfo As System.Windows.Forms.RichTextBox
     Friend WithEvents GroupBox1 As System.Windows.Forms.GroupBox
-    Friend WithEvents Panel2 As System.Windows.Forms.Panel
-    Friend WithEvents Label13 As System.Windows.Forms.Label
+    Friend WithEvents MenuStrip1 As System.Windows.Forms.MenuStrip
+    Friend WithEvents FileToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents NewGameToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents ExitGameToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents HelpToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents ControlsToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents ShowInventoryToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents ShowToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents ToggleCharacterStatsToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents ShowHideActivityLogToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents ToolStripSeparator1 As System.Windows.Forms.ToolStripSeparator
+    Friend WithEvents ToolStripMenuItem2 As System.Windows.Forms.ToolStripSeparator
+    Friend WithEvents ToolStripMenuItem1 As System.Windows.Forms.ToolStripSeparator
+    Friend WithEvents ImageFilterToggle As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents ImageFilterOn As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents IMageFilterOff As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents GraphicModeToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents GraphicModeOn As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents GraphicModeOff As System.Windows.Forms.ToolStripMenuItem
 
 End Class

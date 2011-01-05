@@ -1,7 +1,8 @@
 ﻿Imports System.IO
 Public Class MainForm
 #Region "Constants"
-    Public Const MapSize As Short = 25 'original 25
+    Public Const MapSize As Byte = 30 'original 25
+    Public Const MaxDepthLevel As Byte = 28
 
     Const ASCII = False
     Const Tiled = True
@@ -36,7 +37,7 @@ Public Class MainForm
     Const NotHidden As Short = 1 'ditto
     Const Shadowed As Short = 2 'ditto again
 
-    Const TotalEnvironmentTypes As Short = 10
+    Public Const TotalEnvironmentTypes As Short = 10
 
     Const Dungeon = 0
     Const Ruins = 1
@@ -53,13 +54,15 @@ Public Class MainForm
 
     Public StandardColor As Color 'used for color types in fog display
     Public GenerateType As Short = Random
-    Public EnvironmentType As Short = 0
-    Public MapLevel As Short = 0
-    Public Map(MapSize, MapSize) As Short
-    Public MapShown(MapSize, MapSize) As Boolean
-    Public MapOccupied(MapSize, MapSize) As Short
-    Public MapBlur(MapSize, MapSize, 3) As Boolean
-    Public FogMap(MapSize, MapSize) As Short
+    Public EnvironmentType As Byte = 0
+    Public MapLevel As Byte = 1
+    Public MapCreated(MaxDepthLevel) As Boolean
+    Public Map(MaxDepthLevel, MapSize, MapSize) As Byte
+    Public MapEntrances(MaxDepthLevel, 1, 1) As Short 'mapentrances(maxdepthlevel,exit type,axis type) exit types(0=down exit, 1=up exit locations) axis types(0=x,1=y)
+    Public MapShown(MaxDepthLevel, MapSize, MapSize) As Boolean
+    Public MapOccupied(MaxDepthLevel, MapSize, MapSize) As Byte
+    Public MapBlur(MaxDepthLevel, MapSize, MapSize, 3) As Boolean
+    Public FogMap(MaxDepthLevel, MapSize, MapSize) As Byte
 
     Public SKillGobalCooldown As Short 'prevents skills for a amount of time
     Public SkillType As String 'references a skillname if it's going to be used on next attack
@@ -67,17 +70,17 @@ Public Class MainForm
 
     Public PlayerPosX, PlayerPosY, PlayerLastPosX, PlayerLastPosY As Short
     Public PlayerExperience As Integer = 0
-    Public PlayerLevel As Short = 1
+    Public PlayerLevel As Byte = 1
     Public PlayerName As String
     Public PlayerHidden As Short
     Public PlayerClass As String
     Public PlayerRace As String
-    Public PlayerDefense As Short = 1
-    Public PlayerAttack As Short = 1
-    Public PlayerSTR, PlayerDEX, PlayerINT, PlayerWIS, PlayerCON, PlayerCHA, PlayerLUC As Short
-    Public PlayerMaxSTR, PlayerMaxDEX, PlayerMaxINT, PlayerMaxWIS, PlayerMaxCON, PlayerMaxCHA, PlayerMaxLuc As Short
-    Public PlayerEquipHead, PlayerEquipChest, PlayerEquipArms, PlayerEquipHands, PlayerEquipLegs, PlayerEquipFeet As Short
-    Public PlayerEquipQHead, PlayerEquipQChest, PlayerEquipQArms, PlayerEquipQHands, PLayerEquipQLegs, PlayerEquipQFeet As Short
+    Public PlayerDefense As Byte = 1
+    Public PlayerAttack As Byte = 1
+    Public PlayerSTR, PlayerDEX, PlayerINT, PlayerWIS, PlayerCON, PlayerCHA, PlayerLUC As Byte
+    Public PlayerMaxSTR, PlayerMaxDEX, PlayerMaxINT, PlayerMaxWIS, PlayerMaxCON, PlayerMaxCHA, PlayerMaxLuc As Byte
+    Public PlayerEquipHead, PlayerEquipChest, PlayerEquipArms, PlayerEquipHands, PlayerEquipLegs, PlayerEquipFeet As Byte
+    Public PlayerEquipQHead, PlayerEquipQChest, PlayerEquipQArms, PlayerEquipQHands, PLayerEquipQLegs, PlayerEquipQFeet As Byte
     Public PlayerEquipNHead, PlayerEquipNChest, PlayerEquipNArms, PlayerEquipNHands, PLayerEquipNLegs, PlayerEquipNFeet As String
     Public PlayerHitpoints, PlayerWillpower As Short
     Public PlayerCurHitpoints, PlayerCurWillpower As Short
@@ -91,15 +94,15 @@ Public Class MainForm
 
     Public PreviousAttack, PreviousDefense As Short
 
-    Public MobilePosX(9), MobilePosY(9), MobilePrevX(9), MobilePrevY(9), MobileLastMove(9), MobileType(9) As Short
-    Public MobileHealth(9), MobileFlee(9), MobileStun(9), MobileClumsiness(9) As Short
-    Public MobileVisible(9, 3) As Short
-    Public MobOccupied(MapSize, MapSize) As Short '0-9 mobile vnum loc
-    Public MobileExists(MapSize, MapSize) As Boolean 'death flag
+    Public MobilePosX(MaxDepthLevel, 9), MobilePosY(MaxDepthLevel, 9), MobilePrevX(MaxDepthLevel, 9), MobilePrevY(MaxDepthLevel, 9), MobileLastMove(MaxDepthLevel, 9), MobileType(MaxDepthLevel, 9) As Short
+    Public MobileHealth(MaxDepthLevel, 9), MobileFlee(MaxDepthLevel, 9), MobileStun(MaxDepthLevel, 9), MobileClumsiness(MaxDepthLevel, 9) As Short
+    Public MobileVisible(MaxDepthLevel, 9, 3) As Short
+    Public MobOccupied(MaxDepthLevel, MapSize, MapSize) As Short '0-9 mobile vnum loc
+    Public MobileExists(MaxDepthLevel, MapSize, MapSize) As Boolean 'death flag
     Public MobilePresent As Boolean 'generic mobile is presently on screen to prevent erronerous targeting or skills w/o mobs present
 
-    Public ItemNum(39), ItemType(39), ItemOccupied(MapSize, MapSize) As Short
-    Public ItemNameType(MapSize, MapSize), ItemShowType(MapSize, MapSize)
+    Public ItemNum(MaxDepthLevel, 39), ItemType(MaxDepthLevel, 39), ItemOccupied(MaxDepthLevel, MapSize, MapSize) As Short
+    Public ItemNameType(MaxDepthLevel, MapSize, MapSize), ItemShowType(MaxDepthLevel, MapSize, MapSize)
     Public ItemInventoryType(19) As Short
     Public ItemInventoryName(19) As String
     Public ItemInventoryQuality(19) As Short
@@ -202,76 +205,76 @@ Public Class MainForm
 #End Region
 #Region "Mobile Actions & Battle"
     Function Mv(ByVal Mobnum As Short, ByVal x As Short, ByVal y As Short) 'meta mobile move, all movement passed lastly through here
-        Dim PreviousX As Short = MobilePosX(Mobnum)
-        Dim PreviousY As Short = MobilePosY(Mobnum)
+        Dim PreviousX As Short = MobilePosX(MapLevel, Mobnum)
+        Dim PreviousY As Short = MobilePosY(MapLevel, Mobnum)
         If PreviousX >= 0 And PreviousY >= 0 Then
-            MobileExists(PreviousX, PreviousY) = False
-            MobOccupied(PreviousX, PreviousY) = 10
-            MapOccupied(PreviousX, PreviousY) = 0
-            MobilePosX(Mobnum) = PreviousX + x
-            MobilePosY(Mobnum) = PreviousY + y
-            MobileExists(MobilePosX(Mobnum), MobilePosY(Mobnum)) = True
-            MobOccupied(MobilePosX(Mobnum), MobilePosY(Mobnum)) = Mobnum
-            MapOccupied(MobilePosX(Mobnum), MobilePosY(Mobnum)) = MobileType(Mobnum)
+            MobileExists(MapLevel, PreviousX, PreviousY) = False
+            MobOccupied(MapLevel, PreviousX, PreviousY) = 10
+            MapOccupied(MapLevel, PreviousX, PreviousY) = 0
+            MobilePosX(MapLevel, Mobnum) = PreviousX + x
+            MobilePosY(MapLevel, Mobnum) = PreviousY + y
+            MobileExists(MapLevel, MobilePosX(MapLevel, Mobnum), MobilePosY(MapLevel, Mobnum)) = True
+            MobOccupied(MapLevel, MobilePosX(MapLevel, Mobnum), MobilePosY(MapLevel, Mobnum)) = Mobnum
+            MapOccupied(MapLevel, MobilePosX(MapLevel, Mobnum), MobilePosY(MapLevel, Mobnum)) = MobileType(MapLevel, Mobnum)
         End If
         Return 0
     End Function
     Function MoveMobile(ByVal MobNum As Short, ByVal MvType As Short)
         Dim MobileDead As Boolean = False
-        Dim x As Short = MobilePosX(MobNum)
-        Dim y As Short = MobilePosY(MobNum)
-        If MvType = North And MobilePosY(MobNum) > 0 Then 'North movement
-            If Map(MobilePosX(MobNum), MobilePosY(MobNum) - 1) = Item Then 'mobile moves onto an item and picks it up
-            ElseIf MobilePosX(MobNum) = PlayerPosX And MobilePosY(MobNum) - 1 = PlayerPosY Then 'mobile moves into player
-                KillMob(MobNum)
+        Dim x As Short = MobilePosX(MapLevel, MobNum)
+        Dim y As Short = MobilePosY(MapLevel, MobNum)
+        If MvType = North And MobilePosY(MapLevel, MobNum) > 0 Then 'North movement
+            If Map(MapLevel, MobilePosX(MapLevel, MobNum), MobilePosY(MapLevel, MobNum) - 1) = Item Then 'mobile moves onto an item and picks it up
+            ElseIf MobilePosX(MapLevel, MobNum) = PlayerPosX And MobilePosY(MapLevel, MobNum) - 1 = PlayerPosY Then 'mobile moves into player
+                KillMob(MapLevel, Mobnum)
                 MobileDead = True
             End If
             If MobileDead = False Then
                 Mv(MobNum, 0, -1)
-                MobileLastMove(MobNum) = North
+                MobileLastMove(MapLevel, MobNum) = North
             End If
-        ElseIf MvType = East And MobilePosX(MobNum) < MapSize Then 'East movement
-            If Map(MobilePosX(MobNum) + 1, MobilePosY(MobNum)) = Item Then 'mobile moves onto a piece
-            ElseIf MobilePosX(MobNum) + 1 = PlayerPosX And MobilePosY(MobNum) = PlayerPosY Then 'mobile moves into player
-                KillMob(MobNum)
+        ElseIf MvType = East And MobilePosX(MapLevel, MobNum) < MapSize Then 'East movement
+            If Map(MapLevel, MobilePosX(MapLevel, MobNum) + 1, MobilePosY(MapLevel, MobNum)) = Item Then 'mobile moves onto a piece
+            ElseIf MobilePosX(MapLevel, MobNum) + 1 = PlayerPosX And MobilePosY(MapLevel, MobNum) = PlayerPosY Then 'mobile moves into player
+                KillMob(MapLevel, Mobnum)
                 MobileDead = True
             End If
             If MobileDead = False Then
                 Mv(MobNum, 1, 0)
-                MobileLastMove(MobNum) = East
+                MobileLastMove(MapLevel, MobNum) = East
             End If
-        ElseIf MvType = South And MobilePosY(MobNum) < MapSize Then 'south movement
-            If Map(MobilePosX(MobNum), MobilePosY(MobNum) + 1) = Item Then 'mobile moves onto a piece
-            ElseIf MobilePosX(MobNum) = PlayerPosX And MobilePosY(MobNum) + 1 = PlayerPosY Then 'mobile moves into player
-                KillMob(MobNum)
+        ElseIf MvType = South And MobilePosY(MapLevel, MobNum) < MapSize Then 'south movement
+            If Map(MapLevel, MobilePosX(MapLevel, MobNum), MobilePosY(MapLevel, MobNum) + 1) = Item Then 'mobile moves onto a piece
+            ElseIf MobilePosX(MapLevel, MobNum) = PlayerPosX And MobilePosY(MapLevel, MobNum) + 1 = PlayerPosY Then 'mobile moves into player
+                KillMob(MapLevel, Mobnum)
                 MobileDead = True
             End If
             If MobileDead = False Then
                 Mv(MobNum, 0, 1)
-                MobileLastMove(MobNum) = South
+                MobileLastMove(MapLevel, MobNum) = South
             End If
-        ElseIf MvType = West And MobilePosX(MobNum) > 0 Then 'west movement
-            If Map(MobilePosX(MobNum) - 1, MobilePosY(MobNum)) = Item Then 'mobile moves onto a piece
-            ElseIf MobilePosX(MobNum) - 1 = PlayerPosX And MobilePosY(MobNum) = PlayerPosY Then 'mobile moves into player
-                KillMob(MobNum)
+        ElseIf MvType = West And MobilePosX(MapLevel, MobNum) > 0 Then 'west movement
+            If Map(MapLevel, MobilePosX(MapLevel, MobNum) - 1, MobilePosY(MapLevel, MobNum)) = Item Then 'mobile moves onto a piece
+            ElseIf MobilePosX(MapLevel, MobNum) - 1 = PlayerPosX And MobilePosY(MapLevel, MobNum) = PlayerPosY Then 'mobile moves into player
+                KillMob(MapLevel, Mobnum)
                 MobileDead = True
             End If
             If MobileDead = False Then
                 Mv(MobNum, -1, 0)
-                MobileLastMove(MobNum) = West 'dictates the mobiles last movement direction for pattern-making movements
+                MobileLastMove(MapLevel, MobNum) = West 'dictates the mobiles last movement direction for pattern-making movements
             End If
         End If
         Return 0
     End Function
     Function KillMob(ByVal Mobnum As Short, Optional ByVal MobString As String = "Enemy")
         If MobString <> "SILENCE MOB KILL" Then
-            If Map(MobilePosX(Mobnum), MobilePosY(Mobnum)) = Floor Then
-                Map(MobilePosX(Mobnum), MobilePosY(Mobnum)) = SpecialFloor
+            If Map(MapLevel, MobilePosX(MapLevel, Mobnum), MobilePosY(MapLevel, Mobnum)) = Floor Then
+                Map(MapLevel, MobilePosX(MapLevel, Mobnum), MobilePosY(MapLevel, Mobnum)) = SpecialFloor
             End If
-            MapOccupied(MobilePosX(Mobnum), MobilePosY(Mobnum)) = False 'clears mob type
-            MobileExists(MobilePosX(Mobnum), MobilePosY(Mobnum)) = False 'kills mob
-            MobileHealth(Mobnum) = 0
-            PlayerExperience += MobileType(Mobnum)  'mobiletype distinguishes it's difficulty and therefor applys likewise to experience gained.
+            MapOccupied(MapLevel, MobilePosX(MapLevel, Mobnum), MobilePosY(MapLevel, Mobnum)) = False 'clears mob type
+            MobileExists(MapLevel, MobilePosX(MapLevel, Mobnum), MobilePosY(MapLevel, Mobnum)) = False 'kills mob
+            MobileHealth(MapLevel, Mobnum) = 0
+            PlayerExperience += MobileType(MapLevel, Mobnum)  'mobiletype distinguishes it's difficulty and therefor applys likewise to experience gained.
             If PlayerExperience >= 100 Then
                 LevelUp()
             End If
@@ -283,8 +286,8 @@ Public Class MainForm
             Dim RandomNumber As New Random
             Dim RandomValue As Short
             For ItemNumber = 1 To ItemNum.Length Step 1
-                If ItemNum(ItemNumber) = 0 Then
-                    ItemNum(ItemNumber) = ItemNumber
+                If ItemNum(MapLevel, ItemNumber) = 0 Then
+                    ItemNum(MapLevel, ItemNumber) = ItemNumber
                     ItemLocFound = True
                     Exit For
                 End If
@@ -306,54 +309,54 @@ Public Class MainForm
                     'Public ItemType As Short
                     'Public ShowType As String
                     GenerateItem.GenerateRandomItem(ItemNumber)
-                    ItemType(ItemNumber) = GenerateItem.ItemType
-                    ItemShowType(MobilePosX(Mobnum), MobilePosY(Mobnum)) = GenerateItem.ShowType
-                    ItemNameType(MobilePosX(Mobnum), MobilePosY(Mobnum)) = GenerateItem.NameType
+                    ItemType(MapLevel, ItemNumber) = GenerateItem.ItemType
+                    ItemShowType(MapLevel, MobilePosX(MapLevel, Mobnum), MobilePosY(MapLevel, Mobnum)) = GenerateItem.ShowType
+                    ItemNameType(MapLevel, MobilePosX(MapLevel, Mobnum), MobilePosY(MapLevel, Mobnum)) = GenerateItem.NameType
                     SND(UCase(Mid(MobString, 1, 1)) + Mid(MobString, 2, Len(MobString)) + " drops " + GenerateItem.NameType + ".")
-                    ItemOccupied(MobilePosX(Mobnum), MobilePosY(Mobnum)) = ItemNum(ItemNumber)
-                    DrawingProcedures.LOSMap(MobilePosX(Mobnum), MobilePosY(Mobnum)) = DrawingProcedures.Redraw
+                    ItemOccupied(MapLevel, MobilePosX(MapLevel, Mobnum), MobilePosY(MapLevel, Mobnum)) = ItemNum(MapLevel, ItemNumber)
+                    DrawingProcedures.LOSMap(MobilePosX(MapLevel, Mobnum), MobilePosY(MapLevel, Mobnum)) = DrawingProcedures.Redraw
                 End If
             End If
         Else
-            MobileHealth(Mobnum) = 0
-            MapOccupied(MobilePosX(Mobnum), MobilePosY(Mobnum)) = False 'clears mob type
-            MobileExists(MobilePosX(Mobnum), MobilePosY(Mobnum)) = False 'kills mob
-            MobilePosX(Mobnum) = MapSize + 1 : MobilePosY(Mobnum) = MapSize + 1
+            MobileHealth(MapLevel, Mobnum) = 0
+            MapOccupied(MapLevel, MobilePosX(MapLevel, Mobnum), MobilePosY(MapLevel, Mobnum)) = False 'clears mob type
+            MobileExists(MapLevel, MobilePosX(MapLevel, Mobnum), MobilePosY(MapLevel, Mobnum)) = False 'kills mob
+            MobilePosX(MapLevel, Mobnum) = MapSize + 1 : MobilePosY(MapLevel, Mobnum) = MapSize + 1
         End If
         Return 0
     End Function
     Function MobileFleeFail(ByVal Mobnum As Short)
         Dim MobileNameString As String = ""
-        If MobileType(Mobnum) = 1 Then
+        If MobileType(MapLevel, Mobnum) = 1 Then
             MobileNameString = "A rat"
-        ElseIf MobileType(Mobnum) = 2 Then
+        ElseIf MobileType(MapLevel, Mobnum) = 2 Then
             MobileNameString = "A bat"
-        ElseIf MobileType(Mobnum) = 3 Then
+        ElseIf MobileType(MapLevel, Mobnum) = 3 Then
             MobileNameString = "An imp"
-        ElseIf MobileType(Mobnum) = 4 Then
+        ElseIf MobileType(MapLevel, Mobnum) = 4 Then
             MobileNameString = "A goblin"
-        ElseIf MobileType(Mobnum) = 5 Then
+        ElseIf MobileType(MapLevel, Mobnum) = 5 Then
             MobileNameString = "A troll"
-        ElseIf MobileType(Mobnum) = 6 Then
+        ElseIf MobileType(MapLevel, Mobnum) = 6 Then
             MobileNameString = "An ogre"
-        ElseIf MobileType(Mobnum) = 7 Then
+        ElseIf MobileType(MapLevel, Mobnum) = 7 Then
             MobileNameString = "A catoblepas"
-        ElseIf MobileType(Mobnum) = 8 Then
+        ElseIf MobileType(MapLevel, Mobnum) = 8 Then
             MobileNameString = "A parandrus"
-        ElseIf MobileType(Mobnum) = 9 Then
+        ElseIf MobileType(MapLevel, Mobnum) = 9 Then
             MobileNameString = "A clurichuan"
-        ElseIf MobileType(Mobnum) = 10 Then
+        ElseIf MobileType(MapLevel, Mobnum) = 10 Then
             MobileNameString = "A dullahan"
-        ElseIf MobileType(Mobnum) = 11 Then
+        ElseIf MobileType(MapLevel, Mobnum) = 11 Then
             MobileNameString = "A golem"
-        ElseIf MobileType(Mobnum) = 12 Then
+        ElseIf MobileType(MapLevel, Mobnum) = 12 Then
             MobileNameString = "A sceadugengan"
-        ElseIf MobileType(Mobnum) = 13 Then
+        ElseIf MobileType(MapLevel, Mobnum) = 13 Then
             MobileNameString = "A schilla"
         End If
         SND(MobileNameString + " trips in its terror.")
-        MobileHealth(Mobnum) -= 1
-        If MobileHealth(Mobnum) <= 0 Then
+        MobileHealth(MapLevel, Mobnum) -= 1
+        If MobileHealth(MapLevel, Mobnum) <= 0 Then
             KillMob(Mobnum, MobileNameString)
             SND(MobileNameString + " falls in a heap dead.")
         End If
@@ -361,72 +364,72 @@ Public Class MainForm
     End Function
     Function FleeMob(ByVal Mobnum As Short)
         Dim MobileNameString As String = ""
-        If MobileType(Mobnum) = 1 Then
+        If MobileType(MapLevel, Mobnum) = 1 Then
             MobileNameString = "a rat"
-        ElseIf MobileType(Mobnum) = 2 Then
+        ElseIf MobileType(MapLevel, Mobnum) = 2 Then
             MobileNameString = "a bat"
-        ElseIf MobileType(Mobnum) = 3 Then
+        ElseIf MobileType(MapLevel, Mobnum) = 3 Then
             MobileNameString = "an imp"
-        ElseIf MobileType(Mobnum) = 4 Then
+        ElseIf MobileType(MapLevel, Mobnum) = 4 Then
             MobileNameString = "a goblin"
-        ElseIf MobileType(Mobnum) = 5 Then
+        ElseIf MobileType(MapLevel, Mobnum) = 5 Then
             MobileNameString = "a troll"
-        ElseIf MobileType(Mobnum) = 6 Then
+        ElseIf MobileType(MapLevel, Mobnum) = 6 Then
             MobileNameString = "an ogre"
-        ElseIf MobileType(Mobnum) = 7 Then
+        ElseIf MobileType(MapLevel, Mobnum) = 7 Then
             MobileNameString = "a catoblepas"
-        ElseIf MobileType(Mobnum) = 8 Then
+        ElseIf MobileType(MapLevel, Mobnum) = 8 Then
             MobileNameString = "a parandrus"
-        ElseIf MobileType(Mobnum) = 9 Then
+        ElseIf MobileType(MapLevel, Mobnum) = 9 Then
             MobileNameString = "a clurichuan"
-        ElseIf MobileType(Mobnum) = 10 Then
+        ElseIf MobileType(MapLevel, Mobnum) = 10 Then
             MobileNameString = "a dullahan"
-        ElseIf MobileType(Mobnum) = 11 Then
+        ElseIf MobileType(MapLevel, Mobnum) = 11 Then
             MobileNameString = "a golem"
-        ElseIf MobileType(Mobnum) = 12 Then
+        ElseIf MobileType(MapLevel, Mobnum) = 12 Then
             MobileNameString = "a sceadugengan"
-        ElseIf MobileType(Mobnum) = 13 Then
+        ElseIf MobileType(MapLevel, Mobnum) = 13 Then
             MobileNameString = "a schilla"
         End If
         SND(MobileNameString + " turns to flee.")
-        MobileFlee(Mobnum) = Math.Round(PlayerCHA / 10, 0)
+        MobileFlee(MapLevel, Mobnum) = Math.Round(PlayerCHA / 10, 0)
         Return 0
     End Function
     Function HitMob(ByVal Mobnum As Short, Optional ByVal Counter As Boolean = False, Optional ByVal HideAttack As Boolean = False)
         Dim MobileNameString As String = ""
         Dim TestCriticalStrike As New Random
         Dim CritStrike As Short = 0
-        If MobileType(Mobnum) = 1 Then
+        If MobileType(MapLevel, Mobnum) = 1 Then
             MobileNameString = "a rat"
-        ElseIf MobileType(Mobnum) = 2 Then
+        ElseIf MobileType(MapLevel, Mobnum) = 2 Then
             MobileNameString = "a bat"
-        ElseIf MobileType(Mobnum) = 3 Then
+        ElseIf MobileType(MapLevel, Mobnum) = 3 Then
             MobileNameString = "an imp"
-        ElseIf MobileType(Mobnum) = 4 Then
+        ElseIf MobileType(MapLevel, Mobnum) = 4 Then
             MobileNameString = "a goblin"
-        ElseIf MobileType(Mobnum) = 5 Then
+        ElseIf MobileType(MapLevel, Mobnum) = 5 Then
             MobileNameString = "a troll"
-        ElseIf MobileType(Mobnum) = 6 Then
+        ElseIf MobileType(MapLevel, Mobnum) = 6 Then
             MobileNameString = "an ogre"
-        ElseIf MobileType(Mobnum) = 7 Then
+        ElseIf MobileType(MapLevel, Mobnum) = 7 Then
             MobileNameString = "a catoblepas"
-        ElseIf MobileType(Mobnum) = 8 Then
+        ElseIf MobileType(MapLevel, Mobnum) = 8 Then
             MobileNameString = "a parandrus"
-        ElseIf MobileType(Mobnum) = 9 Then
+        ElseIf MobileType(MapLevel, Mobnum) = 9 Then
             MobileNameString = "a clurichuan"
-        ElseIf MobileType(Mobnum) = 10 Then
+        ElseIf MobileType(MapLevel, Mobnum) = 10 Then
             MobileNameString = "a dullahan"
-        ElseIf MobileType(Mobnum) = 11 Then
+        ElseIf MobileType(MapLevel, Mobnum) = 11 Then
             MobileNameString = "a golem"
-        ElseIf MobileType(Mobnum) = 12 Then
+        ElseIf MobileType(MapLevel, Mobnum) = 12 Then
             MobileNameString = "a sceadugengan"
-        ElseIf MobileType(Mobnum) = 13 Then
+        ElseIf MobileType(MapLevel, Mobnum) = 13 Then
             MobileNameString = "a schilla"
         End If
         If HideAttack = False Then
             If SkillType = "" Then CritStrike = TestCriticalStrike.Next(0, 101) Else CritStrike = TestCriticalStrike.Next(0, 101)
             If CritStrike <= PlayerSTR And SkillType = "" Then 'player critically striked. chance to critically strike is the players strength
-                MobileHealth(Mobnum) -= PlayerAttack * 2
+                MobileHealth(MapLevel, Mobnum) -= PlayerAttack * 2
                 If Counter = False Then
                     SND("You CRIT " + MobileNameString + ".")
                 Else
@@ -435,10 +438,10 @@ Public Class MainForm
             ElseIf CritStrike <= PlayerINT And SkillType <> "" Then 'player critically striked with a skill.
                 If SkillType = "Punch" Or SkillType = "Kick" Or SkillType = "Hit" Or SkillType = "Strike" Or SkillType = "Slice" Or SkillType = "Stab" Or SkillType = "Shoot" Then
                     'these are the basic +1 skilltypes, and all do the same
-                    MobileHealth(Mobnum) -= PlayerAttack * 2 + 2
+                    MobileHealth(MapLevel, Mobnum) -= PlayerAttack * 2 + 2
                     SND("Your skill CRITS " + MobileNameString + ".")
                 ElseIf SkillType = "Wound" Then
-                    MobileHealth(Mobnum) -= 40
+                    MobileHealth(MapLevel, Mobnum) -= 40
                     SND("Your skill CRITS " + MobileNameString + ".")
                 End If
             ElseIf SkillType = "" Then 'basic attack, test mobile dodge, then mobile miss
@@ -457,9 +460,9 @@ Public Class MainForm
                     End If
                 Else
                     If Fury > 0 Then 'fury increases regular attack strength by 1
-                        MobileHealth(Mobnum) -= PlayerAttack + 1
+                        MobileHealth(MapLevel, Mobnum) -= PlayerAttack + 1
                     Else
-                        MobileHealth(Mobnum) -= PlayerAttack
+                        MobileHealth(MapLevel, Mobnum) -= PlayerAttack
                     End If
                     If Counter = False Then
                         SND("You hit " + MobileNameString + ".")
@@ -469,60 +472,60 @@ Public Class MainForm
                 End If
             ElseIf SkillType <> "" Then 'basic skill
                 If SkillType = "Punch" Then 'just a +1 attack
-                    MobileHealth(Mobnum) -= PlayerAttack + 1
+                    MobileHealth(MapLevel, Mobnum) -= PlayerAttack + 1
                     SND("You punch " + MobileNameString + ".")
                 ElseIf SkillType = "Kick" Then 'just a +1 attack
-                    MobileHealth(Mobnum) -= PlayerAttack + 1
+                    MobileHealth(MapLevel, Mobnum) -= PlayerAttack + 1
                     SND("You kick " + MobileNameString + ".")
                 ElseIf SkillType = "Hit" Then 'just a +1 attack
-                    MobileHealth(Mobnum) -= PlayerAttack + 1
+                    MobileHealth(MapLevel, Mobnum) -= PlayerAttack + 1
                     SND("You hit " + MobileNameString + ".")
                 ElseIf SkillType = "Strike" Then 'just a +1 attack
-                    MobileHealth(Mobnum) -= PlayerAttack + 1
+                    MobileHealth(MapLevel, Mobnum) -= PlayerAttack + 1
                     SND("You strike " + MobileNameString + ".")
                 ElseIf SkillType = "Slice" Then 'just a +1 attack
-                    MobileHealth(Mobnum) -= PlayerAttack + 1
+                    MobileHealth(MapLevel, Mobnum) -= PlayerAttack + 1
                     SND("You slice " + MobileNameString + ".")
                 ElseIf SkillType = "Stab" Then 'just a +1 attack
-                    MobileHealth(Mobnum) -= PlayerAttack + 1
+                    MobileHealth(MapLevel, Mobnum) -= PlayerAttack + 1
                     SND("You stab " + MobileNameString + ".")
                 ElseIf SkillType = "Shoot" Then 'just a +1 attack
-                    MobileHealth(Mobnum) -= PlayerAttack + 1
+                    MobileHealth(MapLevel, Mobnum) -= PlayerAttack + 1
                     SND("You shoot " + MobileNameString + ".")
                 ElseIf SkillType = "Wound" Then '20 attack
-                    MobileHealth(Mobnum) -= 20
+                    MobileHealth(MapLevel, Mobnum) -= 20
                     SND("You decimate " + MobileNameString + ".")
                 ElseIf SkillType = "Stun" Then 'stun enemy preventing movement and attacks for 3 rounds
-                    MobileStun(Mobnum) = 3
+                    MobileStun(MapLevel, Mobnum) = 3
                     SND("You stun " + MobileNameString + ".")
                 ElseIf SkillType = "Double Slice" Then 'double slice the enemy
-                    MobileHealth(Mobnum) -= PlayerAttack * 2
+                    MobileHealth(MapLevel, Mobnum) -= PlayerAttack * 2
                     SND("You slice " + MobileNameString + ".")
                     SND("You slice " + MobileNameString + ".")
                 ElseIf SkillType = "Trip" Then 'stun enemy for 2 rounds
-                    MobileStun(Mobnum) = 2
+                    MobileStun(MapLevel, Mobnum) = 2
                     SND("You trip " + MobileNameString + ".")
                 ElseIf SkillType = "Runestrike" Then 'runstrike enemy
-                    MobileStun(Mobnum) = 2
-                    MobileHealth(Mobnum) -= PlayerAttack
+                    MobileStun(MapLevel, Mobnum) = 2
+                    MobileHealth(MapLevel, Mobnum) -= PlayerAttack
                     SND("You runstrike " + MobileNameString + ".")
                 ElseIf SkillType = "Fireball" Then 'fireball enemy
-                    MobileHealth(Mobnum) -= PlayerAttack + 10
+                    MobileHealth(MapLevel, Mobnum) -= PlayerAttack + 10
                     SND("A fireball mutilates " + MobileNameString + ".")
                 ElseIf SkillType = "Clumsiness" Then 'clumsiness enemy
                     SND("You clumsiness " + MobileNameString + ".")
-                    MobileClumsiness(Mobnum) = 5
+                    MobileClumsiness(MapLevel, Mobnum) = 5
                 ElseIf SkillType = "Holy Bolt" Then 'holy bolt enemy
                     SND("Holy Bolt erradicates " + MobileNameString + ".")
-                    MobileHealth(Mobnum) -= PlayerAttack + 10
+                    MobileHealth(MapLevel, Mobnum) -= PlayerAttack + 10
                 ElseIf SkillType = "Fire Arrow" Then 'fire arrow enemy
                     SND("Fire Arrow sears " + MobileNameString + ".")
-                    MobileHealth(Mobnum) -= PlayerAttack + 3
+                    MobileHealth(MapLevel, Mobnum) -= PlayerAttack + 3
                 ElseIf SkillType = "Sacrifice" Then 'sacrifice hp for extra damage attack
                     SND("You demolish " + MobileNameString + ".")
-                    MobileHealth(Mobnum) -= PlayerAttack + 10
+                    MobileHealth(MapLevel, Mobnum) -= PlayerAttack + 10
                 ElseIf SkillType = "Triple Slice" Then 'double slice the enemy
-                    MobileHealth(Mobnum) -= PlayerAttack * 3
+                    MobileHealth(MapLevel, Mobnum) -= PlayerAttack * 3
                     SND("You slice " + MobileNameString + ".")
                     SND("You slice " + MobileNameString + ".")
                     SND("You slice " + MobileNameString + ".")
@@ -530,10 +533,10 @@ Public Class MainForm
                 SkillType = "" 'makes sure you don't use the skill again for free ;0
             End If
         Else
-            MobileHealth(Mobnum) -= 1
+            MobileHealth(MapLevel, Mobnum) -= 1
             SND("Immolation burns " + MobileNameString + ".")
         End If
-        If MobileHealth(Mobnum) <= 0 Then
+        If MobileHealth(MapLevel, Mobnum) <= 0 Then
             KillMob(Mobnum, MobileNameString)
         End If
         Return 0
@@ -541,7 +544,7 @@ Public Class MainForm
     Function PlayerHitLocation(ByVal X As Short, ByVal Y As Short) 'This determines which mobile the player hits then sends it to function "hitmob" to determine damage
         Dim MobXVar As Short
         For MobXVar = 0 To 9 Step 1
-            If X = MobilePosX(MobXVar) And Y = MobilePosY(MobXVar) Then
+            If X = MobilePosX(MapLevel, MobXVar) And Y = MobilePosY(MapLevel, MobXVar) Then
                 HitMob(MobXVar)
                 Exit For
             End If
@@ -554,43 +557,43 @@ Public Class MainForm
         Dim SupressDueToCriticalStrike As Boolean = False
         Dim TestDodgeRandom As New Random
         Dim TestDodge As Short = 0
-        If MobileType(Mobnum) = 1 Then
+        If MobileType(MapLevel, Mobnum) = 1 Then
             DamageAmount = 3
             MobileNameString = "A rat"
-        ElseIf MobileType(Mobnum) = 2 Then
+        ElseIf MobileType(MapLevel, Mobnum) = 2 Then
             DamageAmount = 6
             MobileNameString = "A bat"
-        ElseIf MobileType(Mobnum) = 3 Then
+        ElseIf MobileType(MapLevel, Mobnum) = 3 Then
             DamageAmount = 9
             MobileNameString = "An imp"
-        ElseIf MobileType(Mobnum) = 4 Then
+        ElseIf MobileType(MapLevel, Mobnum) = 4 Then
             DamageAmount = 12
             MobileNameString = "A goblin"
-        ElseIf MobileType(Mobnum) = 5 Then
+        ElseIf MobileType(MapLevel, Mobnum) = 5 Then
             DamageAmount = 15
             MobileNameString = "A troll"
-        ElseIf MobileType(Mobnum) = 6 Then
+        ElseIf MobileType(MapLevel, Mobnum) = 6 Then
             DamageAmount = 18
             MobileNameString = "An ogre"
-        ElseIf MobileType(Mobnum) = 7 Then
+        ElseIf MobileType(MapLevel, Mobnum) = 7 Then
             DamageAmount = 21
             MobileNameString = "A catoblepas"
-        ElseIf MobileType(Mobnum) = 8 Then
+        ElseIf MobileType(MapLevel, Mobnum) = 8 Then
             DamageAmount = 24
             MobileNameString = "A parandrus"
-        ElseIf MobileType(Mobnum) = 9 Then
+        ElseIf MobileType(MapLevel, Mobnum) = 9 Then
             DamageAmount = 27
             MobileNameString = "A clurichuan"
-        ElseIf MobileType(Mobnum) = 10 Then
+        ElseIf MobileType(MapLevel, Mobnum) = 10 Then
             DamageAmount = 30
             MobileNameString = "A dullahan"
-        ElseIf MobileType(Mobnum) = 11 Then
+        ElseIf MobileType(MapLevel, Mobnum) = 11 Then
             DamageAmount = 33
             MobileNameString = "A golem"
-        ElseIf MobileType(Mobnum) = 12 Then
+        ElseIf MobileType(MapLevel, Mobnum) = 12 Then
             DamageAmount = 36
             MobileNameString = "A sceadugengan"
-        ElseIf MobileType(Mobnum) = 13 Then
+        ElseIf MobileType(MapLevel, Mobnum) = 13 Then
             DamageAmount = 39
             MobileNameString = "A schilla"
         Else
@@ -612,14 +615,14 @@ Public Class MainForm
             SND("You dodge an attack.")
         End If
         TestDodge = TestDodgeRandom.Next(0, 100) 'test miss, 10%
-        If TestDodge <= 10 And MobileClumsiness(Mobnum) <= 0 Then
+        If TestDodge <= 10 And MobileClumsiness(MapLevel, Mobnum) <= 0 Then
             SupressDueToCriticalStrike = True
             SND(MobileNameString + "'s attack misses.")
-        ElseIf MobileClumsiness(Mobnum) > 0 And TestDodge <= 50 Then
+        ElseIf MobileClumsiness(MapLevel, Mobnum) > 0 And TestDodge <= 50 Then
             SupressDueToCriticalStrike = True
             SND(MobileNameString + "'s attack misses.")
         End If
-        If MobileClumsiness(Mobnum) > 0 Then MobileClumsiness(Mobnum) -= 1
+        If MobileClumsiness(MapLevel, Mobnum) > 0 Then MobileClumsiness(MapLevel, Mobnum) -= 1
         If SupressDueToCriticalStrike = False Then
             DamageAmount -= PlayerDefense
             If Block > 0 Then 'block skill is active, reduce all damage by 2
@@ -651,22 +654,22 @@ Public Class MainForm
         Dim AlreadyMoved As Boolean = False
         Dim FleeinTerror As New Random
         Dim FleeResult As Short
-        If MobilePosX(MobNum) = PlayerPosX And MobilePosY(MobNum) = PlayerPosY Then
+        If MobilePosX(MapLevel, Mobnum) = PlayerPosX And MobilePosY(MapLevel, Mobnum) = PlayerPosY Then
             'player stepped on mob, mobile is dead, no path required. This sometimes happens on a bad spawn
             KillMob(MobNum, "SILENCE MOB KILL") 'send optional killmob text that supresses xp and message of mob dead
             Return 0
             Exit Function
         End If
         'check to see if character is close
-        If Math.Abs(MobilePosX(MobNum) - PlayerPosX) < 3 And Math.Abs(MobilePosY(MobNum) - PlayerPosY) < 3 Then '3 block radius of visibility
+        If Math.Abs(MobilePosX(MapLevel, Mobnum) - PlayerPosX) < 3 And Math.Abs(MobilePosY(MapLevel, Mobnum) - PlayerPosY) < 3 Then '3 block radius of visibility
             Resolved = False
         End If
-        While Resolved = False And MobileFlee(MobNum) = 0 And PlayerHidden = 0 'this is mobile pathfinding straight to the player
+        While Resolved = False And MobileFlee(MapLevel, Mobnum) = 0 And PlayerHidden = 0 'this is mobile pathfinding straight to the player
             StepNum += 1
-            If PlayerPosX > MobilePosX(MobNum) Then
+            If PlayerPosX > MobilePosX(MapLevel, Mobnum) Then
                 'if the variable isn't passed into this if statement, it's because mobile tried moving onto another mobile or wall
-                If Map(MobilePosX(MobNum) + 1, MobilePosY(MobNum)) > 0 And Map(MobilePosX(MobNum) + 1, MobilePosY(MobNum)) < 4 Then
-                    If MobilePosX(MobNum) + 1 = PlayerPosX And MobilePosY(MobNum) = PlayerPosY Then 'if mobile plans on moving east and character is to the east, hit character instead of move
+                If Map(MapLevel, MobilePosX(MapLevel, Mobnum) + 1, MobilePosY(MapLevel, Mobnum)) <> Wall Then
+                    If MobilePosX(MapLevel, Mobnum) + 1 = PlayerPosX And MobilePosY(MapLevel, Mobnum) = PlayerPosY Then 'if mobile plans on moving east and character is to the east, hit character instead of move
                         FleeResult = FleeinTerror.Next(0, 101)
                         If FleeResult <= PlayerCHA Then
                             FleeMob(MobNum)
@@ -677,7 +680,7 @@ Public Class MainForm
                             AlreadyMoved = True
                         End If
                     Else
-                        If MapOccupied(MobilePosX(MobNum) + 1, MobilePosY(MobNum)) = 0 Then 'ensures that the sector isn't already occupied by another mobile
+                        If MapOccupied(MapLevel, MobilePosX(MapLevel, MobNum) + 1, MobilePosY(MapLevel, MobNum)) = 0 Then 'ensures that the sector isn't already occupied by another mobile
                             MoveMobile(MobNum, East)
                             Resolved = True
                             AlreadyMoved = True
@@ -685,10 +688,10 @@ Public Class MainForm
                     End If
                 End If
             End If
-            If PlayerPosX < MobilePosX(MobNum) And Resolved = False Then
+            If PlayerPosX < MobilePosX(MapLevel, MobNum) And Resolved = False Then
                 'if the variable isn't passed into this if statement, it's because mobile tried moving onto another mobile or wall
-                If Map(MobilePosX(MobNum) - 1, MobilePosY(MobNum)) > 0 And Map(MobilePosX(MobNum) - 1, MobilePosY(MobNum)) < 4 Then
-                    If MobilePosX(MobNum) - 1 = PlayerPosX And MobilePosY(MobNum) = PlayerPosY Then 'if mobile plans on moving west and character is to the west, hit character instead of moving
+                If Map(MapLevel, MobilePosX(MapLevel, MobNum) - 1, MobilePosY(MapLevel, MobNum)) <> Wall Then
+                    If MobilePosX(MapLevel, MobNum) - 1 = PlayerPosX And MobilePosY(MapLevel, MobNum) = PlayerPosY Then 'if mobile plans on moving west and character is to the west, hit character instead of moving
                         FleeResult = FleeinTerror.Next(0, 101)
                         If FleeResult <= PlayerCHA Then
                             FleeMob(MobNum)
@@ -699,7 +702,7 @@ Public Class MainForm
                             AlreadyMoved = True
                         End If
                     Else
-                        If MapOccupied(MobilePosX(MobNum) - 1, MobilePosY(MobNum)) = 0 Then 'ensures that the sector isn't already occupied by another mobile
+                        If MapOccupied(MapLevel, MobilePosX(MapLevel, MobNum) - 1, MobilePosY(MapLevel, MobNum)) = 0 Then 'ensures that the sector isn't already occupied by another mobile
                             MoveMobile(MobNum, West)
                             Resolved = True
                             AlreadyMoved = True
@@ -707,10 +710,10 @@ Public Class MainForm
                     End If
                 End If
             End If
-            If PlayerPosY > MobilePosY(MobNum) And Resolved = False Then
+            If PlayerPosY > MobilePosY(MapLevel, MobNum) And Resolved = False Then
                 'if the variable isn't passed into this if statement, it's because mobile tried moving onto another mobile or wall
-                If Map(MobilePosX(MobNum), MobilePosY(MobNum) + 1) > 0 And Map(MobilePosX(MobNum), MobilePosY(MobNum) + 1) < 4 Then
-                    If MobilePosY(MobNum) + 1 = PlayerPosY And MobilePosX(MobNum) = PlayerPosX Then 'if mobile plans on moving south and character is to the south, hit character instead of moving
+                If Map(MapLevel, MobilePosX(MapLevel, MobNum), MobilePosY(MapLevel, MobNum) + 1) <> Wall Then
+                    If MobilePosY(MapLevel, MobNum) + 1 = PlayerPosY And MobilePosX(MapLevel, MobNum) = PlayerPosX Then 'if mobile plans on moving south and character is to the south, hit character instead of moving
                         FleeResult = FleeinTerror.Next(0, 101)
                         If FleeResult <= PlayerCHA Then
                             FleeMob(MobNum)
@@ -721,7 +724,7 @@ Public Class MainForm
                             AlreadyMoved = True
                         End If
                     Else
-                        If MapOccupied(MobilePosX(MobNum), MobilePosY(MobNum) + 1) = 0 Then 'ensures that the sector isn't already occupied by another mobile
+                        If MapOccupied(MapLevel, MobilePosX(MapLevel, MobNum), MobilePosY(MapLevel, MobNum) + 1) = 0 Then 'ensures that the sector isn't already occupied by another mobile
                             MoveMobile(MobNum, South)
                             Resolved = True
                             AlreadyMoved = True
@@ -729,10 +732,10 @@ Public Class MainForm
                     End If
                 End If
             End If
-            If PlayerPosY < MobilePosY(MobNum) And Resolved = False Then
+            If PlayerPosY < MobilePosY(MapLevel, MobNum) And Resolved = False Then
                 'if the variable isn't passed into this if statement, it's because mobile tried moving onto another mobile or wall
-                If Map(MobilePosX(MobNum), MobilePosY(MobNum) - 1) > 0 And Map(MobilePosX(MobNum), MobilePosY(MobNum) - 1) < 4 Then
-                    If MobilePosY(MobNum) - 1 = PlayerPosY And MobilePosX(MobNum) = PlayerPosX Then 'if mobile plans on moving north and character is to the north, hit character instead of moving
+                If Map(MapLevel, MobilePosX(MapLevel, MobNum), MobilePosY(MapLevel, MobNum) - 1) <> Wall Then
+                    If MobilePosY(MapLevel, MobNum) - 1 = PlayerPosY And MobilePosX(MapLevel, MobNum) = PlayerPosX Then 'if mobile plans on moving north and character is to the north, hit character instead of moving
                         FleeResult = FleeinTerror.Next(0, 101)
                         If FleeResult <= PlayerCHA Then
                             FleeMob(MobNum)
@@ -743,7 +746,7 @@ Public Class MainForm
                             AlreadyMoved = True
                         End If
                     Else
-                        If MapOccupied(MobilePosX(MobNum), MobilePosY(MobNum) - 1) = 0 Then 'ensures that the sector isn't already occupied by another mobile
+                        If MapOccupied(MapLevel, MobilePosX(MapLevel, MobNum), MobilePosY(MapLevel, MobNum) - 1) = 0 Then 'ensures that the sector isn't already occupied by another mobile
                             MoveMobile(MobNum, North)
                             Resolved = True
                             AlreadyMoved = True
@@ -755,80 +758,80 @@ Public Class MainForm
                 Resolved = True
             End If
         End While
-        If MobileFlee(MobNum) > 0 Or PlayerHidden > 0 Then
-            MobileFlee(MobNum) -= 1
-            If MobileFlee(MobNum) < 0 Then MobileFlee(MobNum) = 0
+        If MobileFlee(MapLevel, MobNum) > 0 Or PlayerHidden > 0 Then
+            MobileFlee(MapLevel, MobNum) -= 1
+            If MobileFlee(MapLevel, MobNum) < 0 Then MobileFlee(MapLevel, MobNum) = 0
             Resolved = True
         End If
         If Resolved = True And AlreadyMoved = False Then 'this is random mobile movement since the player isn't visible
             Dim FinishMovement As Boolean = False
             Dim RandomDirection As New Random
             Dim RandomPick As Short = RandomDirection.Next(1)
-            If RandomPick = 0 Then RandomPick = MobileLastMove(MobNum) 'continues in same direction unless blocked, 50% chance
+            If RandomPick = 0 Then RandomPick = MobileLastMove(MapLevel, MobNum) 'continues in same direction unless blocked, 50% chance
             If RandomPick = 1 Then RandomPick = RandomDirection.Next(1, 5) 'makes new path, 50% chance
             Dim Tries As Short = 1
             While FinishMovement = False
-                If RandomPick = 1 And MobilePosY(MobNum) > 0 And MobileHealth(MobNum) > 0 Then 'north
-                    If MobileLastMove(MobNum) <> South Then
-                        If Map(MobilePosX(MobNum), MobilePosY(MobNum) - 1) > 0 And Map(MobilePosX(MobNum), MobilePosY(MobNum) - 1) < 4 Then 'is there no walls to the north?
-                            If MobilePosY(MobNum) - 1 = PlayerPosY And MobilePosX(MobNum) = PlayerPosX Then
-                                If MobileFlee(MobNum) > 0 Then
+                If RandomPick = 1 And MobilePosY(MapLevel, MobNum) > 0 And MobileHealth(MapLevel, MobNum) > 0 Then 'north
+                    If MobileLastMove(MapLevel, MobNum) <> South Then
+                        If Map(MapLevel, MobilePosX(MapLevel, MobNum), MobilePosY(MapLevel, MobNum) - 1) <> Wall Then 'is there no walls to the north?
+                            If MobilePosY(MapLevel, MobNum) - 1 = PlayerPosY And MobilePosX(MapLevel, MobNum) = PlayerPosX Then
+                                If MobileFlee(MapLevel, MobNum) > 0 Then
                                     MobileFleeFail(MobNum)
                                 End If
                                 'mobile can't move into player, this is set incase the mobile is fleeing
                             Else
-                                If MapOccupied(MobilePosX(MobNum), MobilePosY(MobNum) - 1) = 0 Then 'doesn't allow mobs to group up in a single sector
+                                If MapOccupied(MapLevel, MobilePosX(MapLevel, MobNum), MobilePosY(MapLevel, MobNum) - 1) = 0 Then 'doesn't allow mobs to group up in a single sector
                                     FinishMovement = True
                                     MoveMobile(MobNum, North)
                                 End If
                             End If
                         End If
                     End If
-                ElseIf RandomPick = 2 And MobilePosX(MobNum) < 25 And MobileHealth(MobNum) > 0 Then 'east
-                    If MobileLastMove(MobNum) <> West Then
+                ElseIf RandomPick = 2 And MobilePosX(MapLevel, MobNum) < 25 And MobileHealth(MapLevel, MobNum) > 0 Then 'east
+                    If MobileLastMove(MapLevel, MobNum) <> West Then
                         'cannot allow mobiles to go back to spots they were just at in random direction.
-                        If Map(MobilePosX(MobNum) + 1, MobilePosY(MobNum)) > 0 And Map(MobilePosX(MobNum) + 1, MobilePosY(MobNum)) < 4 Then 'is there no walls to the east?
-                            If MobilePosY(MobNum) = PlayerPosY And MobilePosX(MobNum) + 1 = PlayerPosX Then
-                                If MobileFlee(MobNum) > 0 Then
+                        If Map(MapLevel, MobilePosX(MapLevel, MobNum) + 1, MobilePosY(MapLevel, MobNum)) <> Wall Then 'is there no walls to the east?
+                            If MobilePosY(MapLevel, MobNum) = PlayerPosY And MobilePosX(MapLevel, MobNum) + 1 = PlayerPosX Then
+                                If MobileFlee(MapLevel, MobNum) > 0 Then
                                     MobileFleeFail(MobNum)
                                 End If
                                 'mobile can't move into player, this is set incase the mobile is fleeing
                             Else
-                                If MapOccupied(MobilePosX(MobNum) + 1, MobilePosY(MobNum)) = 0 Then 'doesn't allow mobs to group up in a single sector
+                                If MapOccupied(MapLevel, MobilePosX(MapLevel, MobNum) + 1, MobilePosY(MapLevel, MobNum)) = 0 Then 'doesn't allow mobs to group up in a single sector
                                     FinishMovement = True
                                     MoveMobile(MobNum, East)
                                 End If
                             End If
                         End If
                     End If
-                ElseIf RandomPick = 3 And MobilePosY(MobNum) < 25 And MobileHealth(MobNum) > 0 Then 'south
-                    If MobileLastMove(MobNum) <> North Then
+                ElseIf RandomPick = 3 And MobilePosY(MapLevel, MobNum) < 25 And MobileHealth(MapLevel, MobNum) > 0 Then 'south
+                    If MobileLastMove(MapLevel, MobNum) <> North Then
                         'cannot allow mobiles to go back to spots they were just at in random direction.
-                        If Map(MobilePosX(MobNum), MobilePosY(MobNum) + 1) > 0 And Map(MobilePosX(MobNum), MobilePosY(MobNum) + 1) < 4 Then 'is there no walls to the south?
-                            If MobilePosY(MobNum) + 1 = PlayerPosY And MobilePosX(MobNum) = PlayerPosX Then
-                                If MobileFlee(MobNum) > 0 Then
+                        If Map(MapLevel, MobilePosX(MapLevel, MobNum), MobilePosY(MapLevel, MobNum) + 1) <> Wall Then 'is there no walls to the south?
+                            If MobilePosY(MapLevel, MobNum) + 1 = PlayerPosY And MobilePosX(MapLevel, MobNum) = PlayerPosX Then
+                                If MobileFlee(MapLevel, MobNum) > 0 Then
                                     MobileFleeFail(MobNum)
                                 End If
                                 'mobile can't move into player, this is set incase the mobile is fleeing
                             Else
-                                If MapOccupied(MobilePosX(MobNum), MobilePosY(MobNum) + 1) = 0 Then 'doesn't allow mobs to group up in a single sector
+                                If MapOccupied(MapLevel, MobilePosX(MapLevel, MobNum), MobilePosY(MapLevel, MobNum) + 1) = 0 Then 'doesn't allow mobs to group up in a single sector
                                     FinishMovement = True
                                     MoveMobile(MobNum, South)
                                 End If
                             End If
                         End If
                     End If
-                ElseIf RandomPick = 4 And MobilePosX(MobNum) > 0 And MobileHealth(MobNum) > 0 Then 'west
-                    If MobileLastMove(MobNum) <> East Then
+                ElseIf RandomPick = 4 And MobilePosX(MapLevel, MobNum) > 0 And MobileHealth(MapLevel, MobNum) > 0 Then 'west
+                    If MobileLastMove(MapLevel, MobNum) <> East Then
                         'cannot allow mobiles to go back to spots they were just at in random direction.
-                        If Map(MobilePosX(MobNum) - 1, MobilePosY(MobNum)) > 0 And Map(MobilePosX(MobNum) - 1, MobilePosY(MobNum)) < 4 Then 'is there no walls to the west?
-                            If MobilePosY(MobNum) = PlayerPosY And MobilePosX(MobNum) - 1 = PlayerPosX Then
-                                If MobileFlee(MobNum) > 0 Then
+                        If Map(MapLevel, MobilePosX(MapLevel, MobNum) - 1, MobilePosY(MapLevel, MobNum)) <> Wall Then 'is there no walls to the west?
+                            If MobilePosY(MapLevel, MobNum) = PlayerPosY And MobilePosX(MapLevel, MobNum) - 1 = PlayerPosX Then
+                                If MobileFlee(MapLevel, MobNum) > 0 Then
                                     MobileFleeFail(MobNum)
                                 End If
                                 'mobile can't move into player, this is set incase the mobile is fleeing
                             Else
-                                If MapOccupied(MobilePosX(MobNum) - 1, MobilePosY(MobNum)) = 0 Then 'doesn't allow mobs to group up in a single sector
+                                If MapOccupied(MapLevel, MobilePosX(MapLevel, MobNum) - 1, MobilePosY(MapLevel, MobNum)) = 0 Then 'doesn't allow mobs to group up in a single sector
                                     FinishMovement = True
                                     MoveMobile(MobNum, West)
                                 End If
@@ -839,14 +842,14 @@ Public Class MainForm
                 Tries += 1
                 If Tries >= 8 Then 'stay in same spot... boorrrring... really rare
                     FinishMovement = True
-                    MobileLastMove(MobNum) = 5
+                    MobileLastMove(MapLevel, MobNum) = 5
                     Tries = 1
                 End If
                 RandomPick = RandomDirection.Next(1, 5)
             End While
         End If
-        MobilePrevX(MobNum) = MobilePosX(MobNum)
-        MobilePrevY(MobNum) = MobilePosY(MobNum)
+        MobilePrevX(MapLevel, Mobnum) = MobilePosX(MapLevel, Mobnum)
+        MobilePrevY(MapLevel, Mobnum) = MobilePosY(MapLevel, Mobnum)
         Return 0
     End Function
 #End Region
@@ -854,29 +857,32 @@ Public Class MainForm
     Private Sub Initialize(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
         'resize windows
         Dim Oldscreenheight As Integer = Me.Height 'used to distinguish the correct layout of the width
-        Me.Height = Screen.PrimaryScreen.WorkingArea.Height - 50 'arranges the height to the screen, assorting tiles to perspective size
-        Me.Width += Me.Height - Oldscreenheight 'ensures the width is correspondant to the height
-        Me.CenterToScreen() 'center to the screen
-        TheRoomHeight = Math.Round(Me.Height / (MapSize + 2), 0)  'test the room height
-        TheRoomWidth = Math.Round(Me.Width / (MapSize + 2), 0)  'test the room width
+        Me.Height = Screen.PrimaryScreen.WorkingArea.Height - 5 'arranges the height to the screen, assorting tiles to perspective size
+        Me.Width = Me.Height - Oldscreenheight 'ensures the width is correspondant to the height
+        If Me.Width < Me.Height Then Me.Width = Me.Height
+        TheRoomHeight = Math.Round(Me.Height / (MapSize + 2), 0) - 4  'test the room height
+        TheRoomWidth = Math.Round(Me.Width / (MapSize + 2), 0) - 4  'test the room width
         If TheRoomHeight > TheRoomWidth Then TheRoomHeight = TheRoomWidth 'ensures that the window is scaled to the smallest of the two
         If TheRoomWidth > TheRoomHeight Then TheRoomWidth = TheRoomHeight 'ensures that the window is scaled to the smallest of the two
+        Me.Width = TheRoomWidth * MapSize + MapSize + 20 + Panel1.Width
+        Me.Height = TheRoomWidth * MapSize + MapSize + 60
+        Me.CenterToScreen() 'center to the screen
         Panel1.Left = Me.Width - Panel1.Width - 15 'sorts the panels width to the width of the window
-        Panel2.Left = Panel1.Left
+        Panel1.Height = Me.Height
         HealthBar.Left = Me.Width - Panel1.Width - 10 'arranges the healthbar
         WillpowerBar.Left = Me.Width - Panel1.Width - 10 'arrange the willpowerbar according to the panel
         StatBox.Left = Me.Width - Panel1.Width - 10 'arrange the statbox according tot he panel
-        Comment1.Left = (Me.Width / 2) - (Comment1.Width / 2) : Comment1.Top = Me.Height - Comment1.Height - 30
-        Comment2.Left = (Me.Width / 2) - (Comment2.Width / 2) : Comment2.Top = Me.Height - Comment2.Height - 30
-        Comment3.Left = (Me.Width / 2) - (Comment3.Width / 2) : Comment3.Top = Me.Height - Comment3.Height - 30
-        Comment4.Left = (Me.Width / 2) - (Comment4.Width / 2) : Comment4.Top = Me.Height - Comment4.Height - 30
-        Comment5.Left = (Me.Width / 2) - (Comment5.Width / 2) : Comment5.Top = Me.Height - Comment5.Height - 30
-        Comment6.Left = (Me.Width / 2) - (Comment6.Width / 2) : Comment6.Top = Me.Height - Comment6.Height - 30
-        Comment7.Left = (Me.Width / 2) - (Comment7.Width / 2) : Comment7.Top = Me.Height - Comment7.Height - 30
-        Comment8.Left = (Me.Width / 2) - (Comment8.Width / 2) : Comment8.Top = Me.Height - Comment8.Height - 30
-        Comment9.Left = (Me.Width / 2) - (Comment9.Width / 2) : Comment9.Top = Me.Height - Comment9.Height - 30
-        Comment10.Left = (Me.Width / 2) - (Comment10.Width / 2) : Comment10.Top = Me.Height - Comment10.Height - 30
-        Comment11.Left = (Me.Width / 2) - (Comment11.Width / 2) : Comment11.Top = Me.Height - Comment11.Height - 30
+        Comment1.Left = (Me.Width / 2) - (Comment1.Width / 2) - (Panel1.Width / 2) : Comment1.Top = Me.Height - Comment1.Height - 30
+        Comment2.Left = (Me.Width / 2) - (Comment2.Width / 2) - (Panel1.Width / 2) : Comment2.Top = Me.Height - Comment2.Height - 30
+        Comment3.Left = (Me.Width / 2) - (Comment3.Width / 2) - (Panel1.Width / 2) : Comment3.Top = Me.Height - Comment3.Height - 30
+        Comment4.Left = (Me.Width / 2) - (Comment4.Width / 2) - (Panel1.Width / 2) : Comment4.Top = Me.Height - Comment4.Height - 30
+        Comment5.Left = (Me.Width / 2) - (Comment5.Width / 2) - (Panel1.Width / 2) : Comment5.Top = Me.Height - Comment5.Height - 30
+        Comment6.Left = (Me.Width / 2) - (Comment6.Width / 2) - (Panel1.Width / 2) : Comment6.Top = Me.Height - Comment6.Height - 30
+        Comment7.Left = (Me.Width / 2) - (Comment7.Width / 2) - (Panel1.Width / 2) : Comment7.Top = Me.Height - Comment7.Height - 30
+        Comment8.Left = (Me.Width / 2) - (Comment8.Width / 2) - (Panel1.Width / 2) : Comment8.Top = Me.Height - Comment8.Height - 30
+        Comment9.Left = (Me.Width / 2) - (Comment9.Width / 2) - (Panel1.Width / 2) : Comment9.Top = Me.Height - Comment9.Height - 30
+        Comment10.Left = (Me.Width / 2) - (Comment10.Width / 2) - (Panel1.Width / 2) : Comment10.Top = Me.Height - Comment10.Height - 30
+        Comment11.Left = (Me.Width / 2) - (Comment11.Width / 2) - (Panel1.Width / 2) : Comment11.Top = Me.Height - Comment11.Height - 30
         'test display fonts
         displayfont = New Font("Arial", -4 + (TheRoomHeight + TheRoomWidth / 2) / 2)
         'end resize windows
@@ -901,42 +907,56 @@ Public Class MainForm
             SaveTextToFile("[Name]              [Race]        [Class]          [Level] [Experience] [Depth]      [Gold]    [Turns]" + Chr(13) + "Jarvis              Gnome         Gravedigger      4       45           6            141       1690", CurDir() + "\HighScores.TG", , True)
             HighScores = GetFileContents(CurDir() + "\HighScores.TG")
         End If
+        Me.Focus()
     End Sub
 #End Region
 #Region "Build Map"
-    Private Sub BuildNewMap()
+    Private Sub BuildNewMap(Optional ByVal DirectionTraveled As Boolean = True)
         CANVAS.FillRectangle(Brushes.Black, 1, 1, 1200, 1200)
-        Dim RefreshShownMapX, RefreshShownMapY As Short
-        For RefreshShownMapX = 0 To MapSize Step 1
-            For RefreshShownMapY = 0 To MapSize Step 1
-                MapShown(RefreshShownMapX, RefreshShownMapY) = False
-                DrawingProcedures.LOSMap(RefreshShownMapX, RefreshShownMapY) = Hidden
+        'refresh line of sight for new map
+        For x = 0 To MapSize Step 1
+            For y = 0 To MapSize Step 1
+                DrawingProcedures.LOSMap(x, y) = Hidden
             Next
         Next
-        DetermineEnvironment()
-        GenerateMap(8)
-        GenerateFog()
-        GenerateBlur()
-        PopulateItems()
-        PopulateMobiles()
-        PopulateEntrances()
+        'check to see if the new map was one visited already
+        If MapCreated(MapLevel) = False Then 'entering a new map, need to generate
+            GenerateMap(8)
+            DetermineEnvironment()
+            GenerateFog()
+            GenerateBlur()
+            PopulateItems()
+            PopulateMobiles()
+            PopulateEntrances()
+            MapCreated(MapLevel) = True
+        Else
+            If DirectionTraveled = False Then 'up traveled, show down exit
+                PlayerPosX = MapEntrances(MapLevel, 0, 0)
+                PlayerPosY = MapEntrances(MapLevel, 0, 1)
+            Else 'down traveled
+                PlayerPosX = MapEntrances(MapLevel, 1, 0)
+                PlayerPosY = MapEntrances(MapLevel, 1, 1)
+            End If
+        End If
+        DrawingProcedures.ChangedMode = True
         ReDraw()
+        DrawingProcedures.ChangedMode = False
     End Sub
     Sub GenerateBlur()
         For x = 0 To MapSize Step 1
             For y = 0 To MapSize Step 1
-                If Map(x, y) = Wall Then
+                If Map(Maplevel, x, y) = Wall Then
                     If x > 0 Then
-                        If Map(x - 1, y) <> Wall Then MapBlur(x, y, 3) = True Else MapBlur(x, y, 3) = False
+                        If Map(MapLevel, x - 1, y) <> Wall Then MapBlur(MapLevel, x, y, 3) = True Else MapBlur(MapLevel, x, y, 3) = False
                     End If
                     If x < MapSize Then
-                        If Map(x + 1, y) <> Wall Then MapBlur(x, y, 1) = True Else MapBlur(x, y, 1) = False
+                        If Map(MapLevel, x + 1, y) <> Wall Then MapBlur(MapLevel, x, y, 1) = True Else MapBlur(MapLevel, x, y, 1) = False
                     End If
                     If y > 0 Then
-                        If Map(x, y - 1) <> Wall Then MapBlur(x, y, 2) = True Else MapBlur(x, y, 2) = False
+                        If Map(MapLevel, x, y - 1) <> Wall Then MapBlur(MapLevel, x, y, 2) = True Else MapBlur(MapLevel, x, y, 2) = False
                     End If
                     If y < MapSize Then
-                        If Map(x, y + 1) <> Wall Then MapBlur(x, y, 0) = True Else MapBlur(x, y, 0) = False
+                        If Map(MapLevel, x, y + 1) <> Wall Then MapBlur(MapLevel, x, y, 0) = True Else MapBlur(MapLevel, x, y, 0) = False
                     End If
                 End If
             Next
@@ -955,12 +975,14 @@ Public Class MainForm
                 'no place to put the item, recursion too high, exit (catch)
                 Exit While
             End If
-            If Map(RandomPosX, RandomPosY) = 1 Then
+            If Map(MapLevel, RandomPosX, RandomPosY) = 1 Then
                 Foundentrance = True
                 If MapLevel >= 2 Then 'ensures that the player can't go to levels before 1
-                    'Map(RandomPosX, RandomPosY) = 2 'uncomment this to allow stairs up
-                    'EntrancePosX = RandomPosX 'uncomment this to allow stairs up
-                    'EntrancePosY = RandomPosY 'uncomment this to allow stairs up
+                    Map(MapLevel, RandomPosX, RandomPosY) = StairsUp 'uncomment this to allow stairs up
+                    EntrancePosX = RandomPosX 'uncomment this to allow stairs up
+                    EntrancePosY = RandomPosY 'uncomment this to allow stairs up
+                    MapEntrances(MapLevel, 1, 0) = RandomPosX
+                    MapEntrances(MapLevel, 1, 1) = RandomPosY
                 End If
                 PlayerPosX = RandomPosX
                 PlayerPosY = RandomPosY
@@ -979,9 +1001,11 @@ Public Class MainForm
                 'no place to put the item, recursion too high, exit (catch)
                 Exit While
             End If
-            If Map(RandomPosX, RandomPosY) = 1 Then
+            If Map(MapLevel, RandomPosX, RandomPosY) = 1 Then
                 If Math.Abs(RandomPosX - EntrancePosX) >= 5 Or Math.Abs(RandomPosY - EntrancePosY) >= 5 Then
-                    Map(RandomPosX, RandomPosY) = 3
+                    Map(MapLevel, RandomPosX, RandomPosY) = StairsDown
+                    MapEntrances(MapLevel, 0, 0) = RandomPosX
+                    MapEntrances(MapLevel, 0, 1) = RandomPosY
                     Foundexit = True
                 Else
                     RandomPosX = RandomNum.Next(1, MapSize - 1)
@@ -996,7 +1020,6 @@ Public Class MainForm
     Sub DetermineEnvironment()
         Dim RandomNum As New Random
         Dim RandomEnvironment As Short = RandomNum.Next(0, 10)
-        MapLevel += 1
         If MapLevel < 4 Then
             EnvironmentType = 0
         ElseIf MapLevel < 7 Then
@@ -1057,7 +1080,7 @@ Public Class MainForm
         Dim Tries As Short = 0
         For ItemNumber = 0 To MaxItems Step 1
             FoundPosition = False
-            ItemNum(ItemNumber) = ItemNumber
+            ItemNum(MapLevel, ItemNumber) = ItemNumber
             Tries = 0
             While FoundPosition = False
                 Tries += 1
@@ -1067,21 +1090,21 @@ Public Class MainForm
                 End If
                 RandomPosX = RandomNum.Next(1, MapSize - 1) 'don't want to start a mobile on the edge of the map... just because it doesn't look pretty
                 RandomPosY = RandomNum.Next(1, MapSize - 1) 'don't want to start a mobile on the edge of the map... just because it doesn't look pretty
-                If Map(RandomPosX, RandomPosY) = 1 Then 'if map sector is floor (can't draw items onto a wall.. that's just silly)
-                    ItemOccupied(RandomPosX, RandomPosY) = ItemNum(ItemNumber)
+                If Map(MapLevel, RandomPosX, RandomPosY) = 1 Then 'if map sector is floor (can't draw items onto a wall.. that's just silly)
+                    ItemOccupied(MapLevel, RandomPosX, RandomPosY) = ItemNum(MapLevel, ItemNumber)
                     GenerateItem.GenerateRandomItem(ItemNumber)
                     'Public NameType As String
                     'Public ItemType As Short
                     'Public ShowType As String
-                    ItemType(ItemNumber) = GenerateItem.ItemType
-                    ItemShowType(RandomPosX, RandomPosY) = GenerateItem.ShowType
-                    ItemNameType(RandomPosX, RandomPosY) = GenerateItem.NameType
-                    If MapLevel = 28 And ItemNumber = MaxItems Then 'the reason we show it on item nine is because i allowed items to spawn over each other, this is
-                        ItemType(ItemNumber) = TheEverspark 'an easy way to ensure that there's not always 10 items.
+                    ItemType(MapLevel, ItemNumber) = GenerateItem.ItemType
+                    ItemShowType(MapLevel, RandomPosX, RandomPosY) = GenerateItem.ShowType
+                    ItemNameType(MapLevel, RandomPosX, RandomPosY) = GenerateItem.NameType
+                    If MapLevel = MaxDepthLevel And ItemNumber = MaxItems Then 'the reason we show it on item nine is because i allowed items to spawn over each other, this is
+                        ItemType(MapLevel, ItemNumber) = TheEverspark 'an easy way to ensure that there's not always 10 items.
                     End If
                     FoundPosition = True
                     If LTrim(GenerateItem.NameType) = "" Then 'this prevents stringless items which occur rarely.. remove when bug is found in generate item
-                        ItemOccupied(RandomPosX, RandomPosY) = 0
+                        ItemOccupied(MapLevel, RandomPosX, RandomPosY) = 0
                     End If
                 End If
             End While
@@ -1097,7 +1120,7 @@ Public Class MainForm
         'clear previous map occupied first
         For RandomPosX = 0 To MapSize Step 1
             For RandomPosY = 0 To MapSize Step 1
-                MapOccupied(RandomPosX, RandomPosY) = 0
+                MapOccupied(MapLevel, RandomPosX, RandomPosY) = 0
             Next
         Next
         'initiate population
@@ -1114,44 +1137,44 @@ Public Class MainForm
                 End If
                 RandomPosX = RandomNum.Next(1, MapSize - 1) 'don't want to start a mobile on the edge of the map... just because it doesn't look pretty
                 RandomPosY = RandomNum.Next(1, MapSize - 1) 'don't want to start a mobile on the edge of the map... just because it doesn't look pretty
-                If Map(RandomPosX, RandomPosY) = 1 Then
-                    MapOccupied(RandomPosX, RandomPosY) = RandomMobType 'assign mobiles random type
-                    MobOccupied(RandomPosX, RandomPosY) = MobileNumber
-                    MobilePosX(MobileNumber) = RandomPosX : MobilePosY(MobileNumber) = RandomPosY
-                    MobilePrevX(MobileNumber) = RandomPosX : MobilePrevY(MobileNumber) = RandomPosY
-                    MobileType(MobileNumber) = RandomMobType
+                If Map(MapLevel, RandomPosX, RandomPosY) = 1 Then
+                    MapOccupied(MapLevel, RandomPosX, RandomPosY) = RandomMobType 'assign mobiles random type
+                    MobOccupied(MapLevel, RandomPosX, RandomPosY) = MobileNumber
+                    MobilePosX(MapLevel, MobileNumber) = RandomPosX : MobilePosY(MapLevel, MobileNumber) = RandomPosY
+                    MobilePrevX(MapLevel, MobileNumber) = RandomPosX : MobilePrevY(MapLevel, MobileNumber) = RandomPosY
+                    MobileType(MapLevel, MobileNumber) = RandomMobType
                     If RandomMobType = 1 Then 'assign the mobiles health depending on their type
-                        MobileHealth(MobileNumber) = 2 + MapLevel
+                        MobileHealth(MapLevel, MobileNumber) = 2 + MapLevel
                     ElseIf RandomMobType = 2 Then
-                        MobileHealth(MobileNumber) = 2 + MapLevel
+                        MobileHealth(MapLevel, MobileNumber) = 2 + MapLevel
                     ElseIf RandomMobType = 3 Then
-                        MobileHealth(MobileNumber) = 3 + MapLevel
+                        MobileHealth(MapLevel, MobileNumber) = 3 + MapLevel
                     ElseIf RandomMobType = 4 Then
-                        MobileHealth(MobileNumber) = 3 + MapLevel
+                        MobileHealth(MapLevel, MobileNumber) = 3 + MapLevel
                     ElseIf RandomMobType = 5 Then
-                        MobileHealth(MobileNumber) = 3 + MapLevel
+                        MobileHealth(MapLevel, MobileNumber) = 3 + MapLevel
                     ElseIf RandomMobType = 6 Then
-                        MobileHealth(MobileNumber) = 5 + MapLevel
+                        MobileHealth(MapLevel, MobileNumber) = 5 + MapLevel
                     ElseIf RandomMobType = 7 Then
-                        MobileHealth(MobileNumber) = 5 + MapLevel
+                        MobileHealth(MapLevel, MobileNumber) = 5 + MapLevel
                     ElseIf RandomMobType = 8 Then
-                        MobileHealth(MobileNumber) = 5 + MapLevel
+                        MobileHealth(MapLevel, MobileNumber) = 5 + MapLevel
                     ElseIf RandomMobType = 9 Then
-                        MobileHealth(MobileNumber) = 5 + MapLevel
+                        MobileHealth(MapLevel, MobileNumber) = 5 + MapLevel
                     ElseIf RandomMobType = 10 Then
-                        MobileHealth(MobileNumber) = 10 + MapLevel
+                        MobileHealth(MapLevel, MobileNumber) = 10 + MapLevel
                     ElseIf RandomMobType = 11 Then
-                        MobileHealth(MobileNumber) = 10 + MapLevel
+                        MobileHealth(MapLevel, MobileNumber) = 10 + MapLevel
                     ElseIf RandomMobType = 12 Then
-                        MobileHealth(MobileNumber) = 10 + MapLevel
+                        MobileHealth(MapLevel, MobileNumber) = 10 + MapLevel
                     ElseIf RandomMobType = 13 Then
-                        MobileHealth(MobileNumber) = 10 + MapLevel
+                        MobileHealth(MapLevel, MobileNumber) = 10 + MapLevel
                     Else 'this is a catch to ensure that mobile types stay within known bounds in case environments are ever added, set all future mobiles
-                        MobileHealth(MobileNumber) = 1 'to retain the same hitpoints as the rat (1)
-                        MobileType(MobileNumber) = 1
-                        MapOccupied(RandomPosX, RandomPosY) = 1
+                        MobileHealth(MapLevel, MobileNumber) = 1 'to retain the same hitpoints as the rat (1)
+                        MobileType(MapLevel, MobileNumber) = 1
+                        MapOccupied(MapLevel, RandomPosX, RandomPosY) = 1
                     End If
-                    MobileExists(RandomPosX, RandomPosY) = True 'set mobile to living
+                    MobileExists(MapLevel, RandomPosX, RandomPosY) = True 'set mobile to living
                     FoundPosition = True
                 End If
             End While
@@ -1176,7 +1199,7 @@ Public Class MainForm
         End If
         If GenerateRandomType = Dungeon Then
             For RepeatToRecursion = 1 To Recursion Step 1
-                Map(BuilderPositionX, BuilderPositionY) = 1
+                Map(MapLevel, BuilderPositionX, BuilderPositionY) = 1
                 While Turns > 0
                     PotentialGrowth = 0
                     '-------Pick Random Direction---------
@@ -1193,86 +1216,86 @@ Public Class MainForm
                     StopWhile = 0
                     If BuilderDirection = North And BuilderPositionY > 2 Then 'Verifying there is room for growth in that direction, at least 2 spaces
                         PotentialGrowth = BuilderPositionY - 1
-                        If Map(BuilderPositionX, BuilderPositionY - 1) = 1 Then 'already carved, no need to proceed
+                        If Map(MapLevel, BuilderPositionX, BuilderPositionY - 1) = 1 Then 'already carved, no need to proceed
                             PotentialGrowth = -1 : Stops += 1
                         End If
                     ElseIf BuilderDirection = East And BuilderPositionX < MapSize - 2 Then 'Veryifying there is room for growth in that direction, at least 2 spaces
                         PotentialGrowth = MapSize - BuilderPositionX - 1
-                        If Map(BuilderPositionX + 1, BuilderPositionY) = 1 Then 'already carved, no need to proceed
+                        If Map(MapLevel, BuilderPositionX + 1, BuilderPositionY) = 1 Then 'already carved, no need to proceed
                             PotentialGrowth = -1 : Stops += 1
                         End If
                     ElseIf BuilderDirection = South And BuilderPositionY < MapSize - 2 Then 'Verifying there is room for growth in that direction, at least 2 spaces
                         PotentialGrowth = MapSize - BuilderPositionY - 1
-                        If Map(BuilderPositionX, BuilderPositionY + 1) = 1 Then 'already carved, no need to proceed
+                        If Map(MapLevel, BuilderPositionX, BuilderPositionY + 1) = 1 Then 'already carved, no need to proceed
                             PotentialGrowth = -1 : Stops += 1
                         End If
                     ElseIf BuilderDirection = West And BuilderPositionX > 2 Then 'Verifying there is room for growth in that direction, at least 2 spaces
                         PotentialGrowth = BuilderPositionX - 1
-                        If Map(BuilderPositionX - 1, BuilderPositionY) = 1 Then 'already carved, no need to proceed
+                        If Map(MapLevel, BuilderPositionX - 1, BuilderPositionY) = 1 Then 'already carved, no need to proceed
                             PotentialGrowth = -1 : Stops += 1
                         End If
                     End If
                     If PotentialGrowth > 4 Then
                         BuilderLastDirection = BuilderDirection
                         BuilderGrowthAmount = RandomNumber.Next(1, PotentialGrowth) 'growth includes wall, can't draw to end of map so just use potential growth since it's exclusive instead of inclusive
-                        Map(BuilderPositionX + 1, BuilderPositionY) = Floor
-                        Map(BuilderPositionX - 1, BuilderPositionY) = Floor
-                        Map(BuilderPositionX, BuilderPositionY + 1) = Floor
-                        Map(BuilderPositionX, BuilderPositionY - 1) = Floor
+                        Map(MapLevel, BuilderPositionX + 1, BuilderPositionY) = Floor
+                        Map(MapLevel, BuilderPositionX - 1, BuilderPositionY) = Floor
+                        Map(MapLevel, BuilderPositionX, BuilderPositionY + 1) = Floor
+                        Map(MapLevel, BuilderPositionX, BuilderPositionY - 1) = Floor
                         PotentialSides = RandomNumber.Next(1, 3)
                         If PotentialSides = 1 Then
-                            Map(BuilderPositionX + 1, BuilderPositionY + 1) = Floor
+                            Map(MapLevel, BuilderPositionX + 1, BuilderPositionY + 1) = Floor
                         End If
                         PotentialSides = RandomNumber.Next(1, 3)
                         If PotentialSides = 1 Then
-                            Map(BuilderPositionX - 1, BuilderPositionY - 1) = Floor
+                            Map(MapLevel, BuilderPositionX - 1, BuilderPositionY - 1) = Floor
                         End If
                         PotentialSides = RandomNumber.Next(1, 3)
                         If PotentialSides = 1 Then
-                            Map(BuilderPositionX - 1, BuilderPositionY + 1) = Floor
+                            Map(MapLevel, BuilderPositionX - 1, BuilderPositionY + 1) = Floor
                         End If
                         PotentialSides = RandomNumber.Next(1, 3)
                         If PotentialSides = 1 Then
-                            Map(BuilderPositionX + 1, BuilderPositionY - 1) = Floor
+                            Map(MapLevel, BuilderPositionX + 1, BuilderPositionY - 1) = Floor
                         End If
                         If BuilderDirection = North Then
                             For BuilderPositionY = BuilderPositionY To BuilderPositionY - BuilderGrowthAmount Step -1
-                                Map(BuilderPositionX, BuilderPositionY) = Floor
+                                Map(MapLevel, BuilderPositionX, BuilderPositionY) = Floor
                                 PotentialSides = RandomNumber.Next(1, 11)
                                 If PotentialSides = 1 Then 'random chance to draw a floor to the right 10%
-                                    Map(BuilderPositionX + 1, BuilderPositionY) = Floor
+                                    Map(MapLevel, BuilderPositionX + 1, BuilderPositionY) = Floor
                                 ElseIf PotentialSides = 2 Then 'randomchance to draw a floor to the left 10%
-                                    Map(BuilderPositionX - 1, BuilderPositionY) = Floor
+                                    Map(MapLevel, BuilderPositionX - 1, BuilderPositionY) = Floor
                                 End If
                             Next
                         ElseIf BuilderDirection = East Then
                             For BuilderPositionX = BuilderPositionX To BuilderPositionX + BuilderGrowthAmount Step 1
-                                Map(BuilderPositionX, BuilderPositionY) = Floor
+                                Map(MapLevel, BuilderPositionX, BuilderPositionY) = Floor
                                 PotentialSides = RandomNumber.Next(1, 11)
                                 If PotentialSides = 1 Then 'random chance to draw a floor to the north 10%
-                                    Map(BuilderPositionX, BuilderPositionY - 1) = Floor
+                                    Map(MapLevel, BuilderPositionX, BuilderPositionY - 1) = Floor
                                 ElseIf PotentialSides = 2 Then 'randomchance to draw a floor to the south 10%
-                                    Map(BuilderPositionX, BuilderPositionY + 1) = Floor
+                                    Map(MapLevel, BuilderPositionX, BuilderPositionY + 1) = Floor
                                 End If
                             Next
                         ElseIf BuilderDirection = South Then
                             For BuilderPositionY = BuilderPositionY To BuilderPositionY + BuilderGrowthAmount Step 1
-                                Map(BuilderPositionX, BuilderPositionY) = Floor
+                                Map(MapLevel, BuilderPositionX, BuilderPositionY) = Floor
                                 PotentialSides = RandomNumber.Next(1, 11)
                                 If PotentialSides = 1 Then 'random chance to draw a floor to the right 10%
-                                    Map(BuilderPositionX + 1, BuilderPositionY) = Floor
+                                    Map(MapLevel, BuilderPositionX + 1, BuilderPositionY) = Floor
                                 ElseIf PotentialSides = 2 Then 'randomchance to draw a floor to the left 10%
-                                    Map(BuilderPositionX - 1, BuilderPositionY) = Floor
+                                    Map(MapLevel, BuilderPositionX - 1, BuilderPositionY) = Floor
                                 End If
                             Next
                         ElseIf BuilderDirection = West Then
                             For BuilderPositionX = BuilderPositionX To BuilderPositionX - BuilderGrowthAmount Step -1
-                                Map(BuilderPositionX, BuilderPositionY) = Floor
+                                Map(MapLevel, BuilderPositionX, BuilderPositionY) = Floor
                                 PotentialSides = RandomNumber.Next(1, 11)
                                 If PotentialSides = 1 Then 'random chance to draw a floor to the north 10%
-                                    Map(BuilderPositionX, BuilderPositionY - 1) = Floor
+                                    Map(MapLevel, BuilderPositionX, BuilderPositionY - 1) = Floor
                                 ElseIf PotentialSides = 2 Then 'randomchance to draw a floor to the south 10%
-                                    Map(BuilderPositionX, BuilderPositionY + 1) = Floor
+                                    Map(MapLevel, BuilderPositionX, BuilderPositionY + 1) = Floor
                                 End If
                             Next
                         End If
@@ -1303,7 +1326,7 @@ Public Class MainForm
             'forest starts with a clean slate of floor instead of walls, must paint map first
             For BuilderPositionX = 0 To MapSize Step 1
                 For BuilderPositionY = 0 To MapSize Step 1
-                    Map(BuilderPositionX, BuilderPositionY) = Floor
+                    Map(MapLevel, BuilderPositionX, BuilderPositionY) = Floor
                 Next
             Next
             For CurrentRuin = 0 To MaximumRuins Step 1
@@ -1327,7 +1350,7 @@ Public Class MainForm
                     Y = cy - (a * (Math.Sin(ang)) * (e ^ (b * ang))) * RuinStrength 'Ruin strength increases the distance between diversion the larger it gets
                     If Math.Floor(X) >= 0 And Math.Floor(X) <= MapSize Then
                         If Math.Floor(Y) >= 0 And Math.Floor(Y) <= MapSize Then
-                            Map(Math.Floor(X), Math.Floor(Y)) = Wall
+                            Map(MapLevel, Math.Floor(X), Math.Floor(Y)) = Wall
                         End If
                     End If
                 Next
@@ -1339,7 +1362,7 @@ Public Class MainForm
             Dim CurrentOccupied As Short = 1
             Dim StartPositionFound As Boolean = False
             Dim MapTrod(MapSize, MapSize) As Short
-            Dim MapLevel(MapSize, MapSize) As Short
+            Dim MapGenLevel(MapSize, MapSize) As Short
             Dim TrodLevel As Short = 1
             Dim TrodTry As Boolean 'used in while statement to test in a circle , then +1, +2, up to +5 then exits the occupied space and goes to next space
             Dim TrodHead As Boolean
@@ -1347,17 +1370,17 @@ Public Class MainForm
             For BuilderPositionX = 0 To MapSize Step 1
                 For BuilderPositionY = 0 To MapSize Step 1
                     If StartPositionFound = False And CurrentOccupied < 10 Then 'finding a location to start searching
-                        If Map(BuilderPositionX, BuilderPositionY) = Floor And MapTrod(BuilderPositionX, BuilderPositionY) = 0 Then
+                        If Map(MapLevel, BuilderPositionX, BuilderPositionY) = Floor And MapTrod(BuilderPositionX, BuilderPositionY) = 0 Then
                             StartPositionFound = True
                             MapTrod(BuilderPositionX, BuilderPositionY) += 1
                             BuilderTestPosX = BuilderPositionX
                             BuilderTestPosY = BuilderPositionY
-                            MapLevel(BuilderTestPosX, BuilderTestPosY) = CurrentOccupied
-                            ItemOccupied(BuilderTestPosX, BuilderTestPosY) = 1
-                            ItemShowType(BuilderTestPosX, BuilderTestPosY) = CurrentOccupied
+                            MapGenLevel(BuilderTestPosX, BuilderTestPosY) = CurrentOccupied
+                            ItemOccupied(MapLevel, BuilderTestPosX, BuilderTestPosY) = 1
+                            ItemShowType(MapLevel, BuilderTestPosX, BuilderTestPosY) = CurrentOccupied
                         End If
                     ElseIf CurrentOccupied = 20 Then
-                        Map(BuilderPositionX, BuilderPositionY) = Wall 'positions filled, no more searching, fill rest with walls
+                        Map(MapLevel, BuilderPositionX, BuilderPositionY) = Wall 'positions filled, no more searching, fill rest with walls
                     Else 'already searching a location
                         TrodHead = True
                         While TrodHead = True
@@ -1365,14 +1388,14 @@ Public Class MainForm
                             While TrodTry = False
                                 'test up
                                 If BuilderTestPosY > 0 Then 'ensure it's within bounds
-                                    If Map(BuilderTestPosX, BuilderTestPosY - 1) = Floor Or Map(BuilderTestPosX, BuilderTestPosY - 1) = StairsUp Then 'make sure it's a floor
+                                    If Map(MapLevel, BuilderTestPosX, BuilderTestPosY - 1) = Floor Or Map(MapLevel, BuilderTestPosX, BuilderTestPosY - 1) = StairsUp Then 'make sure it's a floor
                                         If MapTrod(BuilderTestPosX, BuilderTestPosY - 1) = TrodLevel Then 'found next trod
                                             BuilderTestPosY -= 1
                                             If MapTrod(BuilderTestPosX, BuilderTestPosY) <= 1 Then
                                                 OccupiedSquares(CurrentOccupied) += 1 'increase the total occupied squares of current occupied set to compare w/ others
                                             End If
                                             MapTrod(BuilderTestPosX, BuilderTestPosY) += 1
-                                            MapLevel(BuilderTestPosX, BuilderTestPosY) = CurrentOccupied
+                                            MapGenLevel(BuilderTestPosX, BuilderTestPosY) = CurrentOccupied
                                             'ItemOccupied(BuilderTestPosX, BuilderTestPosY) = 1 'show the current state number, debug
                                             'ItemShowType(BuilderTestPosX, BuilderTestPosY) = CurrentOccupied 'show the current state number, debug
                                             Exit While
@@ -1381,15 +1404,15 @@ Public Class MainForm
                                 End If
                                 'test right
                                 If BuilderTestPosX < MapSize Then 'ensure it's within bounds
-                                    If Map(BuilderTestPosX + 1, BuilderTestPosY) = Floor Or Map(BuilderTestPosX + 1, BuilderTestPosY) = StairsUp Then 'make sure it's a floor
+                                    If Map(MapLevel, BuilderTestPosX + 1, BuilderTestPosY) = Floor Or Map(MapLevel, BuilderTestPosX + 1, BuilderTestPosY) = StairsUp Then 'make sure it's a floor
                                         If MapTrod(BuilderTestPosX + 1, BuilderTestPosY) = TrodLevel Then 'found next trod
                                             BuilderTestPosX += 1
                                             If MapTrod(BuilderTestPosX, BuilderTestPosY) <= 1 Then
                                                 OccupiedSquares(CurrentOccupied) += 1 'increase the total occupied squares of current occupied set to compare w/ others
                                             End If
                                             MapTrod(BuilderTestPosX, BuilderTestPosY) += 1
-                                            MapLevel(BuilderTestPosX, BuilderTestPosY) = CurrentOccupied
-                                            Map(BuilderTestPosX, BuilderTestPosY) = StairsUp
+                                            MapGenLevel(BuilderTestPosX, BuilderTestPosY) = CurrentOccupied
+                                            Map(MapLevel, BuilderTestPosX, BuilderTestPosY) = StairsUp
                                             'ItemOccupied(BuilderTestPosX, BuilderTestPosY) = 1 'show the current state number, debug
                                             'ItemShowType(BuilderTestPosX, BuilderTestPosY) = CurrentOccupied 'show the current state number, debug
                                             Exit While
@@ -1398,15 +1421,15 @@ Public Class MainForm
                                 End If
                                 'test down
                                 If BuilderTestPosY < MapSize Then 'ensure it's within bounds
-                                    If Map(BuilderTestPosX, BuilderTestPosY + 1) = Floor Or Map(BuilderTestPosX, BuilderTestPosY + 1) = StairsUp Then 'make sure it's a floor
+                                    If Map(MapLevel, BuilderTestPosX, BuilderTestPosY + 1) = Floor Or Map(MapLevel, BuilderTestPosX, BuilderTestPosY + 1) = StairsUp Then 'make sure it's a floor
                                         If MapTrod(BuilderTestPosX, BuilderTestPosY + 1) = TrodLevel Then 'found next trod
                                             BuilderTestPosY += 1
                                             If MapTrod(BuilderTestPosX, BuilderTestPosY) <= 1 Then
                                                 OccupiedSquares(CurrentOccupied) += 1 'increase the total occupied squares of current occupied set to compare w/ others
                                             End If
                                             MapTrod(BuilderTestPosX, BuilderTestPosY) += 1
-                                            MapLevel(BuilderTestPosX, BuilderTestPosY) = CurrentOccupied
-                                            Map(BuilderTestPosX, BuilderTestPosY) = StairsUp
+                                            MapGenLevel(BuilderTestPosX, BuilderTestPosY) = CurrentOccupied
+                                            Map(MapLevel, BuilderTestPosX, BuilderTestPosY) = StairsUp
                                             'ItemOccupied(BuilderTestPosX, BuilderTestPosY) = 1 'show the current state number, debug
                                             'ItemShowType(BuilderTestPosX, BuilderTestPosY) = CurrentOccupied 'show the current state number, debug
                                             Exit While
@@ -1415,15 +1438,15 @@ Public Class MainForm
                                 End If
                                 'test left
                                 If BuilderTestPosX > 0 Then 'ensure it's within bounds
-                                    If Map(BuilderTestPosX - 1, BuilderTestPosY) = Floor Or Map(BuilderTestPosX - 1, BuilderTestPosY) = StairsUp Then 'make sure it's a floor
+                                    If Map(MapLevel, BuilderTestPosX - 1, BuilderTestPosY) = Floor Or Map(MapLevel, BuilderTestPosX - 1, BuilderTestPosY) = StairsUp Then 'make sure it's a floor
                                         If MapTrod(BuilderTestPosX - 1, BuilderTestPosY) = TrodLevel Then 'found next trod
                                             BuilderTestPosX -= 1
                                             If MapTrod(BuilderTestPosX, BuilderTestPosY) <= 1 Then
                                                 OccupiedSquares(CurrentOccupied) += 1 'increase the total occupied squares of current occupied set to compare w/ others
                                             End If
                                             MapTrod(BuilderTestPosX, BuilderTestPosY) += 1
-                                            MapLevel(BuilderTestPosX, BuilderTestPosY) = CurrentOccupied
-                                            Map(BuilderTestPosX, BuilderTestPosY) = StairsUp
+                                            MapGenLevel(BuilderTestPosX, BuilderTestPosY) = CurrentOccupied
+                                            Map(MapLevel, BuilderTestPosX, BuilderTestPosY) = StairsUp
                                             'ItemOccupied(BuilderTestPosX, BuilderTestPosY) = 1 'show the current state number, debug
                                             'ItemShowType(BuilderTestPosX, BuilderTestPosY) = CurrentOccupied 'show the current state number, debug
                                             Exit While
@@ -1454,11 +1477,11 @@ Public Class MainForm
             Next
             For MapStepX = 0 To MapSize Step 1
                 For MapStepY = 0 To MapSize Step 1
-                    If MapLevel(MapStepX, MapStepY) = CurrentLargest Then
-                        Map(MapStepX, MapStepY) = Floor
+                    If MapGenLevel(MapStepX, MapStepY) = CurrentLargest Then
+                        Map(MapLevel, MapStepX, MapStepY) = Floor
                         Wallnumber += 1
                     Else
-                        Map(MapStepX, MapStepY) = Wall
+                        Map(MapLevel, MapStepX, MapStepY) = Wall
                     End If
                 Next
             Next
@@ -1477,7 +1500,7 @@ Public Class MainForm
                     'see if spawn is within 1 block of pawn after spawn
                     If Math.Abs(PawnLocationX - BuilderPositionX) <= 1 And Math.Abs(PawnLocationY - BuilderPositionY) <= 1 Then
                         'builder was spawned too close to spawn, clear that floor and respawn
-                        Map(BuilderPositionX, BuilderPositionY) = Floor
+                        Map(MapLevel, BuilderPositionX, BuilderPositionY) = Floor
                     Else
                         BuilderSpawned = True
                         BuilderMoveDirection = RandomPosition.Next(1, 5)
@@ -1603,7 +1626,7 @@ Public Class MainForm
                 CurNoise += noiseFloor(BuilderPositionX, BuilderPositionY) / 4
                 'apply new noise average
                 noiseFloor(BuilderPositionX, BuilderPositionY) = CurNoise
-                FogMap(BuilderPositionX, BuilderPositionY) = noiseFloor(BuilderPositionX, BuilderPositionY) 'show the current state number, debug
+                FogMap(MapLevel, BuilderPositionX, BuilderPositionY) = noiseFloor(BuilderPositionX, BuilderPositionY) 'show the current state number, debug
             Next
         Next
     End Sub
@@ -1614,15 +1637,15 @@ Public Class MainForm
         Dim ProcessMobilePathNumber As Short = 0
         For ProcessMobilePathNumber = 0 To 9 Step 1
             If Silence <= 0 Then
-                If MobileStun(ProcessMobilePathNumber) <= 0 Then
-                    If MobileHealth(ProcessMobilePathNumber) > 0 Then
+                If MobileStun(MapLevel, ProcessMobilePathNumber) <= 0 Then
+                    If MobileHealth(MapLevel, ProcessMobilePathNumber) > 0 Then
                         DetermineMobMov(ProcessMobilePathNumber)
                     End If
                 Else
                     'mobile is stunned and can't move
                     SND("Stunned enemy struggles.")
                     'reduce the current time left on stun
-                    MobileStun(ProcessMobilePathNumber) -= 1
+                    MobileStun(MapLevel, ProcessMobilePathNumber) -= 1
                 End If
             End If
         Next
@@ -2258,10 +2281,10 @@ Public Class MainForm
                 SND("No enemies are around.")
             End If
         End If
-            HealthBar.Caption = LTrim(Str(PlayerCurHitpoints)) + " / " + LTrim(Str(PlayerHitpoints)) + " HP"
-            HealthBar.Value = PlayerCurHitpoints
-            WillpowerBar.Caption = LTrim(Str(PlayerCurWillpower)) + " / " + LTrim(Str(PlayerWillpower)) + " WP"
-            WillpowerBar.Value = PlayerCurWillpower
+        HealthBar.Caption = LTrim(Str(PlayerCurHitpoints)) + " / " + LTrim(Str(PlayerHitpoints)) + " HP"
+        HealthBar.Value = PlayerCurHitpoints
+        WillpowerBar.Caption = LTrim(Str(PlayerCurWillpower)) + " / " + LTrim(Str(PlayerWillpower)) + " WP"
+        WillpowerBar.Value = PlayerCurWillpower
     End Sub
     Private Sub SetSkillsToCooldown()
         FilterRed(Skill1)
@@ -2462,107 +2485,107 @@ Public Class MainForm
                 CloseCommentBox()
             End If
             If e.KeyCode = Keys.Up And PlayerPosY > 0 And PlayerTargeting = False Or e.KeyCode = Keys.NumPad8 And PlayerPosY > 0 And PlayerTargeting = False Then
-                If Map(PlayerPosX, PlayerPosY - 1) > 0 And MapOccupied(PlayerPosX, PlayerPosY - 1) = 0 Then
+                If Map(MapLevel, PlayerPosX, PlayerPosY - 1) > 0 And MapOccupied(MapLevel, PlayerPosX, PlayerPosY - 1) = 0 Then
                     PlayerLastPosX = PlayerPosX : PlayerLastPosY = PlayerPosY
                     PlayerPosY -= 1
                     ReDraw()
-                ElseIf Map(PlayerPosX, PlayerPosY - 1) > 0 And MapOccupied(PlayerPosX, PlayerPosY - 1) <> 0 Then
+                ElseIf Map(MapLevel, PlayerPosX, PlayerPosY - 1) > 0 And MapOccupied(MapLevel, PlayerPosX, PlayerPosY - 1) <> 0 Then
                     PlayerHitLocation(PlayerPosX, PlayerPosY - 1)
                     ReDraw()
                 End If
             ElseIf e.KeyCode = Keys.Down And PlayerPosY < MapSize And PlayerTargeting = False Or e.KeyCode = Keys.NumPad2 And PlayerPosY < MapSize And PlayerTargeting = False Then
-                If Map(PlayerPosX, PlayerPosY + 1) > 0 And MapOccupied(PlayerPosX, PlayerPosY + 1) = 0 Then
+                If Map(MapLevel, PlayerPosX, PlayerPosY + 1) > 0 And MapOccupied(MapLevel, PlayerPosX, PlayerPosY + 1) = 0 Then
                     PlayerLastPosX = PlayerPosX : PlayerLastPosY = PlayerPosY
                     PlayerPosY += 1
                     ReDraw()
-                ElseIf Map(PlayerPosX, PlayerPosY + 1) > 0 And MapOccupied(PlayerPosX, PlayerPosY + 1) <> 0 Then
+                ElseIf Map(MapLevel, PlayerPosX, PlayerPosY + 1) > 0 And MapOccupied(MapLevel, PlayerPosX, PlayerPosY + 1) <> 0 Then
                     PlayerHitLocation(PlayerPosX, PlayerPosY + 1)
                     ReDraw()
                 End If
             ElseIf e.KeyCode = Keys.Right And PlayerPosX < MapSize And PlayerTargeting = False Or e.KeyCode = Keys.NumPad6 And PlayerPosX < MapSize And PlayerTargeting = False Then
-                If Map(PlayerPosX + 1, PlayerPosY) > 0 And MapOccupied(PlayerPosX + 1, PlayerPosY) = 0 Then
+                If Map(MapLevel, PlayerPosX + 1, PlayerPosY) > 0 And MapOccupied(MapLevel, PlayerPosX + 1, PlayerPosY) = 0 Then
                     PlayerLastPosX = PlayerPosX : PlayerLastPosY = PlayerPosY
                     PlayerPosX += 1
                     ReDraw()
-                ElseIf Map(PlayerPosX + 1, PlayerPosY) > 0 And MapOccupied(PlayerPosX + 1, PlayerPosY) <> 0 Then
+                ElseIf Map(MapLevel, PlayerPosX + 1, PlayerPosY) > 0 And MapOccupied(MapLevel, PlayerPosX + 1, PlayerPosY) <> 0 Then
                     PlayerHitLocation(PlayerPosX + 1, PlayerPosY)
                     ReDraw()
                 End If
             ElseIf e.KeyCode = Keys.Left And PlayerPosX > 0 And PlayerTargeting = False Or e.KeyCode = Keys.NumPad4 And PlayerPosX > 0 And PlayerTargeting = False Then
-                If Map(PlayerPosX - 1, PlayerPosY) > 0 And MapOccupied(PlayerPosX - 1, PlayerPosY) = 0 Then
+                If Map(MapLevel, PlayerPosX - 1, PlayerPosY) > 0 And MapOccupied(MapLevel, PlayerPosX - 1, PlayerPosY) = 0 Then
                     PlayerLastPosX = PlayerPosX : PlayerLastPosY = PlayerPosY
                     PlayerPosX -= 1
                     ReDraw()
-                ElseIf Map(PlayerPosX - 1, PlayerPosY) > 0 And MapOccupied(PlayerPosX - 1, PlayerPosY) <> 0 Then
+                ElseIf Map(MapLevel, PlayerPosX - 1, PlayerPosY) > 0 And MapOccupied(MapLevel, PlayerPosX - 1, PlayerPosY) <> 0 Then
                     PlayerHitLocation(PlayerPosX - 1, PlayerPosY)
                     ReDraw()
                 End If
             ElseIf e.KeyCode = Keys.NumPad7 And PlayerPosX > 0 And PlayerPosY > 0 And PlayerTargeting = False Then
-                If Map(PlayerPosX - 1, PlayerPosY - 1) > 0 And MapOccupied(PlayerPosX - 1, PlayerPosY - 1) = 0 Then
+                If Map(MapLevel, PlayerPosX - 1, PlayerPosY - 1) > 0 And MapOccupied(MapLevel, PlayerPosX - 1, PlayerPosY - 1) = 0 Then
                     PlayerLastPosX = PlayerPosX : PlayerLastPosY = PlayerPosY
                     PlayerPosX -= 1 : PlayerPosY -= 1
                     ReDraw()
-                ElseIf Map(PlayerPosX - 1, PlayerPosY - 1) > 0 And MapOccupied(PlayerPosX - 1, PlayerPosY - 1) <> 0 Then
+                ElseIf Map(MapLevel, PlayerPosX - 1, PlayerPosY - 1) > 0 And MapOccupied(MapLevel, PlayerPosX - 1, PlayerPosY - 1) <> 0 Then
                     PlayerHitLocation(PlayerPosX - 1, PlayerPosY - 1)
                     ReDraw()
                 End If
             ElseIf e.KeyCode = Keys.NumPad9 And PlayerPosX < MapSize And PlayerPosY > 0 And PlayerTargeting = False Then
-                If Map(PlayerPosX + 1, PlayerPosY - 1) > 0 And MapOccupied(PlayerPosX + 1, PlayerPosY - 1) = 0 Then
+                If Map(MapLevel, PlayerPosX + 1, PlayerPosY - 1) > 0 And MapOccupied(MapLevel, PlayerPosX + 1, PlayerPosY - 1) = 0 Then
                     PlayerLastPosX = PlayerPosX : PlayerLastPosY = PlayerPosY
                     PlayerPosX += 1 : PlayerPosY -= 1
                     ReDraw()
-                ElseIf Map(PlayerPosX + 1, PlayerPosY - 1) > 0 And MapOccupied(PlayerPosX + 1, PlayerPosY - 1) <> 0 Then
+                ElseIf Map(MapLevel, PlayerPosX + 1, PlayerPosY - 1) > 0 And MapOccupied(MapLevel, PlayerPosX + 1, PlayerPosY - 1) <> 0 Then
                     PlayerHitLocation(PlayerPosX + 1, PlayerPosY - 1)
                     ReDraw()
                 End If
             ElseIf e.KeyCode = Keys.NumPad3 And PlayerPosX < MapSize And PlayerPosY < MapSize And PlayerTargeting = False Then
-                If Map(PlayerPosX + 1, PlayerPosY + 1) > 0 And MapOccupied(PlayerPosX + 1, PlayerPosY + 1) = 0 Then
+                If Map(MapLevel, PlayerPosX + 1, PlayerPosY + 1) > 0 And MapOccupied(MapLevel, PlayerPosX + 1, PlayerPosY + 1) = 0 Then
                     PlayerLastPosX = PlayerPosX : PlayerLastPosY = PlayerPosY
                     PlayerPosX += 1 : PlayerPosY += 1
                     ReDraw()
-                ElseIf Map(PlayerPosX + 1, PlayerPosY + 1) > 0 And MapOccupied(PlayerPosX + 1, PlayerPosY + 1) <> 0 Then
+                ElseIf Map(MapLevel, PlayerPosX + 1, PlayerPosY + 1) > 0 And MapOccupied(MapLevel, PlayerPosX + 1, PlayerPosY + 1) <> 0 Then
                     PlayerHitLocation(PlayerPosX + 1, PlayerPosY + 1)
                     ReDraw()
                 End If
             ElseIf e.KeyCode = Keys.NumPad1 And PlayerPosX > 0 And PlayerPosY < MapSize And PlayerTargeting = False Then
-                If Map(PlayerPosX - 1, PlayerPosY + 1) > 0 And MapOccupied(PlayerPosX - 1, PlayerPosY + 1) = 0 Then
+                If Map(MapLevel, PlayerPosX - 1, PlayerPosY + 1) > 0 And MapOccupied(MapLevel, PlayerPosX - 1, PlayerPosY + 1) = 0 Then
                     PlayerLastPosX = PlayerPosX : PlayerLastPosY = PlayerPosY
                     PlayerPosX -= 1 : PlayerPosY += 1
                     ReDraw()
-                ElseIf Map(PlayerPosX - 1, PlayerPosY + 1) > 0 And MapOccupied(PlayerPosX - 1, PlayerPosY + 1) <> 0 Then
+                ElseIf Map(MapLevel, PlayerPosX - 1, PlayerPosY + 1) > 0 And MapOccupied(MapLevel, PlayerPosX - 1, PlayerPosY + 1) <> 0 Then
                     PlayerHitLocation(PlayerPosX - 1, PlayerPosY + 1)
                     ReDraw()
                 End If
             ElseIf e.KeyCode = Keys.Up And PlayerTargeting = True Then
-                If MobileVisible(0, 1) > 0 Then
+                If MobileVisible(MapLevel, 0, 1) > 0 Then
                     DrawingProcedures.TargetEnemy(True)
-                    DrawingProcedures.LOSMap(MobileVisible(0, 0), MobileVisible(0, 1)) = DrawingProcedures.Redraw 'make sure that tile is redrawn next round to remove black box
-                    MobileVisible(0, 1) -= 1
+                    DrawingProcedures.LOSMap(MobileVisible(MapLevel, 0, 0), MobileVisible(MapLevel, 0, 1)) = DrawingProcedures.Redraw 'make sure that tile is redrawn next round to remove black box
+                    MobileVisible(MapLevel, 0, 1) -= 1
                     DrawingProcedures.TargetEnemy(False) 'just dictated false for visibility reasons
                 End If
             ElseIf e.KeyCode = Keys.Down And PlayerTargeting = True Then
-                If MobileVisible(0, 1) < MapSize Then
+                If MobileVisible(MapLevel, 0, 1) < MapSize Then
                     DrawingProcedures.TargetEnemy(True)
-                    DrawingProcedures.LOSMap(MobileVisible(0, 0), MobileVisible(0, 1)) = DrawingProcedures.Redraw 'make sure that tile is redrawn next round to remove black box
-                    MobileVisible(0, 1) += 1
+                    DrawingProcedures.LOSMap(MobileVisible(MapLevel, 0, 0), MobileVisible(MapLevel, 0, 1)) = DrawingProcedures.Redraw 'make sure that tile is redrawn next round to remove black box
+                    MobileVisible(MapLevel, 0, 1) += 1
                     DrawingProcedures.TargetEnemy(False) 'just dictated false for visibility reasons
                 End If
             ElseIf e.KeyCode = Keys.Right And PlayerTargeting = True Then
-                If MobileVisible(0, 0) < MapSize Then
+                If MobileVisible(MapLevel, 0, 0) < MapSize Then
                     DrawingProcedures.TargetEnemy(True)
-                    DrawingProcedures.LOSMap(MobileVisible(0, 0), MobileVisible(0, 1)) = DrawingProcedures.Redraw 'make sure that tile is redrawn next round to remove black box
-                    MobileVisible(0, 0) += 1
+                    DrawingProcedures.LOSMap(MobileVisible(MapLevel, 0, 0), MobileVisible(MapLevel, 0, 1)) = DrawingProcedures.Redraw 'make sure that tile is redrawn next round to remove black box
+                    MobileVisible(MapLevel, 0, 0) += 1
                     DrawingProcedures.TargetEnemy(False) 'just dictated false for visibility reasons
                 End If
             ElseIf e.KeyCode = Keys.Left And PlayerTargeting = True Then
-                If MobileVisible(0, 0) > 0 Then
+                If MobileVisible(MapLevel, 0, 0) > 0 Then
                     DrawingProcedures.TargetEnemy(True)
-                    DrawingProcedures.LOSMap(MobileVisible(0, 0), MobileVisible(0, 1)) = DrawingProcedures.Redraw 'make sure that tile is redrawn next round to remove black box
-                    MobileVisible(0, 0) -= 1
+                    DrawingProcedures.LOSMap(MobileVisible(MapLevel, 0, 0), MobileVisible(MapLevel, 0, 1)) = DrawingProcedures.Redraw 'make sure that tile is redrawn next round to remove black box
+                    MobileVisible(MapLevel, 0, 0) -= 1
                     DrawingProcedures.TargetEnemy(False) 'just dictated false for visibility reasons
                 End If
             ElseIf e.KeyCode = Keys.Space And PlayerTargeting = True Then
-                PlayerHitLocation(MobileVisible(0, 0), MobileVisible(0, 1))
+                PlayerHitLocation(MobileVisible(MapLevel, 0, 0), MobileVisible(MapLevel, 0, 1))
                 PlayerTargeting = False
                 ReDraw()
             ElseIf e.KeyCode = Keys.Space And PlayerTargeting = False Then
@@ -2580,8 +2603,8 @@ Public Class MainForm
                 End If
                 ReDraw()
             ElseIf e.KeyCode = Keys.P Or e.KeyCode = Keys.T Then
-                If ItemOccupied(PlayerPosX, PlayerPosY) > 0 Then
-                    Inventory.AddToInventory(ItemOccupied(PlayerPosX, PlayerPosY))
+                If ItemOccupied(MapLevel, PlayerPosX, PlayerPosY) > 0 Then
+                    Inventory.AddToInventory(ItemOccupied(MapLevel, PlayerPosX, PlayerPosY))
                 Else
                     SND("Nothing is here to pickup.")
                 End If
@@ -2592,173 +2615,15 @@ Public Class MainForm
                 DecipherSkill(2)
             ElseIf e.KeyCode = Keys.D3 Then
                 DecipherSkill(3)
-            ElseIf e.KeyCode = Keys.F1 Then
-                If ScoresBox.Visible = True Then
-                    ScoresBox.Visible = False
-                ElseIf ScoresBox.Visible = False Then
-                    SNDScores()
-                    CharStats.Visible = False
-                    ScoresBox.Visible = True
-                End If
-            ElseIf e.KeyCode = Keys.F2 Then
-                If CharStats.Visible = True Then
-                    CharStats.Visible = False
-                ElseIf CharStats.Visible = False Then
-                    StatBox.Text = "[Character Stats]" + Chr(13) + "Depth     : " + LTrim(Str(MapLevel)) + Chr(13) + "Level     : " + LTrim(Str(PlayerLevel)) + Chr(13) _
-+ "Experience: " + LTrim(Str(PlayerExperience)) + Chr(13) _
-+ "Gold      : " + LTrim(Str(PlayerGold)) + Chr(13) _
-+ "Turns     : " + LTrim(Str(PlayerTurns)) + Chr(13) + Chr(13) _
-+ "Strength    : " + LTrim(Str(PlayerSTR)) + Chr(13) _
-+ "Dexterity   : " + LTrim(Str(PlayerDEX)) + Chr(13) _
-+ "Intelligence: " + LTrim(Str(PlayerINT)) + Chr(13) _
-+ "Wisdom      : " + LTrim(Str(PlayerWIS)) + Chr(13) _
-+ "Constitution: " + LTrim(Str(PlayerCON)) + Chr(13) _
-+ "Charisma    : " + LTrim(Str(PlayerCHA)) + Chr(13) _
-+ "Luck        : " + LTrim(Str(PlayerLUC))
-                    StatBox.Visible = True
-                    ScoresBox.Visible = False
-                    CharStats.Visible = True
-                End If
-            ElseIf e.KeyCode = Keys.F3 Then
-                If LogVisible = True Then
-                    LogVisible = False
-                    Panel1.Height -= DisplayText.Height + 10
-                    Skill1Name.Top = 99 : Skill2Name.Top = 99 : Skill3Name.Top = 99
-                ElseIf LogVisible = False Then
-                    LogVisible = True
-                    Panel1.Height += DisplayText.Height + 10
-                    Skill1Name.Top = 99 : Skill2Name.Top = 99 : Skill3Name.Top = 99
-                End If
-            ElseIf e.KeyCode = Keys.F4 Then
-                PlayerExperience = 0
-                PlayerGold = 0
-                PlayerTurns = 0
-                PlayerLevel = 0
-                PlayerLevelPoints = 0
-                PlayerDead = False
-                MapLevel = 0
-                Initialize(0, EventArgs.Empty)
-                Comment11.Visible = False
-                For tmp0 = 0 To 19 Step 1
-                    ItemInventoryName(tmp0) = ""
-                    ItemInventoryQuality(tmp0) = 0
-                    ItemInventoryType(tmp0) = 0
-                    PlayerEquipArms = 0
-                    PlayerEquipChest = 0
-                    PlayerEquipFeet = 0
-                    PlayerEquipHands = 0
-                    PlayerEquipHead = 0
-                    PlayerEquipLegs = 0
-                    PlayerEquipNArms = ""
-                    PlayerEquipNChest = ""
-                    PlayerEquipNFeet = ""
-                    PlayerEquipNHands = ""
-                    PlayerEquipNHead = ""
-                    PLayerEquipNLegs = ""
-                Next
-                Me.Hide()
-                ChooseCharacter.TabControl1.SelectedTab = ChooseCharacter.BasicTab
-                ChooseCharacter.CharacterName.Text = "Mykil Ironfist"
-                ChooseCharacter.TopMost = True
-                ChooseCharacter.Show()
-            ElseIf e.KeyCode = Keys.F5 Then
-                If GraphicalMode = ASCII Then GraphicalMode = Tiled Else GraphicalMode = ASCII
-                For x = 0 To MapSize Step 1
-                    For y = 0 To MapSize Step 1
-                        DrawingProcedures.LOSMap(x, y) = Hidden
-                    Next
-                Next
-                DrawingProcedures.ChangedMode = True
-                If PlayerTurns > 0 Then DrawingProcedures.DrawMap(GraphicalMode)
-                DrawingProcedures.ChangedMode = False
             ElseIf e.KeyCode = Keys.OemPeriod And e.Shift = True Then 'go down
-                If Map(PlayerPosX, PlayerPosY) = 3 Then 'exit
-                    Dim tmp1 As Short
-                    For tmp0 = 0 To MapSize Step 1
-                        For tmp1 = 0 To MapSize Step 1
-                            Map(tmp0, tmp1) = 0
-                        Next
-                    Next
-                    BuildNewMap()
+                If Map(MapLevel, PlayerPosX, PlayerPosY) = StairsDown Then 'exit
+                    MapLevel += 1
+                    BuildNewMap(True)
                 End If
-            ElseIf e.KeyCode = Keys.F9 And e.Shift = True And e.Control = True And e.Alt = True Then 'go down regardless of stairs, admin cheat mode
-                Dim tmp1 As Short
-                For tmp0 = 0 To MapSize Step 1
-                    For tmp1 = 0 To MapSize Step 1
-                        Map(tmp0, tmp1) = 0
-                    Next
-                Next
-                BuildNewMap()
-            ElseIf e.KeyCode = Keys.I Then 'inventory
-                Inventory.NameStat.Text = PlayerName
-                Inventory.HealthStat.Text = LTrim(Str(PlayerCurHitpoints)) + " / " + LTrim(Str(PlayerHitpoints))
-                Inventory.GoldStat.Text = LTrim(Str(PlayerGold))
-                Inventory.ExperienceStat.Text = LTrim(Str(PlayerExperience))
-                Inventory.PointsStat.Text = LTrim(Str(PlayerLevelPoints))
-                Inventory.AttackScore.Text = "Attack: " + LTrim(Str(PlayerAttack))
-                Inventory.DefenseScore.Text = "Defense: " + LTrim(Str(PlayerDefense))
-                If PlayerEquipHead <> 0 Then
-                    Inventory.HeadEquip.Text = CapitalizeFirstLetter(PlayerEquipNHead + " +" + LTrim(Str(PlayerEquipQHead)))
-                End If
-                If PlayerEquipArms <> 0 Then
-                    Inventory.ArmsEquip.Text = CapitalizeFirstLetter(PlayerEquipNArms + " +" + LTrim(Str(PlayerEquipQArms)))
-                End If
-                If PlayerEquipChest <> 0 Then
-                    Inventory.ChestEquip.Text = CapitalizeFirstLetter(PlayerEquipNChest + " +" + LTrim(Str(PlayerEquipQChest)))
-                End If
-                If PlayerEquipFeet <> 0 Then
-                    Inventory.BootsEquip.Text = CapitalizeFirstLetter(PlayerEquipNFeet + " +" + LTrim(Str(PlayerEquipQFeet)))
-                End If
-                If PlayerEquipHands <> 0 Then
-                    Inventory.HandsEquip.Text = CapitalizeFirstLetter(PlayerEquipNHands + " +" + LTrim(Str(PlayerEquipQHands)))
-                End If
-                If PlayerEquipLegs <> 0 Then
-                    Inventory.LegsEquip.Text = CapitalizeFirstLetter(PLayerEquipNLegs + " +" + LTrim(Str(PLayerEquipQLegs)))
-                End If
-                'inventory 1 is the left column, 2 is the right column
-                Dim Line1 As String
-                If ItemInventoryName(0) <> "" Then Line1 = "1. " + CapitalizeFirstLetter(ItemInventoryName(0)) + " +" + LTrim(Str(ItemInventoryQuality(0))) + Chr(13) Else Line1 = "1." + Chr(13)
-                If ItemInventoryName(1) <> "" Then Line1 += "2. " + CapitalizeFirstLetter(ItemInventoryName(1)) + " +" + LTrim(Str(ItemInventoryQuality(1))) + Chr(13) Else Line1 += "2." + Chr(13)
-                If ItemInventoryName(2) <> "" Then Line1 += "3. " + CapitalizeFirstLetter(ItemInventoryName(2)) + " +" + LTrim(Str(ItemInventoryQuality(2))) + Chr(13) Else Line1 += "3." + Chr(13)
-                If ItemInventoryName(3) <> "" Then Line1 += "4. " + CapitalizeFirstLetter(ItemInventoryName(3)) + " +" + LTrim(Str(ItemInventoryQuality(3))) + Chr(13) Else Line1 += "4." + Chr(13)
-                If ItemInventoryName(4) <> "" Then Line1 += "5. " + CapitalizeFirstLetter(ItemInventoryName(4)) + " +" + LTrim(Str(ItemInventoryQuality(4))) + Chr(13) Else Line1 += "5." + Chr(13)
-                If ItemInventoryName(5) <> "" Then Line1 += "6. " + CapitalizeFirstLetter(ItemInventoryName(5)) + " +" + LTrim(Str(ItemInventoryQuality(5))) + Chr(13) Else Line1 += "6." + Chr(13)
-                If ItemInventoryName(6) <> "" Then Line1 += "7. " + CapitalizeFirstLetter(ItemInventoryName(6)) + " +" + LTrim(Str(ItemInventoryQuality(6))) + Chr(13) Else Line1 += "7." + Chr(13)
-                If ItemInventoryName(7) <> "" Then Line1 += "8. " + CapitalizeFirstLetter(ItemInventoryName(7)) + " +" + LTrim(Str(ItemInventoryQuality(7))) + Chr(13) Else Line1 += "8." + Chr(13)
-                If ItemInventoryName(8) <> "" Then Line1 += "9. " + CapitalizeFirstLetter(ItemInventoryName(8)) + " +" + LTrim(Str(ItemInventoryQuality(8))) + Chr(13) Else Line1 += "9." + Chr(13)
-                If ItemInventoryName(9) <> "" Then Line1 += "10. " + CapitalizeFirstLetter(ItemInventoryName(9)) + " +" + LTrim(Str(ItemInventoryQuality(9))) + Chr(13) Else Line1 += "10." + Chr(13)
-                Inventory.Inventory1.Text = Line1 : Line1 = ""
-                If ItemInventoryName(10) <> "" Then Line1 = "11. " + CapitalizeFirstLetter(ItemInventoryName(10)) + " +" + LTrim(Str(ItemInventoryQuality(10))) + Chr(13) Else Line1 = "11." + Chr(13)
-                If ItemInventoryName(11) <> "" Then Line1 += "12. " + CapitalizeFirstLetter(ItemInventoryName(11)) + " +" + LTrim(Str(ItemInventoryQuality(11))) + Chr(13) Else Line1 += "12." + Chr(13)
-                If ItemInventoryName(12) <> "" Then Line1 += "13. " + CapitalizeFirstLetter(ItemInventoryName(12)) + " +" + LTrim(Str(ItemInventoryQuality(12))) + Chr(13) Else Line1 += "13." + Chr(13)
-                If ItemInventoryName(13) <> "" Then Line1 += "14. " + CapitalizeFirstLetter(ItemInventoryName(13)) + " +" + LTrim(Str(ItemInventoryQuality(13))) + Chr(13) Else Line1 += "14." + Chr(13)
-                If ItemInventoryName(14) <> "" Then Line1 += "15. " + CapitalizeFirstLetter(ItemInventoryName(14)) + " +" + LTrim(Str(ItemInventoryQuality(14))) + Chr(13) Else Line1 += "15." + Chr(13)
-                If ItemInventoryName(15) <> "" Then Line1 += "16. " + CapitalizeFirstLetter(ItemInventoryName(15)) + " +" + LTrim(Str(ItemInventoryQuality(15))) + Chr(13) Else Line1 += "16." + Chr(13)
-                If ItemInventoryName(16) <> "" Then Line1 += "17. " + CapitalizeFirstLetter(ItemInventoryName(16)) + " +" + LTrim(Str(ItemInventoryQuality(16))) + Chr(13) Else Line1 += "17." + Chr(13)
-                If ItemInventoryName(17) <> "" Then Line1 += "18. " + CapitalizeFirstLetter(ItemInventoryName(17)) + " +" + LTrim(Str(ItemInventoryQuality(17))) + Chr(13) Else Line1 += "18." + Chr(13)
-                If ItemInventoryName(18) <> "" Then Line1 += "19. " + CapitalizeFirstLetter(ItemInventoryName(18)) + " +" + LTrim(Str(ItemInventoryQuality(18))) + Chr(13) Else Line1 += "19." + Chr(13)
-                If ItemInventoryName(19) <> "" Then Line1 += "20. " + CapitalizeFirstLetter(ItemInventoryName(19)) + " +" + LTrim(Str(ItemInventoryQuality(19))) + Chr(13) Else Line1 += "20." + Chr(13)
-                Inventory.Inventory2.Text = Line1 : Line1 = ""
-                Inventory.Show()
             ElseIf e.KeyCode = Keys.Oemcomma And e.Shift = True Then 'go up
-                If Map(PlayerPosX, PlayerPosY) = 2 Then 'entrance
-                    Dim tmp1 As Short
-                    For tmp0 = 0 To MapSize Step 1
-                        For tmp1 = 0 To MapSize Step 1
-                            Map(tmp0, tmp1) = 0
-                        Next
-                    Next
-                    MapLevel -= 2
-                    BuildNewMap()
-                End If
-            ElseIf e.KeyCode = Keys.Escape Then 'exit inventory, exit game
-                Me.Close()
-                Me.Dispose()
-            ElseIf e.KeyCode = Keys.H Or e.KeyCode = Keys.OemQuestion And e.Shift = True Then
-                If HelpInfo.Visible = False Then
-                    HelpInfo.Visible = True
-                ElseIf HelpInfo.Visible = True Then
-                    HelpInfo.Visible = False
+                If Map(MapLevel, PlayerPosX, PlayerPosY) = StairsUp Then 'entrance
+                    MapLevel -= 1
+                    BuildNewMap(False)
                 End If
             End If
             If PlayerCurHitpoints <= 0 Then
@@ -2968,18 +2833,202 @@ Public Class MainForm
     Private Sub SkillRollOut(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Skill3.MouseLeave, Skill2.MouseLeave, Skill1.MouseLeave
         SkillInfoBox.Visible = False
     End Sub
-    Private Sub Button2_Click(ByVal sender As System.Object, ByVal e As System.EventArgs)
+#Region "Menu Click"
+    Private Sub NewGameClick(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles NewGameToolStripMenuItem.Click
+        PlayerExperience = 0
+        PlayerGold = 0
+        PlayerTurns = 0
+        PlayerLevel = 0
+        PlayerLevelPoints = 0
+        PlayerDead = False
+        MapLevel = 0
+        Initialize(0, EventArgs.Empty)
+        Comment11.Visible = False
+        For tmp0 = 0 To 19 Step 1
+            ItemInventoryName(tmp0) = ""
+            ItemInventoryQuality(tmp0) = 0
+            ItemInventoryType(tmp0) = 0
+            PlayerEquipArms = 0
+            PlayerEquipChest = 0
+            PlayerEquipFeet = 0
+            PlayerEquipHands = 0
+            PlayerEquipHead = 0
+            PlayerEquipLegs = 0
+            PlayerEquipNArms = ""
+            PlayerEquipNChest = ""
+            PlayerEquipNFeet = ""
+            PlayerEquipNHands = ""
+            PlayerEquipNHead = ""
+            PLayerEquipNLegs = ""
+        Next
+        Me.Hide()
+        ChooseCharacter.TabControl1.SelectedTab = ChooseCharacter.BasicTab
+        ChooseCharacter.CharacterName.Text = "Mykil Ironfist"
+        ChooseCharacter.TopMost = True
+        ChooseCharacter.Show()
+    End Sub
+    Private Sub ExitGameClick(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ExitGameToolStripMenuItem.Click
         Me.Close()
         Me.Dispose()
     End Sub
-    Private Sub ChangeColor(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Panel2.MouseEnter
-        Panel2.BackColor = Color.FromArgb(150, 150, 150)
+    Private Sub HelpClick(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles HelpToolStripMenuItem.Click
+        If GroupBox1.Visible = False Then
+            GroupBox1.Visible = True
+            HelpInfo.Visible = True
+        ElseIf GroupBox1.Visible = True Then
+            GroupBox1.Visible = False
+            HelpInfo.Visible = False
+        End If
     End Sub
-    Private Sub ChangeColorDim(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Panel2.MouseLeave
-        Panel2.BackColor = Color.FromArgb(64, 64, 64)
+    Private Sub InventoryClick(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ShowInventoryToolStripMenuItem.Click
+        Inventory.NameStat.Text = PlayerName
+        Inventory.HealthStat.Text = LTrim(Str(PlayerCurHitpoints)) + " / " + LTrim(Str(PlayerHitpoints))
+        Inventory.GoldStat.Text = LTrim(Str(PlayerGold))
+        Inventory.ExperienceStat.Text = LTrim(Str(PlayerExperience))
+        Inventory.PointsStat.Text = LTrim(Str(PlayerLevelPoints))
+        Inventory.AttackScore.Text = "Attack: " + LTrim(Str(PlayerAttack))
+        Inventory.DefenseScore.Text = "Defense: " + LTrim(Str(PlayerDefense))
+        If PlayerEquipHead <> 0 Then
+            Inventory.HeadEquip.Text = CapitalizeFirstLetter(PlayerEquipNHead + " +" + LTrim(Str(PlayerEquipQHead)))
+        End If
+        If PlayerEquipArms <> 0 Then
+            Inventory.ArmsEquip.Text = CapitalizeFirstLetter(PlayerEquipNArms + " +" + LTrim(Str(PlayerEquipQArms)))
+        End If
+        If PlayerEquipChest <> 0 Then
+            Inventory.ChestEquip.Text = CapitalizeFirstLetter(PlayerEquipNChest + " +" + LTrim(Str(PlayerEquipQChest)))
+        End If
+        If PlayerEquipFeet <> 0 Then
+            Inventory.BootsEquip.Text = CapitalizeFirstLetter(PlayerEquipNFeet + " +" + LTrim(Str(PlayerEquipQFeet)))
+        End If
+        If PlayerEquipHands <> 0 Then
+            Inventory.HandsEquip.Text = CapitalizeFirstLetter(PlayerEquipNHands + " +" + LTrim(Str(PlayerEquipQHands)))
+        End If
+        If PlayerEquipLegs <> 0 Then
+            Inventory.LegsEquip.Text = CapitalizeFirstLetter(PLayerEquipNLegs + " +" + LTrim(Str(PLayerEquipQLegs)))
+        End If
+        'inventory 1 is the left column, 2 is the right column
+        Dim Line1 As String
+        If ItemInventoryName(0) <> "" Then Line1 = "1. " + CapitalizeFirstLetter(ItemInventoryName(0)) + " +" + LTrim(Str(ItemInventoryQuality(0))) + Chr(13) Else Line1 = "1." + Chr(13)
+        If ItemInventoryName(1) <> "" Then Line1 += "2. " + CapitalizeFirstLetter(ItemInventoryName(1)) + " +" + LTrim(Str(ItemInventoryQuality(1))) + Chr(13) Else Line1 += "2." + Chr(13)
+        If ItemInventoryName(2) <> "" Then Line1 += "3. " + CapitalizeFirstLetter(ItemInventoryName(2)) + " +" + LTrim(Str(ItemInventoryQuality(2))) + Chr(13) Else Line1 += "3." + Chr(13)
+        If ItemInventoryName(3) <> "" Then Line1 += "4. " + CapitalizeFirstLetter(ItemInventoryName(3)) + " +" + LTrim(Str(ItemInventoryQuality(3))) + Chr(13) Else Line1 += "4." + Chr(13)
+        If ItemInventoryName(4) <> "" Then Line1 += "5. " + CapitalizeFirstLetter(ItemInventoryName(4)) + " +" + LTrim(Str(ItemInventoryQuality(4))) + Chr(13) Else Line1 += "5." + Chr(13)
+        If ItemInventoryName(5) <> "" Then Line1 += "6. " + CapitalizeFirstLetter(ItemInventoryName(5)) + " +" + LTrim(Str(ItemInventoryQuality(5))) + Chr(13) Else Line1 += "6." + Chr(13)
+        If ItemInventoryName(6) <> "" Then Line1 += "7. " + CapitalizeFirstLetter(ItemInventoryName(6)) + " +" + LTrim(Str(ItemInventoryQuality(6))) + Chr(13) Else Line1 += "7." + Chr(13)
+        If ItemInventoryName(7) <> "" Then Line1 += "8. " + CapitalizeFirstLetter(ItemInventoryName(7)) + " +" + LTrim(Str(ItemInventoryQuality(7))) + Chr(13) Else Line1 += "8." + Chr(13)
+        If ItemInventoryName(8) <> "" Then Line1 += "9. " + CapitalizeFirstLetter(ItemInventoryName(8)) + " +" + LTrim(Str(ItemInventoryQuality(8))) + Chr(13) Else Line1 += "9." + Chr(13)
+        If ItemInventoryName(9) <> "" Then Line1 += "10. " + CapitalizeFirstLetter(ItemInventoryName(9)) + " +" + LTrim(Str(ItemInventoryQuality(9))) + Chr(13) Else Line1 += "10." + Chr(13)
+        Inventory.Inventory1.Text = Line1 : Line1 = ""
+        If ItemInventoryName(10) <> "" Then Line1 = "11. " + CapitalizeFirstLetter(ItemInventoryName(10)) + " +" + LTrim(Str(ItemInventoryQuality(10))) + Chr(13) Else Line1 = "11." + Chr(13)
+        If ItemInventoryName(11) <> "" Then Line1 += "12. " + CapitalizeFirstLetter(ItemInventoryName(11)) + " +" + LTrim(Str(ItemInventoryQuality(11))) + Chr(13) Else Line1 += "12." + Chr(13)
+        If ItemInventoryName(12) <> "" Then Line1 += "13. " + CapitalizeFirstLetter(ItemInventoryName(12)) + " +" + LTrim(Str(ItemInventoryQuality(12))) + Chr(13) Else Line1 += "13." + Chr(13)
+        If ItemInventoryName(13) <> "" Then Line1 += "14. " + CapitalizeFirstLetter(ItemInventoryName(13)) + " +" + LTrim(Str(ItemInventoryQuality(13))) + Chr(13) Else Line1 += "14." + Chr(13)
+        If ItemInventoryName(14) <> "" Then Line1 += "15. " + CapitalizeFirstLetter(ItemInventoryName(14)) + " +" + LTrim(Str(ItemInventoryQuality(14))) + Chr(13) Else Line1 += "15." + Chr(13)
+        If ItemInventoryName(15) <> "" Then Line1 += "16. " + CapitalizeFirstLetter(ItemInventoryName(15)) + " +" + LTrim(Str(ItemInventoryQuality(15))) + Chr(13) Else Line1 += "16." + Chr(13)
+        If ItemInventoryName(16) <> "" Then Line1 += "17. " + CapitalizeFirstLetter(ItemInventoryName(16)) + " +" + LTrim(Str(ItemInventoryQuality(16))) + Chr(13) Else Line1 += "17." + Chr(13)
+        If ItemInventoryName(17) <> "" Then Line1 += "18. " + CapitalizeFirstLetter(ItemInventoryName(17)) + " +" + LTrim(Str(ItemInventoryQuality(17))) + Chr(13) Else Line1 += "18." + Chr(13)
+        If ItemInventoryName(18) <> "" Then Line1 += "19. " + CapitalizeFirstLetter(ItemInventoryName(18)) + " +" + LTrim(Str(ItemInventoryQuality(18))) + Chr(13) Else Line1 += "19." + Chr(13)
+        If ItemInventoryName(19) <> "" Then Line1 += "20. " + CapitalizeFirstLetter(ItemInventoryName(19)) + " +" + LTrim(Str(ItemInventoryQuality(19))) + Chr(13) Else Line1 += "20." + Chr(13)
+        Inventory.Inventory2.Text = Line1 : Line1 = ""
+        Inventory.Show()
     End Sub
-    Private Sub CloseProgram(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Panel2.Click
-        Me.Close()
-        Me.Dispose()
+    Private Sub ScoresClick(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ShowToolStripMenuItem.Click
+        If ScoresBox.Visible = True Then
+            ScoresBox.Visible = False
+        ElseIf ScoresBox.Visible = False Then
+            SNDScores()
+            CharStats.Visible = False
+            ScoresBox.Visible = True
+        End If
     End Sub
+    Private Sub ToggleCharacterStatsClick(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ToggleCharacterStatsToolStripMenuItem.Click
+        If CharStats.Visible = True Then
+            CharStats.Visible = False
+        ElseIf CharStats.Visible = False Then
+            StatBox.Text = "[Character Stats]" + Chr(13) + "Depth     : " + LTrim(Str(MapLevel)) + Chr(13) + "Level     : " + LTrim(Str(PlayerLevel)) + Chr(13) _
++ "Experience: " + LTrim(Str(PlayerExperience)) + Chr(13) _
++ "Gold      : " + LTrim(Str(PlayerGold)) + Chr(13) _
++ "Turns     : " + LTrim(Str(PlayerTurns)) + Chr(13) + Chr(13) _
++ "Strength    : " + LTrim(Str(PlayerSTR)) + Chr(13) _
++ "Dexterity   : " + LTrim(Str(PlayerDEX)) + Chr(13) _
++ "Intelligence: " + LTrim(Str(PlayerINT)) + Chr(13) _
++ "Wisdom      : " + LTrim(Str(PlayerWIS)) + Chr(13) _
++ "Constitution: " + LTrim(Str(PlayerCON)) + Chr(13) _
++ "Charisma    : " + LTrim(Str(PlayerCHA)) + Chr(13) _
++ "Luck        : " + LTrim(Str(PlayerLUC))
+            StatBox.Visible = True
+            ScoresBox.Visible = False
+            CharStats.Visible = True
+        End If
+    End Sub
+    Private Sub ToggleActivityLogClick(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ShowHideActivityLogToolStripMenuItem.Click
+        If LogVisible = True Then
+            LogVisible = False
+            Panel1.Height -= DisplayText.Height + 10
+            Skill1Name.Top = 99 : Skill2Name.Top = 99 : Skill3Name.Top = 99
+        ElseIf LogVisible = False Then
+            LogVisible = True
+            Panel1.Height += DisplayText.Height + 10
+            Skill1Name.Top = 99 : Skill2Name.Top = 99 : Skill3Name.Top = 99
+        End If
+    End Sub
+#End Region
+#Region "Graphic Mode Change Click"
+    Private Sub ClearScreen(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ImageFilterOn.Click
+        For x = 0 To MapSize Step 1
+            For y = 0 To MapSize Step 1
+                DrawingProcedures.LOSMap(x, y) = Hidden
+            Next
+        Next
+        DrawingProcedures.ChangedMode = True
+        If PlayerTurns > 0 Then DrawingProcedures.DrawMap(GraphicalMode)
+        DrawingProcedures.ChangedMode = False
+        ImageFilterOn.Checked = True
+        IMageFilterOff.Checked = False
+    End Sub
+    Private Sub ClearScreen2(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles IMageFilterOff.Click
+        For x = 0 To MapSize Step 1
+            For y = 0 To MapSize Step 1
+                DrawingProcedures.LOSMap(x, y) = Hidden
+            Next
+        Next
+        DrawingProcedures.ChangedMode = True
+        If PlayerTurns > 0 Then DrawingProcedures.DrawMap(GraphicalMode)
+        DrawingProcedures.ChangedMode = False
+        ImageFilterOn.Checked = False
+        IMageFilterOff.Checked = True
+    End Sub
+    Private Sub GraphicModeChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles GraphicModeOn.Click
+        If GraphicalMode = ASCII Then
+            If GraphicalMode = ASCII Then GraphicalMode = Tiled Else GraphicalMode = ASCII
+            For x = 0 To MapSize Step 1
+                For y = 0 To MapSize Step 1
+                    DrawingProcedures.LOSMap(x, y) = Hidden
+                Next
+            Next
+            DrawingProcedures.ChangedMode = True
+            If PlayerTurns > 0 Then DrawingProcedures.DrawMap(GraphicalMode)
+            DrawingProcedures.ChangedMode = False
+            GraphicModeOn.Checked = True
+            GraphicModeOff.Checked = False
+            ImageFilterToggle.Enabled = True
+        End If
+    End Sub
+    Private Sub GraphicModeChanged2(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles GraphicModeOff.Click
+        If GraphicalMode = Tiled Then
+            If GraphicalMode = ASCII Then GraphicalMode = Tiled Else GraphicalMode = ASCII
+            For x = 0 To MapSize Step 1
+                For y = 0 To MapSize Step 1
+                    DrawingProcedures.LOSMap(x, y) = Hidden
+                Next
+            Next
+            DrawingProcedures.ChangedMode = True
+            If PlayerTurns > 0 Then DrawingProcedures.DrawMap(GraphicalMode)
+            DrawingProcedures.ChangedMode = False
+            GraphicModeOn.Checked = False
+            GraphicModeOff.Checked = True
+            ImageFilterToggle.Enabled = False
+        End If
+    End Sub
+#End Region
 End Class
