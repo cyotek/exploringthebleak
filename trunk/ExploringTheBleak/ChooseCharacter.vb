@@ -443,8 +443,8 @@
         End If
     End Sub
     Private Sub Initialize(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
-        Race_Dwarf.Checked = True
-        Headhunter.Checked = True
+        Race_Halforc.Checked = True
+        Woodsman.Checked = True
     End Sub
     Private Sub CheckKey(ByVal sender As System.Object, ByVal e As System.Windows.Forms.KeyEventArgs) Handles MyBase.KeyDown
         If e.KeyValue = Keys.Enter Then
@@ -460,10 +460,5 @@
         Else
             Button1.Text = "Ready"
         End If
-    End Sub
-
-    Private Sub Button2_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Button2.Click
-        MainForm.Close()
-        Me.Close()
     End Sub
 End Class

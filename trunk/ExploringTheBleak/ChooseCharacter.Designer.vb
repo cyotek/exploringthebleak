@@ -98,7 +98,6 @@ Partial Class ChooseCharacter
         Me.Priest = New System.Windows.Forms.RadioButton()
         Me.Button1 = New System.Windows.Forms.Button()
         Me.Panel2 = New System.Windows.Forms.Panel()
-        Me.Button2 = New System.Windows.Forms.Button()
         Me.TabControl1.SuspendLayout()
         Me.BasicTab.SuspendLayout()
         Me.GroupBox2.SuspendLayout()
@@ -897,21 +896,11 @@ Partial Class ChooseCharacter
         '
         Me.Panel2.BackColor = System.Drawing.Color.Black
         Me.Panel2.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D
-        Me.Panel2.Controls.Add(Me.Button2)
         Me.Panel2.Controls.Add(Me.TabControl1)
         Me.Panel2.Location = New System.Drawing.Point(0, 0)
         Me.Panel2.Name = "Panel2"
         Me.Panel2.Size = New System.Drawing.Size(458, 383)
         Me.Panel2.TabIndex = 40
-        '
-        'Button2
-        '
-        Me.Button2.Location = New System.Drawing.Point(397, 3)
-        Me.Button2.Name = "Button2"
-        Me.Button2.Size = New System.Drawing.Size(52, 23)
-        Me.Button2.TabIndex = 20
-        Me.Button2.Text = "X"
-        Me.Button2.UseVisualStyleBackColor = True
         '
         'ChooseCharacter
         '
@@ -921,7 +910,7 @@ Partial Class ChooseCharacter
         Me.ControlBox = False
         Me.Controls.Add(Me.Button1)
         Me.Controls.Add(Me.Panel2)
-        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None
+        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog
         Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
         Me.KeyPreview = True
         Me.MaximizeBox = False
@@ -1022,5 +1011,4 @@ Partial Class ChooseCharacter
     Friend WithEvents Priest As System.Windows.Forms.RadioButton
     Friend WithEvents Button1 As System.Windows.Forms.Button
     Friend WithEvents Panel2 As System.Windows.Forms.Panel
-    Friend WithEvents Button2 As System.Windows.Forms.Button
 End Class
