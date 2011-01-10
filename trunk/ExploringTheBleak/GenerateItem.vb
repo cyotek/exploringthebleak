@@ -10,6 +10,7 @@
     Const Gold As Short = 8
     Public Const Food As Short = 9
     Public Const Water As Short = 10
+    Public Const Potion As Short = 11
     Public NameType As String
     Public ItemType As Short
     Public ShowType As String
@@ -433,14 +434,20 @@
             ElseIf Randomnum = 139 Then
                 NameType = "Kite Shield" : ItemType = Arms : ShowType = "k"
             End If
-        ElseIf RandomType > 50 Then 'food or water
+        ElseIf RandomType > 38 Then 'food,water, and potions
             For Ensure = 1 To seed Step 1
-                Randomnum = RandomItem.Next(0, 2)
+                Randomnum = RandomItem.Next(0, 11)
             Next
-            If Randomnum = 0 Then : NameType = "Water"
-                ItemType = water : ShowType = "w"
-            ElseIf Randomnum = 1 Then : NameType = "Food"
-                ItemType = food : ShowType = "f"
+            If Randomnum < 4 Then : NameType = "Water"
+                ItemType = Water : ShowType = "w"
+            ElseIf Randomnum < 8 Then : NameType = "Food"
+                ItemType = Food : ShowType = "f"
+            ElseIf Randomnum = 8 Then : NameType = "Swim Potion"
+                ItemType = Potion : ShowType = "S"
+            ElseIf Randomnum = 9 Then : NameType = "Freeze Potion"
+                ItemType = Potion : ShowType = "F"
+            ElseIf Randomnum = 10 Then : NameType = "Burn Potion"
+                ItemType = Potion : ShowType = "B"
             End If
         Else
             NameType = "Gold" : ItemType = Gold : ShowType = "g"

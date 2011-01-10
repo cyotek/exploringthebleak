@@ -109,6 +109,7 @@ Partial Class MainForm
         Me.ToggleCharacterStatsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ShowHideActivityLogToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.HelpToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.QuickInventory = New System.Windows.Forms.Label()
         Me.HealthBar = New Exploring_The_Bleak.MyProgBar()
         Me.WillpowerBar = New Exploring_The_Bleak.MyProgBar()
         Me.Panel1.SuspendLayout()
@@ -241,7 +242,7 @@ Partial Class MainForm
         Me.HelpInfo.ForeColor = System.Drawing.Color.FromArgb(CType(CType(224, Byte), Integer), CType(CType(224, Byte), Integer), CType(CType(224, Byte), Integer))
         Me.HelpInfo.Location = New System.Drawing.Point(6, 16)
         Me.HelpInfo.Name = "HelpInfo"
-        Me.HelpInfo.Size = New System.Drawing.Size(448, 378)
+        Me.HelpInfo.Size = New System.Drawing.Size(448, 434)
         Me.HelpInfo.TabIndex = 93
         Me.HelpInfo.Text = resources.GetString("HelpInfo.Text")
         Me.HelpInfo.Visible = False
@@ -856,7 +857,7 @@ Partial Class MainForm
         Me.GroupBox1.ForeColor = System.Drawing.Color.White
         Me.GroupBox1.Location = New System.Drawing.Point(3, 27)
         Me.GroupBox1.Name = "GroupBox1"
-        Me.GroupBox1.Size = New System.Drawing.Size(466, 406)
+        Me.GroupBox1.Size = New System.Drawing.Size(466, 462)
         Me.GroupBox1.TabIndex = 97
         Me.GroupBox1.TabStop = False
         Me.GroupBox1.Text = "Help / Commands"
@@ -902,13 +903,15 @@ Partial Class MainForm
         Me.GraphicModeOn.Checked = True
         Me.GraphicModeOn.CheckState = System.Windows.Forms.CheckState.Checked
         Me.GraphicModeOn.Name = "GraphicModeOn"
-        Me.GraphicModeOn.Size = New System.Drawing.Size(120, 22)
+        Me.GraphicModeOn.ShortcutKeys = System.Windows.Forms.Keys.F5
+        Me.GraphicModeOn.Size = New System.Drawing.Size(139, 22)
         Me.GraphicModeOn.Text = "Graphics"
         '
         'GraphicModeOff
         '
         Me.GraphicModeOff.Name = "GraphicModeOff"
-        Me.GraphicModeOff.Size = New System.Drawing.Size(120, 22)
+        Me.GraphicModeOff.ShortcutKeys = System.Windows.Forms.Keys.F6
+        Me.GraphicModeOff.Size = New System.Drawing.Size(139, 22)
         Me.GraphicModeOff.Text = "ASCII"
         '
         'ImageFilterToggle
@@ -923,13 +926,15 @@ Partial Class MainForm
         Me.ImageFilterOn.Checked = True
         Me.ImageFilterOn.CheckState = System.Windows.Forms.CheckState.Checked
         Me.ImageFilterOn.Name = "ImageFilterOn"
-        Me.ImageFilterOn.Size = New System.Drawing.Size(152, 22)
+        Me.ImageFilterOn.ShortcutKeys = System.Windows.Forms.Keys.F7
+        Me.ImageFilterOn.Size = New System.Drawing.Size(110, 22)
         Me.ImageFilterOn.Text = "On"
         '
         'IMageFilterOff
         '
         Me.IMageFilterOff.Name = "IMageFilterOff"
-        Me.IMageFilterOff.Size = New System.Drawing.Size(152, 22)
+        Me.IMageFilterOff.ShortcutKeys = System.Windows.Forms.Keys.F8
+        Me.IMageFilterOff.Size = New System.Drawing.Size(110, 22)
         Me.IMageFilterOff.Text = "Off"
         '
         'ToolStripMenuItem1
@@ -991,6 +996,19 @@ Partial Class MainForm
         Me.HelpToolStripMenuItem.Size = New System.Drawing.Size(44, 20)
         Me.HelpToolStripMenuItem.Text = "&Help"
         '
+        'QuickInventory
+        '
+        Me.QuickInventory.AutoSize = True
+        Me.QuickInventory.BackColor = System.Drawing.SystemColors.ControlLightLight
+        Me.QuickInventory.ForeColor = System.Drawing.Color.DarkGreen
+        Me.QuickInventory.Location = New System.Drawing.Point(153, 5)
+        Me.QuickInventory.Name = "QuickInventory"
+        Me.QuickInventory.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.QuickInventory.Size = New System.Drawing.Size(83, 13)
+        Me.QuickInventory.TabIndex = 99
+        Me.QuickInventory.Text = "Empty Inventory"
+        Me.QuickInventory.TextAlign = System.Drawing.ContentAlignment.TopRight
+        '
         'HealthBar
         '
         Me.HealthBar.BackColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(192, Byte), Integer), CType(CType(192, Byte), Integer))
@@ -1025,6 +1043,7 @@ Partial Class MainForm
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.Color.Black
         Me.ClientSize = New System.Drawing.Size(1111, 852)
+        Me.Controls.Add(Me.QuickInventory)
         Me.Controls.Add(Me.GroupBox1)
         Me.Controls.Add(Me.SkillInfoBox)
         Me.Controls.Add(Me.CharStats)
@@ -1171,5 +1190,6 @@ Partial Class MainForm
     Friend WithEvents GraphicModeToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents GraphicModeOn As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents GraphicModeOff As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents QuickInventory As System.Windows.Forms.Label
 
 End Class

@@ -3,7 +3,7 @@
     Private Sub Race_Human_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Race_Human.CheckedChanged
         If Race_Human.Checked = True Then
             description.Text = "Most of the continent of Sedia contains humans, the newest race, and are breeding out the rest. Humans can be any class as they are most versatile."
-            Sex_Male.Enabled = True : Sex_Female.Enabled = True : Sex_Neutral.Enabled = False : Sex_Male.Checked = True
+            Sex_Male.Enabled = True : Sex_Female.Enabled = True : Sex_Male.Checked = True
             height.Text = "4' to 6'"
             weight.Text = "120' to 240'"
             PrimaryStat.Text = "STR"
@@ -20,7 +20,7 @@
     Private Sub Race_Dwarf_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Race_Dwarf.CheckedChanged
         If Race_Dwarf.Checked = True Then
             description.Text = "Little are seen of the dwarves outside of Jewall in the Northern Reach besides King Mishnal Stonecleaver of Tharsis. Dwarves are usually priests, monks, headhunters, plainsmen, pages, and hermits."
-            Sex_Male.Enabled = True : Sex_Female.Enabled = True : Sex_Neutral.Enabled = False : Sex_Male.Checked = True
+            Sex_Male.Enabled = True : Sex_Female.Enabled = True : Sex_Male.Checked = True
             height.Text = "3' to 5'"
             weight.Text = "120' to 230'"
             PrimaryStat.Text = "STR"
@@ -37,7 +37,7 @@
     Private Sub Race_Gnome_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Race_Gnome.CheckedChanged
         If Race_Gnome.Checked = True Then
             description.Text = "Slaves of Dwarves because of racial hatred, they are recently breaking into freedom into other parts of the continent. Gnomes are usually magelings, gravediggers, minstrels, elementalists, or pickpockets."
-            Sex_Male.Enabled = True : Sex_Female.Enabled = True : Sex_Neutral.Enabled = True : Sex_Male.Checked = True
+            Sex_Male.Enabled = True : Sex_Female.Enabled = True : Sex_Male.Checked = True
             height.Text = "2' to 4'"
             weight.Text = "60' to 170'"
             PrimaryStat.Text = "WIS"
@@ -54,7 +54,7 @@
     Private Sub Race_Elf_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Race_Elf.CheckedChanged
         If Race_Elf.Checked = True Then
             description.Text = "Habitually in warmer climate such as Darkwood, this secluded race communicates little with the rest of the world. Elves are usually trackers, magelings, priests, monks, scouts, hermits, pickpockets, or runescribes."
-            Sex_Male.Enabled = True : Sex_Female.Enabled = True : Sex_Neutral.Enabled = False : Sex_Male.Checked = True
+            Sex_Male.Enabled = True : Sex_Female.Enabled = True : Sex_Male.Checked = True
             height.Text = "4' to 5'"
             weight.Text = "70' to 130'"
             PrimaryStat.Text = "DEX"
@@ -71,7 +71,7 @@
     Private Sub Race_Halfelf_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Race_Halfelf.CheckedChanged
         If Race_Halfelf.Checked = True Then
             description.Text = "A rare race found occasionally in Tharsis, generally hard to identify because most Half-elfs hide their elven heritage. Half-elves are generally trackers, runescribes, minstrels, pickpockets, or elementalists."
-            Sex_Male.Enabled = True : Sex_Female.Enabled = True : Sex_Neutral.Enabled = True : Sex_Male.Checked = True
+            Sex_Male.Enabled = True : Sex_Female.Enabled = True : Sex_Male.Checked = True
             height.Text = "4' to 5'"
             weight.Text = "90' to 140'"
             PrimaryStat.Text = "DEX"
@@ -88,7 +88,7 @@
     Private Sub Race_Halfling_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Race_Halfling.CheckedChanged
         If Race_Halfling.Checked = True Then
             description.Text = "Half the height of a normal man, halflings can sometimes be mischievous but generally well-rounded. They are said to have originated from the War of Souls. Halflings excel at being monks, minstrels, hermits, or pickpockets."
-            Sex_Male.Enabled = True : Sex_Female.Enabled = True : Sex_Neutral.Enabled = True : Sex_Male.Checked = True
+            Sex_Male.Enabled = True : Sex_Female.Enabled = True : Sex_Male.Checked = True
             height.Text = "2' to 3'"
             weight.Text = "60' to 120'"
             PrimaryStat.Text = "DEX"
@@ -105,7 +105,7 @@
     Private Sub Race_Goblin_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Race_Goblin.CheckedChanged
         If Race_Goblin.Checked = True Then
             description.Text = "Approximately half the height of a human, goblins are discolored, disfigured, criticized, and misbehaved intelligent half-breed creatures spawned of Daemune. Goblins excel at being magelings, gravediggers, elementalists, pickpockets, and hermits."
-            Sex_Male.Enabled = True : Sex_Female.Enabled = True : Sex_Neutral.Enabled = False : Sex_Male.Checked = True
+            Sex_Male.Enabled = True : Sex_Female.Enabled = True : Sex_Male.Checked = True
             height.Text = "2' to 4'"
             weight.Text = "70' to 80'"
             PrimaryStat.Text = "CHA"
@@ -122,7 +122,7 @@
     Private Sub Race_Troll_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Race_Troll.CheckedChanged
         If Race_Troll.Checked = True Then
             description.Text = "Trolls are generally tall and residential of desert climates. They are a family-based race dependant upon the movement of their tribe. Trolls are generally magelings, priests, scouts, plainsmen, headhunters, and runescribes."
-            Sex_Male.Enabled = True : Sex_Female.Enabled = True : Sex_Neutral.Enabled = False : Sex_Male.Checked = True
+            Sex_Male.Enabled = True : Sex_Female.Enabled = True : Sex_Male.Checked = True
             height.Text = "5' to 8'"
             weight.Text = "280' to 420'"
             PrimaryStat.Text = "STR"
@@ -139,7 +139,7 @@
     Private Sub Race_Orc_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Race_Orc.CheckedChanged
         If Race_Orc.Checked = True Then
             description.Text = "Orcs are dark-figured misshapen offspring of Daemune and Giants. Their unorthodox small height is made up by their concrete attitude. Orcs are generally magelings, plainsmen, headhunters, pages, and gravediggers."
-            Sex_Male.Enabled = True : Sex_Female.Enabled = True : Sex_Neutral.Enabled = False : Sex_Male.Checked = True
+            Sex_Male.Enabled = True : Sex_Female.Enabled = True : Sex_Male.Checked = True
             height.Text = "5' to 6'"
             weight.Text = "160' to 280'"
             PrimaryStat.Text = "STR"
@@ -156,7 +156,7 @@
     Private Sub Race_Halforc_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Race_Halforc.CheckedChanged
         If Race_Halforc.Checked = True Then
             description.Text = "Half-orcs are sometimes seen in the Northern Reach where humans have been raped countless times by the ruthless hordes of invading Orcs. Half-orcs may be pages, headhunters, and plainsmen."
-            Sex_Male.Enabled = True : Sex_Female.Enabled = True : Sex_Neutral.Enabled = False : Sex_Male.Checked = True
+            Sex_Male.Enabled = True : Sex_Female.Enabled = True : Sex_Male.Checked = True
             height.Text = "5' to 6'"
             weight.Text = "150' to 250'"
             PrimaryStat.Text = "STR"
@@ -173,7 +173,7 @@
     Private Sub Race_Quickling_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Race_Quickling.CheckedChanged
         If Race_Quickling.Checked = True Then
             description.Text = "Quicklings are a third the size of a human. Quicklings are bald and always mischievous and self-centered, with the occasion of talking too fast. Quicklings are generally monks, minstrels, or pickpockets"
-            Sex_Male.Enabled = True : Sex_Female.Enabled = True : Sex_Neutral.Enabled = True : Sex_Male.Checked = True
+            Sex_Male.Enabled = True : Sex_Female.Enabled = True : Sex_Male.Checked = True
             height.Text = "2' to 3'"
             weight.Text = "20' to 50'"
             PrimaryStat.Text = "DEX"
@@ -190,7 +190,7 @@
     Private Sub Race_Pixie_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Race_Pixie.CheckedChanged
         If Race_Pixie.Checked = True Then
             description.Text = "Pixies are a small mysterious creature created by Lythantos during the War of Souls. They now wander the Bleak aimlessly. Pixies are generally magelings and priests."
-            Sex_Male.Enabled = False : Sex_Female.Enabled = True : Sex_Neutral.Enabled = False : Sex_Female.Checked = True
+            Sex_Male.Enabled = False : Sex_Female.Enabled = True : Sex_Female.Checked = True
             height.Text = "1' to 2'"
             weight.Text = "8' to 15'"
             PrimaryStat.Text = "DEX"
@@ -207,7 +207,7 @@
     Private Sub Race_Sprite_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Race_Sprite.CheckedChanged
         If Race_Sprite.Checked = True Then
             description.Text = "Sprites are a small mysterious creature created by Lythantos during the War of Souls. They now wander the Bleak aimlessly. Sprites are generally magelings and gravediggers."
-            Sex_Male.Enabled = True : Sex_Female.Enabled = False : Sex_Neutral.Enabled = False : Sex_Male.Checked = True
+            Sex_Male.Enabled = True : Sex_Female.Enabled = False : Sex_Male.Checked = True
             height.Text = "1' to 2'"
             weight.Text = "9' to 20'"
             PrimaryStat.Text = "DEX"
@@ -438,7 +438,7 @@
             MainForm.PlayerCurHitpoints = Val(HealthValue.Text) : MainForm.PlayerCurWillpower = Val(WillpowerValue.Text)
             MainForm.PlayerName = CharacterName.Text
             Me.Hide()
-            MainForm.TopMost = True
+            MainForm.Text = "Exploring The Bleak - " + MainForm.PlayerName
             MainForm.Show()
         End If
     End Sub
