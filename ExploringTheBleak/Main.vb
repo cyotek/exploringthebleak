@@ -41,8 +41,9 @@ Public Class MainForm
 
     Const Dungeon = 0
     Const Ruins = 1
-    Const Classic = 2
-    Const Random = 3
+    Const Tunnels = 2
+    Const Tunnels2 = 3
+    Const Random = 10
 #End Region
 #Region "Form Enhancements"
     Public PAD As New Bitmap(1200, 1200)
@@ -53,7 +54,7 @@ Public Class MainForm
     Public GraphicalMode As Boolean = Tiled
 
     Public StandardColor As Color 'used for color types in fog display
-    Public GenerateType As Short = Random
+    Public GenerateType As Short
     Public EnvironmentType As Byte = 0
     Public MapLevel As Byte = 1
     Public MapCreated(MaxDepthLevel) As Boolean
@@ -62,7 +63,10 @@ Public Class MainForm
     Public MapShown(MaxDepthLevel, MapSize, MapSize) As Boolean
     Public MapOccupied(MaxDepthLevel, MapSize, MapSize) As Byte
     Public MapBlur(MaxDepthLevel, MapSize, MapSize, 3) As Boolean
+    Public WaterBlur(MaxDepthLevel, MapSize, MapSize, 3) As Boolean
     Public FogMap(MaxDepthLevel, MapSize, MapSize) As Byte
+    Public RiverType As Short
+    Public WaterImmune, IceImmune, LavaImmune As Short
 
     Public SKillGobalCooldown As Short 'prevents skills for a amount of time
     Public SkillType As String 'references a skillname if it's going to be used on next attack
@@ -274,54 +278,51 @@ Public Class MainForm
             MapOccupied(MapLevel, MobilePosX(MapLevel, Mobnum), MobilePosY(MapLevel, Mobnum)) = False 'clears mob type
             MobileExists(MapLevel, MobilePosX(MapLevel, Mobnum), MobilePosY(MapLevel, Mobnum)) = False 'kills mob
             MobileHealth(MapLevel, Mobnum) = 0
-            PlayerExperience += MobileType(MapLevel, Mobnum)  'mobiletype distinguishes it's difficulty and therefor applys likewise to experience gained.
+            PlayerExperience += 8  '+ MobileType(MapLevel, Mobnum)  'mobiletype distinguishes it's difficulty and therefor applys likewise to experience gained.
             If PlayerExperience >= 100 Then
                 LevelUp()
             End If
             SND(UCase(Mid(MobString, 1, 1)) + Mid(MobString, 2, Len(MobString)) + " is dead.")
             '----------------Chance to drop items--------------
             '50% depth 1-2, 40% 3-4, 30% 5-6, 20% 7+
-            Dim ItemNumber As Short
-            Dim ItemLocFound, DropSuccess As Boolean 'only make an item if there's room in item list, no more than 40 items created per map
-            Dim RandomNumber As New Random
-            Dim RandomValue As Short
-            For ItemNumber = 1 To ItemNum.Length Step 1
-                If ItemNum(MapLevel, ItemNumber) = 0 Then
-                    ItemNum(MapLevel, ItemNumber) = ItemNumber
-                    ItemLocFound = True
-                    Exit For
-                End If
-            Next
-            If ItemLocFound = True Then 'generate item possibility, there is a free item resource location
-                DropSuccess = False
-                RandomValue = RandomNumber.Next(1, 101)
-                If MapLevel < 3 Then
-                    If RandomValue > 50 Then DropSuccess = True
-                ElseIf MapLevel < 5 Then
-                    If RandomValue > 60 Then DropSuccess = True
-                ElseIf MapLevel < 7 Then
-                    If RandomValue > 70 Then DropSuccess = True
-                Else
-                    If RandomValue > 80 Then DropSuccess = True
-                End If
-                If DropSuccess = True Then 'item will be dropped, yay!
-                    'Public NameType As String
-                    'Public ItemType As Short
-                    'Public ShowType As String
-                    GenerateItem.GenerateRandomItem(ItemNumber)
-                    ItemType(MapLevel, ItemNumber) = GenerateItem.ItemType
-                    ItemShowType(MapLevel, MobilePosX(MapLevel, Mobnum), MobilePosY(MapLevel, Mobnum)) = GenerateItem.ShowType
-                    ItemNameType(MapLevel, MobilePosX(MapLevel, Mobnum), MobilePosY(MapLevel, Mobnum)) = GenerateItem.NameType
-                    SND(UCase(Mid(MobString, 1, 1)) + Mid(MobString, 2, Len(MobString)) + " drops " + GenerateItem.NameType + ".")
-                    ItemOccupied(MapLevel, MobilePosX(MapLevel, Mobnum), MobilePosY(MapLevel, Mobnum)) = ItemNum(MapLevel, ItemNumber)
-                    DrawingProcedures.LOSMap(MobilePosX(MapLevel, Mobnum), MobilePosY(MapLevel, Mobnum)) = DrawingProcedures.Redraw
-                End If
+            If ItemOccupied(MapLevel, MobilePosX(MapLevel, Mobnum), MobilePosY(MapLevel, Mobnum)) = 0 Then 'ensures that items can't drop on items
+                Dim ItemNumber As Short
+                Dim ItemLocFound, DropSuccess As Boolean 'only make an item if there's room in item list, no more than 40 items created per map
+                Dim RandomNumber As New Random
+                Dim RandomValue As Short
+                For ItemNumber = 1 To ItemNum.Length Step 1
+                    If ItemNum(MapLevel, ItemNumber) = 0 Then
+                        ItemNum(MapLevel, ItemNumber) = ItemNumber
+                        ItemLocFound = True
+                        Exit For
+                    End If
+                Next
+                If ItemLocFound = True Then 'generate item possibility, there is a free item resource location
+                    DropSuccess = False
+                    RandomValue = RandomNumber.Next(1, 101)
+                    If RandomValue <= PlayerLUC * 5 Then DropSuccess = True '5% per luck, (50% @ 10, 80% @ 16)
+                    If DropSuccess = True Then 'item will be dropped, yay!
+                        'Public NameType As String
+                        'Public ItemType As Short
+                        'Public ShowType As String
+                        GenerateItem.GenerateRandomItem(ItemNumber)
+                        ItemType(MapLevel, ItemNumber) = GenerateItem.ItemType
+                        ItemShowType(MapLevel, MobilePosX(MapLevel, Mobnum), MobilePosY(MapLevel, Mobnum)) = GenerateItem.ShowType
+                        ItemNameType(MapLevel, MobilePosX(MapLevel, Mobnum), MobilePosY(MapLevel, Mobnum)) = GenerateItem.NameType
+                        If LTrim(GenerateItem.NameType) = "" Then 'this prevents stringless items which occur rarely.. remove when bug is found in generate item
+                            Return 0
+                        End If
+                        SND(UCase(Mid(MobString, 1, 1)) + Mid(MobString, 2, Len(MobString)) + " drops " + GenerateItem.NameType + ".")
+                        ItemOccupied(MapLevel, MobilePosX(MapLevel, Mobnum), MobilePosY(MapLevel, Mobnum)) = ItemNum(MapLevel, ItemNumber)
+                        DrawingProcedures.LOSMap(MobilePosX(MapLevel, Mobnum), MobilePosY(MapLevel, Mobnum)) = DrawingProcedures.Redraw
+                    End If
             End If
-        Else
-            MobileHealth(MapLevel, Mobnum) = 0
-            MapOccupied(MapLevel, MobilePosX(MapLevel, Mobnum), MobilePosY(MapLevel, Mobnum)) = False 'clears mob type
-            MobileExists(MapLevel, MobilePosX(MapLevel, Mobnum), MobilePosY(MapLevel, Mobnum)) = False 'kills mob
-            MobilePosX(MapLevel, Mobnum) = MapSize + 1 : MobilePosY(MapLevel, Mobnum) = MapSize + 1
+            Else
+                MobileHealth(MapLevel, Mobnum) = 0
+                MapOccupied(MapLevel, MobilePosX(MapLevel, Mobnum), MobilePosY(MapLevel, Mobnum)) = False 'clears mob type
+                MobileExists(MapLevel, MobilePosX(MapLevel, Mobnum), MobilePosY(MapLevel, Mobnum)) = False 'kills mob
+                MobilePosX(MapLevel, Mobnum) = MapSize + 1 : MobilePosY(MapLevel, Mobnum) = MapSize + 1
+            End If
         End If
         Return 0
     End Function
@@ -435,7 +436,7 @@ Public Class MainForm
                 Else
                     SND("You counter CRITS " + MobileNameString + ".")
                 End If
-            ElseIf CritStrike <= PlayerINT And SkillType <> "" Then 'player critically striked with a skill.
+            ElseIf CritStrike <= PlayerINT * 2 And SkillType <> "" Then 'player critically striked with a skill.
                 If SkillType = "Punch" Or SkillType = "Kick" Or SkillType = "Hit" Or SkillType = "Strike" Or SkillType = "Slice" Or SkillType = "Stab" Or SkillType = "Shoot" Then
                     'these are the basic +1 skilltypes, and all do the same
                     MobileHealth(MapLevel, Mobnum) -= PlayerAttack * 2 + 2
@@ -646,9 +647,9 @@ Public Class MainForm
     End Function
     Function DetermineMobMov(ByVal MobNum As Short)
         'The way it works:
-        '    Can mobile see character?
+        '    Can mobile see character? If mobile can see character they race for him whether they have to swim or not. They lose 1 hp each round swimming
         '    If yes, mobile will walk towards him
-        '    If no, mobile will walk around randomly
+        '    If no, mobile will walk around randomly but don't swim
         Dim Resolved As Boolean = True
         Dim StepNum As Short = 0
         Dim AlreadyMoved As Boolean = False
@@ -773,7 +774,7 @@ Public Class MainForm
             While FinishMovement = False
                 If RandomPick = 1 And MobilePosY(MapLevel, MobNum) > 0 And MobileHealth(MapLevel, MobNum) > 0 Then 'north
                     If MobileLastMove(MapLevel, MobNum) <> South Then
-                        If Map(MapLevel, MobilePosX(MapLevel, MobNum), MobilePosY(MapLevel, MobNum) - 1) <> Wall Then 'is there no walls to the north?
+                        If Map(MapLevel, MobilePosX(MapLevel, MobNum), MobilePosY(MapLevel, MobNum) - 1) <> Wall And Map(MapLevel, MobilePosX(MapLevel, MobNum), MobilePosY(MapLevel, MobNum) - 1) <> Water Then 'is there no walls to the north?
                             If MobilePosY(MapLevel, MobNum) - 1 = PlayerPosY And MobilePosX(MapLevel, MobNum) = PlayerPosX Then
                                 If MobileFlee(MapLevel, MobNum) > 0 Then
                                     MobileFleeFail(MobNum)
@@ -790,7 +791,7 @@ Public Class MainForm
                 ElseIf RandomPick = 2 And MobilePosX(MapLevel, MobNum) < 25 And MobileHealth(MapLevel, MobNum) > 0 Then 'east
                     If MobileLastMove(MapLevel, MobNum) <> West Then
                         'cannot allow mobiles to go back to spots they were just at in random direction.
-                        If Map(MapLevel, MobilePosX(MapLevel, MobNum) + 1, MobilePosY(MapLevel, MobNum)) <> Wall Then 'is there no walls to the east?
+                        If Map(MapLevel, MobilePosX(MapLevel, MobNum) + 1, MobilePosY(MapLevel, MobNum)) <> Wall And Map(MapLevel, MobilePosX(MapLevel, MobNum) + 1, MobilePosY(MapLevel, MobNum)) <> Water Then 'is there no walls to the east?
                             If MobilePosY(MapLevel, MobNum) = PlayerPosY And MobilePosX(MapLevel, MobNum) + 1 = PlayerPosX Then
                                 If MobileFlee(MapLevel, MobNum) > 0 Then
                                     MobileFleeFail(MobNum)
@@ -807,7 +808,7 @@ Public Class MainForm
                 ElseIf RandomPick = 3 And MobilePosY(MapLevel, MobNum) < 25 And MobileHealth(MapLevel, MobNum) > 0 Then 'south
                     If MobileLastMove(MapLevel, MobNum) <> North Then
                         'cannot allow mobiles to go back to spots they were just at in random direction.
-                        If Map(MapLevel, MobilePosX(MapLevel, MobNum), MobilePosY(MapLevel, MobNum) + 1) <> Wall Then 'is there no walls to the south?
+                        If Map(MapLevel, MobilePosX(MapLevel, MobNum), MobilePosY(MapLevel, MobNum) + 1) <> Wall And Map(MapLevel, MobilePosX(MapLevel, MobNum), MobilePosY(MapLevel, MobNum) + 1) <> Water Then 'is there no walls to the south?
                             If MobilePosY(MapLevel, MobNum) + 1 = PlayerPosY And MobilePosX(MapLevel, MobNum) = PlayerPosX Then
                                 If MobileFlee(MapLevel, MobNum) > 0 Then
                                     MobileFleeFail(MobNum)
@@ -824,7 +825,7 @@ Public Class MainForm
                 ElseIf RandomPick = 4 And MobilePosX(MapLevel, MobNum) > 0 And MobileHealth(MapLevel, MobNum) > 0 Then 'west
                     If MobileLastMove(MapLevel, MobNum) <> East Then
                         'cannot allow mobiles to go back to spots they were just at in random direction.
-                        If Map(MapLevel, MobilePosX(MapLevel, MobNum) - 1, MobilePosY(MapLevel, MobNum)) <> Wall Then 'is there no walls to the west?
+                        If Map(MapLevel, MobilePosX(MapLevel, MobNum) - 1, MobilePosY(MapLevel, MobNum)) <> Wall And Map(MapLevel, MobilePosX(MapLevel, MobNum) - 1, MobilePosY(MapLevel, MobNum)) <> Water Then 'is there no walls to the west?
                             If MobilePosY(MapLevel, MobNum) = PlayerPosY And MobilePosX(MapLevel, MobNum) - 1 = PlayerPosX Then
                                 If MobileFlee(MapLevel, MobNum) > 0 Then
                                     MobileFleeFail(MobNum)
@@ -891,12 +892,7 @@ Public Class MainForm
         PlayerAttack = Math.Round(PlayerSTR / 5, 0)
         PreviousDefense = PlayerDefense
         PreviousAttack = PlayerAttack
-        HealthBar.Caption = LTrim(Str(PlayerCurHitpoints)) + " / " + LTrim(Str(PlayerHitpoints)) + " HP"
-        HealthBar.Value = PlayerCurHitpoints
-        HealthBar.Max = PlayerHitpoints
-        WillpowerBar.Caption = LTrim(Str(PlayerCurWillpower)) + " / " + LTrim(Str(PlayerWillpower)) + " WP"
-        WillpowerBar.Value = PlayerCurWillpower
-        WillpowerBar.Max = PlayerWillpower
+        RefreshStats() 'updates willpower and health bar statistics
         SkillInfoBox.Left = Panel1.Left - SkillInfoBox.Width
         BuildNewMap()
         SND("Press '?' or 'h' for help.")
@@ -907,11 +903,14 @@ Public Class MainForm
             SaveTextToFile("[Name]              [Race]        [Class]          [Level] [Experience] [Depth]      [Gold]    [Turns]" + Chr(13) + "Jarvis              Gnome         Gravedigger      4       45           6            141       1690", CurDir() + "\HighScores.TG", , True)
             HighScores = GetFileContents(CurDir() + "\HighScores.TG")
         End If
+        Skill1Name.Top = 99 : Skill2Name.Top = 99 : Skill3Name.Top = 99
         Me.Focus()
     End Sub
 #End Region
 #Region "Build Map"
     Private Sub BuildNewMap(Optional ByVal DirectionTraveled As Boolean = True)
+        Dim RandomNumber As New Random
+        Dim GenerateRiverChance As Short = RandomNumber.Next(0, 101)
         CANVAS.FillRectangle(Brushes.Black, 1, 1, 1200, 1200)
         'refresh line of sight for new map
         For x = 0 To MapSize Step 1
@@ -922,14 +921,20 @@ Public Class MainForm
         'check to see if the new map was one visited already
         If MapCreated(MapLevel) = False Then 'entering a new map, need to generate
             GenerateMap(8)
+            GenerateBlur() 'walls blur
+            If GenerateRiverChance < 71 Then '70% chance to draw a river
+                GenerateRiver()
+                GenerateBlur(True) 'water blur
+                RiverType = RandomNumber.Next(6, 9)
+            End If
             DetermineEnvironment()
             GenerateFog()
-            GenerateBlur()
             PopulateItems()
-            PopulateMobiles()
             PopulateEntrances()
+            PopulateMobiles()
             MapCreated(MapLevel) = True
         Else
+            DetermineEnvironment()
             If DirectionTraveled = False Then 'up traveled, show down exit
                 PlayerPosX = MapEntrances(MapLevel, 0, 0)
                 PlayerPosY = MapEntrances(MapLevel, 0, 1)
@@ -942,25 +947,273 @@ Public Class MainForm
         ReDraw()
         DrawingProcedures.ChangedMode = False
     End Sub
-    Sub GenerateBlur()
-        For x = 0 To MapSize Step 1
-            For y = 0 To MapSize Step 1
-                If Map(Maplevel, x, y) = Wall Then
-                    If x > 0 Then
-                        If Map(MapLevel, x - 1, y) <> Wall Then MapBlur(MapLevel, x, y, 3) = True Else MapBlur(MapLevel, x, y, 3) = False
-                    End If
-                    If x < MapSize Then
-                        If Map(MapLevel, x + 1, y) <> Wall Then MapBlur(MapLevel, x, y, 1) = True Else MapBlur(MapLevel, x, y, 1) = False
-                    End If
-                    If y > 0 Then
-                        If Map(MapLevel, x, y - 1) <> Wall Then MapBlur(MapLevel, x, y, 2) = True Else MapBlur(MapLevel, x, y, 2) = False
-                    End If
-                    If y < MapSize Then
-                        If Map(MapLevel, x, y + 1) <> Wall Then MapBlur(MapLevel, x, y, 0) = True Else MapBlur(MapLevel, x, y, 0) = False
-                    End If
+    Sub GenerateRiver()
+        Dim RandomNumber As New Random
+        Dim Direction As Byte = RandomNumber.Next(1, 7)
+        Dim XPos, XTar As Short 'xposition and x target
+        Dim YPos, YTar As Short 'yposition and y target
+        Dim LastAxis As Boolean = False 'determines whether x or y goes next
+        Dim Shifter As Short 'after reaching target axis, shift water every now and then this way or that
+        If Direction = 1 Then 'east-west
+            YPos = RandomNumber.Next(0, MapSize + 1)
+            Shifter = RandomNumber.Next(-3, 4)
+            YTar = YPos + Shifter
+            If YTar > MapSize Then YTar = MapSize
+            If YTar < 0 Then YTar = 0
+            XPos = 0
+            While XPos <= MapSize
+                Map(MapLevel, XPos, YPos) = Water
+                If YPos < YTar And LastAxis = True Then
+                    YPos += 1
+                    LastAxis = False
+                ElseIf YPos > YTar And LastAxis = True Then
+                    YPos -= 1
+                    LastAxis = False
+                ElseIf YPos = YTar Then
+                    Shifter = RandomNumber.Next(-5, 6)
+                    YTar += Shifter
+                    If YTar > MapSize Then YTar = MapSize
+                    If YTar < 0 Then YTar = 0
+                Else
+                    XPos += 1
+                    LastAxis = True
                 End If
+            End While
+        ElseIf Direction = 2 Then 'north-south
+            XPos = RandomNumber.Next(0, MapSize + 1)
+            Shifter = RandomNumber.Next(-3, 4)
+            XTar = XPos + Shifter
+            If XTar > MapSize Then XTar = MapSize
+            If XTar < 0 Then XTar = 0
+            YPos = 0
+            While YPos <= MapSize
+                Map(MapLevel, XPos, YPos) = Water
+                If XPos < XTar And LastAxis = True Then
+                    XPos += 1
+                    LastAxis = False
+                ElseIf XPos > XTar And LastAxis = True Then
+                    XPos -= 1
+                    LastAxis = False
+                ElseIf XPos = XTar Then
+                    Shifter = RandomNumber.Next(-5, 6)
+                    XTar += Shifter
+                    If XTar > MapSize Then XTar = MapSize
+                    If XTar < 0 Then XTar = 0
+                Else
+                    YPos += 1
+                    LastAxis = True
+                End If
+            End While
+        ElseIf Direction = 3 Then 'east-north
+            XPos = RandomNumber.Next(0, MapSize / 2)
+            Shifter = RandomNumber.Next(-3, 4)
+            XTar = XPos + Shifter
+            If XTar > MapSize Then XTar = MapSize
+            If XTar < 0 Then XTar = 0
+            YPos = 0
+            YTar = MapSize 'not used until it reaches the center of map
+            While YPos <= MapSize
+                Map(MapLevel, XPos, YPos) = Water
+                If XPos < XTar And LastAxis = True Then
+                    XPos += 1
+                    LastAxis = False
+                ElseIf XPos > XTar And LastAxis = True Then
+                    XPos -= 1
+                    LastAxis = False
+                ElseIf XPos = XTar Then
+                    If XPos = MapSize Then
+                        Exit While
+                    End If
+                    Shifter = RandomNumber.Next(-5, 6)
+                    XTar += Shifter
+                    If XTar > MapSize Then XTar = MapSize
+                    If XTar < 0 Then XTar = 0
+                ElseIf YPos = YTar Then
+                    Shifter = RandomNumber.Next(-3, 4)
+                    YTar += Shifter
+                    If YTar > MapSize Then YTar = MapSize
+                    If YTar < 0 Then YTar = 0
+                Else
+                    If YPos > YTar Then YPos -= 2
+                    YPos += 1
+                    LastAxis = True
+                End If
+                If YPos > MapSize / 2 Then
+                    XTar = MapSize
+                    Shifter = RandomNumber.Next(-3, 4)
+                    YTar += Shifter
+                    If YTar > MapSize Then YTar = MapSize
+                    If YTar < 0 Then YTar = 0
+                End If
+            End While
+        ElseIf Direction = 4 Then 'west-north
+            XPos = RandomNumber.Next(MapSize / 2, MapSize + 1)
+            Shifter = RandomNumber.Next(-3, 4)
+            XTar = XPos + Shifter
+            If XTar > MapSize Then XTar = MapSize
+            If XTar < 0 Then XTar = 0
+            YPos = 0
+            YTar = MapSize 'not used until it reaches the center of map
+            While YPos <= MapSize
+                Map(MapLevel, XPos, YPos) = Water
+                If XPos < XTar And LastAxis = True Then
+                    XPos += 1
+                    LastAxis = False
+                ElseIf XPos > XTar And LastAxis = True Then
+                    XPos -= 1
+                    LastAxis = False
+                ElseIf XPos = XTar Then
+                    If XPos = 0 Then
+                        Exit While
+                    End If
+                    Shifter = RandomNumber.Next(-5, 6)
+                    XTar += Shifter
+                    If XTar > MapSize Then XTar = MapSize
+                    If XTar < 0 Then XTar = 0
+                ElseIf YPos = YTar Then
+                    Shifter = RandomNumber.Next(-3, 4)
+                    YTar += Shifter
+                    If YTar > MapSize Then YTar = MapSize
+                    If YTar < 0 Then YTar = 0
+                Else
+                    If YPos > YTar Then YPos -= 2
+                    YPos += 1
+                    LastAxis = True
+                End If
+                If YPos > MapSize / 2 Then
+                    XTar = 0
+                    Shifter = RandomNumber.Next(-3, 4)
+                    YTar += Shifter
+                    If YTar > MapSize Then YTar = MapSize
+                    If YTar < 0 Then YTar = 0
+                End If
+            End While
+        ElseIf Direction = 5 Then 'west-south
+            YPos = RandomNumber.Next(MapSize / 2, MapSize + 1)
+            Shifter = RandomNumber.Next(-3, 4)
+            YTar = YPos + Shifter
+            If YTar > MapSize Then YTar = MapSize
+            If YTar < 0 Then YTar = 0
+            XPos = 0
+            XTar = MapSize 'not used until it reaches the center of map
+            While XPos <= MapSize
+                Map(MapLevel, XPos, YPos) = Water
+                If YPos < YTar And LastAxis = True Then
+                    YPos += 1
+                    LastAxis = False
+                ElseIf YPos > YTar And LastAxis = True Then
+                    YPos -= 1
+                    LastAxis = False
+                ElseIf YPos = YTar Then
+                    If YPos = MapSize Then
+                        Exit While
+                    End If
+                    Shifter = RandomNumber.Next(-5, 6)
+                    YTar += Shifter
+                    If YTar > MapSize Then YTar = MapSize
+                    If YTar < 0 Then YTar = 0
+                ElseIf XPos = XTar Then
+                    Shifter = RandomNumber.Next(-3, 4)
+                    XTar += Shifter
+                    If XTar > MapSize Then XTar = MapSize
+                    If XTar < 0 Then XTar = 0
+                Else
+                    If XPos > XTar Then XPos -= 2
+                    XPos += 1
+                    LastAxis = True
+                End If
+                If XPos > MapSize / 2 Then
+                    YTar = MapSize
+                    Shifter = RandomNumber.Next(-3, 4)
+                    XTar += Shifter
+                    If XTar > MapSize Then XTar = MapSize
+                    If XTar < 0 Then XTar = 0
+                End If
+            End While
+        ElseIf Direction = 6 Then 'east-south
+            YPos = RandomNumber.Next(0, MapSize / 2)
+            Shifter = RandomNumber.Next(-3, 4)
+            YTar = YPos + Shifter
+            If YTar > MapSize Then YTar = MapSize
+            If YTar < 0 Then YTar = 0
+            XPos = MapSize
+            XTar = 0 'not used until it reaches the center of map
+            While XPos >= 0
+                Map(MapLevel, XPos, YPos) = Water
+                If YPos < YTar And LastAxis = True Then
+                    YPos += 1
+                    LastAxis = False
+                ElseIf YPos > YTar And LastAxis = True Then
+                    YPos -= 1
+                    LastAxis = False
+                ElseIf YPos = YTar Then
+                    If YPos = MapSize Then
+                        Exit While
+                    End If
+                    Shifter = RandomNumber.Next(-5, 6)
+                    YTar += Shifter
+                    If YTar > MapSize Then YTar = MapSize
+                    If YTar < 0 Then YTar = 0
+                ElseIf XPos = XTar Then
+                    Shifter = RandomNumber.Next(-3, 4)
+                    XTar += Shifter
+                    If XTar > MapSize Then XTar = MapSize
+                    If XTar < 0 Then XTar = 0
+                Else
+                    If XPos > XTar Then XPos -= 2
+                    XPos += 1
+                    LastAxis = True
+                End If
+                If XPos > MapSize / 2 Then
+                    YTar = MapSize
+                    Shifter = RandomNumber.Next(-3, 4)
+                    XTar += Shifter
+                    If XTar > MapSize Then XTar = MapSize
+                    If XTar < 0 Then XTar = 0
+                End If
+            End While
+        End If
+    End Sub
+    Sub GenerateBlur(Optional ByVal Type As Boolean = False)
+        If Type = False Then 'regular test for walls
+            For x = 0 To MapSize Step 1
+                For y = 0 To MapSize Step 1
+                    If Map(MapLevel, x, y) = Wall Then
+                        If x > 0 Then
+                            If Map(MapLevel, x - 1, y) <> Wall Then MapBlur(MapLevel, x, y, 3) = True Else MapBlur(MapLevel, x, y, 3) = False
+                        End If
+                        If x < MapSize Then
+                            If Map(MapLevel, x + 1, y) <> Wall Then MapBlur(MapLevel, x, y, 1) = True Else MapBlur(MapLevel, x, y, 1) = False
+                        End If
+                        If y > 0 Then
+                            If Map(MapLevel, x, y - 1) <> Wall Then MapBlur(MapLevel, x, y, 2) = True Else MapBlur(MapLevel, x, y, 2) = False
+                        End If
+                        If y < MapSize Then
+                            If Map(MapLevel, x, y + 1) <> Wall Then MapBlur(MapLevel, x, y, 0) = True Else MapBlur(MapLevel, x, y, 0) = False
+                        End If
+                    End If
+                Next
             Next
-        Next
+        Else 'test for water
+            For x = 0 To MapSize Step 1
+                For y = 0 To MapSize Step 1
+                    If Map(MapLevel, x, y) = Water Then
+                        If x > 0 Then
+                            If Map(MapLevel, x - 1, y) <> Water Then WaterBlur(MapLevel, x, y, 3) = True Else WaterBlur(MapLevel, x, y, 3) = False
+                        End If
+                        If x < MapSize Then
+                            If Map(MapLevel, x + 1, y) <> Water Then WaterBlur(MapLevel, x, y, 1) = True Else WaterBlur(MapLevel, x, y, 1) = False
+                        End If
+                        If y > 0 Then
+                            If Map(MapLevel, x, y - 1) <> Water Then WaterBlur(MapLevel, x, y, 2) = True Else WaterBlur(MapLevel, x, y, 2) = False
+                        End If
+                        If y < MapSize Then
+                            If Map(MapLevel, x, y + 1) <> Water Then WaterBlur(MapLevel, x, y, 0) = True Else WaterBlur(MapLevel, x, y, 0) = False
+                        End If
+                    End If
+                Next
+            Next
+        End If
     End Sub
     Sub PopulateEntrances()
         Dim RandomNum As New Random
@@ -975,7 +1228,7 @@ Public Class MainForm
                 'no place to put the item, recursion too high, exit (catch)
                 Exit While
             End If
-            If Map(MapLevel, RandomPosX, RandomPosY) = 1 Then
+            If Map(MapLevel, RandomPosX, RandomPosY) = Floor Then
                 Foundentrance = True
                 If MapLevel >= 2 Then 'ensures that the player can't go to levels before 1
                     Map(MapLevel, RandomPosX, RandomPosY) = StairsUp 'uncomment this to allow stairs up
@@ -1001,7 +1254,7 @@ Public Class MainForm
                 'no place to put the item, recursion too high, exit (catch)
                 Exit While
             End If
-            If Map(MapLevel, RandomPosX, RandomPosY) = 1 Then
+            If Map(MapLevel, RandomPosX, RandomPosY) = Floor Then
                 If Math.Abs(RandomPosX - EntrancePosX) >= 5 Or Math.Abs(RandomPosY - EntrancePosY) >= 5 Then
                     Map(MapLevel, RandomPosX, RandomPosY) = StairsDown
                     MapEntrances(MapLevel, 0, 0) = RandomPosX
@@ -1072,7 +1325,8 @@ Public Class MainForm
         Dim RandomItemType As Short = RandomNum.Next(1, 6)
         Dim ItemNumber As Short 'otherwise known in other parts as ItemNum
         Dim FoundPosition As Boolean = False
-        Dim MaxItems As Short = Math.Round(PlayerLUC / 2, 0)
+        Dim MaxItems As Short = Math.Round(PlayerLUC - 8, 0)
+        If MaxItems < 0 Then MaxItems = 0 'luck shouldn't be below 8 but if it is, just don't spawn items
         'clear previous map occupied first
         System.Array.Clear(ItemOccupied, 0, ItemOccupied.Length)
         System.Array.Clear(ItemNum, 0, ItemNum.Length) 'needs to be cleared if mobiles drop items
@@ -1137,45 +1391,49 @@ Public Class MainForm
                 End If
                 RandomPosX = RandomNum.Next(1, MapSize - 1) 'don't want to start a mobile on the edge of the map... just because it doesn't look pretty
                 RandomPosY = RandomNum.Next(1, MapSize - 1) 'don't want to start a mobile on the edge of the map... just because it doesn't look pretty
-                If Map(MapLevel, RandomPosX, RandomPosY) = 1 Then
-                    MapOccupied(MapLevel, RandomPosX, RandomPosY) = RandomMobType 'assign mobiles random type
-                    MobOccupied(MapLevel, RandomPosX, RandomPosY) = MobileNumber
-                    MobilePosX(MapLevel, MobileNumber) = RandomPosX : MobilePosY(MapLevel, MobileNumber) = RandomPosY
-                    MobilePrevX(MapLevel, MobileNumber) = RandomPosX : MobilePrevY(MapLevel, MobileNumber) = RandomPosY
-                    MobileType(MapLevel, MobileNumber) = RandomMobType
-                    If RandomMobType = 1 Then 'assign the mobiles health depending on their type
-                        MobileHealth(MapLevel, MobileNumber) = 2 + MapLevel
-                    ElseIf RandomMobType = 2 Then
-                        MobileHealth(MapLevel, MobileNumber) = 2 + MapLevel
-                    ElseIf RandomMobType = 3 Then
-                        MobileHealth(MapLevel, MobileNumber) = 3 + MapLevel
-                    ElseIf RandomMobType = 4 Then
-                        MobileHealth(MapLevel, MobileNumber) = 3 + MapLevel
-                    ElseIf RandomMobType = 5 Then
-                        MobileHealth(MapLevel, MobileNumber) = 3 + MapLevel
-                    ElseIf RandomMobType = 6 Then
-                        MobileHealth(MapLevel, MobileNumber) = 5 + MapLevel
-                    ElseIf RandomMobType = 7 Then
-                        MobileHealth(MapLevel, MobileNumber) = 5 + MapLevel
-                    ElseIf RandomMobType = 8 Then
-                        MobileHealth(MapLevel, MobileNumber) = 5 + MapLevel
-                    ElseIf RandomMobType = 9 Then
-                        MobileHealth(MapLevel, MobileNumber) = 5 + MapLevel
-                    ElseIf RandomMobType = 10 Then
-                        MobileHealth(MapLevel, MobileNumber) = 10 + MapLevel
-                    ElseIf RandomMobType = 11 Then
-                        MobileHealth(MapLevel, MobileNumber) = 10 + MapLevel
-                    ElseIf RandomMobType = 12 Then
-                        MobileHealth(MapLevel, MobileNumber) = 10 + MapLevel
-                    ElseIf RandomMobType = 13 Then
-                        MobileHealth(MapLevel, MobileNumber) = 10 + MapLevel
-                    Else 'this is a catch to ensure that mobile types stay within known bounds in case environments are ever added, set all future mobiles
-                        MobileHealth(MapLevel, MobileNumber) = 1 'to retain the same hitpoints as the rat (1)
-                        MobileType(MapLevel, MobileNumber) = 1
-                        MapOccupied(MapLevel, RandomPosX, RandomPosY) = 1
+                If Map(MapLevel, RandomPosX, RandomPosY) = Floor Then
+                    If RandomPosX = PlayerPosX And RandomPosY = PlayerPosY Then
+                        'space for expansion if mobile falls on player. right now it's not allowed
+                    Else
+                        MapOccupied(MapLevel, RandomPosX, RandomPosY) = RandomMobType 'assign mobiles random type
+                        MobOccupied(MapLevel, RandomPosX, RandomPosY) = MobileNumber
+                        MobilePosX(MapLevel, MobileNumber) = RandomPosX : MobilePosY(MapLevel, MobileNumber) = RandomPosY
+                        MobilePrevX(MapLevel, MobileNumber) = RandomPosX : MobilePrevY(MapLevel, MobileNumber) = RandomPosY
+                        MobileType(MapLevel, MobileNumber) = RandomMobType
+                        If RandomMobType = 1 Then 'assign the mobiles health depending on their type
+                            MobileHealth(MapLevel, MobileNumber) = 2 + MapLevel
+                        ElseIf RandomMobType = 2 Then
+                            MobileHealth(MapLevel, MobileNumber) = 2 + MapLevel
+                        ElseIf RandomMobType = 3 Then
+                            MobileHealth(MapLevel, MobileNumber) = 3 + MapLevel
+                        ElseIf RandomMobType = 4 Then
+                            MobileHealth(MapLevel, MobileNumber) = 3 + MapLevel
+                        ElseIf RandomMobType = 5 Then
+                            MobileHealth(MapLevel, MobileNumber) = 3 + MapLevel
+                        ElseIf RandomMobType = 6 Then
+                            MobileHealth(MapLevel, MobileNumber) = 5 + MapLevel
+                        ElseIf RandomMobType = 7 Then
+                            MobileHealth(MapLevel, MobileNumber) = 5 + MapLevel
+                        ElseIf RandomMobType = 8 Then
+                            MobileHealth(MapLevel, MobileNumber) = 5 + MapLevel
+                        ElseIf RandomMobType = 9 Then
+                            MobileHealth(MapLevel, MobileNumber) = 5 + MapLevel
+                        ElseIf RandomMobType = 10 Then
+                            MobileHealth(MapLevel, MobileNumber) = 10 + MapLevel
+                        ElseIf RandomMobType = 11 Then
+                            MobileHealth(MapLevel, MobileNumber) = 10 + MapLevel
+                        ElseIf RandomMobType = 12 Then
+                            MobileHealth(MapLevel, MobileNumber) = 10 + MapLevel
+                        ElseIf RandomMobType = 13 Then
+                            MobileHealth(MapLevel, MobileNumber) = 10 + MapLevel
+                        Else 'this is a catch to ensure that mobile types stay within known bounds in case environments are ever added, set all future mobiles
+                            MobileHealth(MapLevel, MobileNumber) = 1 'to retain the same hitpoints as the rat (1)
+                            MobileType(MapLevel, MobileNumber) = 1
+                            MapOccupied(MapLevel, RandomPosX, RandomPosY) = 1
+                        End If
+                        MobileExists(MapLevel, RandomPosX, RandomPosY) = True 'set mobile to living
+                        FoundPosition = True
                     End If
-                    MobileExists(MapLevel, RandomPosX, RandomPosY) = True 'set mobile to living
-                    FoundPosition = True
                 End If
             End While
         Next
@@ -1193,9 +1451,9 @@ Public Class MainForm
         Dim StopWhile = 0
         Dim PotentialGrowth As Short = 0 'this number is the potential size the room or corridor can be in that direction
         Dim PotentialSides As Short = 0
-        Dim GenerateRandomType = GenerateType
-        If GenerateRandomType = 3 Then
-            GenerateRandomType = RandomNumber.Next(0, 2) 'returns 0:Dungeon,1:Ruins..alternatively once finished 2:Classic
+        Dim GenerateRandomType As Short = Random
+        If GenerateRandomType = Random Then
+            GenerateRandomType = RandomNumber.Next(0, 4) 'returns 0:Dungeon,1:Ruins,2:Classic(nesw-dir),3:Classic2(nesw+ne,se,sw,nw-dir)
         End If
         If GenerateRandomType = Dungeon Then
             For RepeatToRecursion = 1 To Recursion Step 1
@@ -1485,25 +1743,33 @@ Public Class MainForm
                     End If
                 Next
             Next
-        ElseIf GenerateRandomType = Classic Then
+        ElseIf GenerateRandomType = Tunnels Or GenerateRandomType = Tunnels2 Then
             Dim AllocatedBlocks As Short = 0
+            Dim FailedBlocks As Short = 0
             Dim RandomPosition As New Random
             Dim BuilderSpawned As Boolean = False
             Dim BuilderMoveDirection As Short = 0
             Dim PawnLocationX As Short = Math.Floor(MapSize / 2)
             Dim PawnLocationY As Short = Math.Floor(MapSize / 2)
-            While AllocatedBlocks < MapSize / 2
+            While AllocatedBlocks < MapSize * (MapSize / 3) And FailedBlocks < 500
                 If BuilderSpawned = False Then
                     'spawn at random position
-                    BuilderPositionX = RandomPosition.Next(0, MapSize)
-                    BuilderPositionY = RandomPosition.Next(0, MapSize)
+                    BuilderPositionX = RandomPosition.Next(1, MapSize)
+                    BuilderPositionY = RandomPosition.Next(1, MapSize)
                     'see if spawn is within 1 block of pawn after spawn
                     If Math.Abs(PawnLocationX - BuilderPositionX) <= 1 And Math.Abs(PawnLocationY - BuilderPositionY) <= 1 Then
                         'builder was spawned too close to spawn, clear that floor and respawn
-                        Map(MapLevel, BuilderPositionX, BuilderPositionY) = Floor
+                        If Map(MapLevel, BuilderPositionX, BuilderPositionY) <> Floor Then
+                            Map(MapLevel, BuilderPositionX, BuilderPositionY) = Floor
+                            AllocatedBlocks += 1
+                        Else
+                            FailedBlocks += 1
+                        End If
+                    ElseIf Map(MapLevel, BuilderPositionX, BuilderPositionY) = Floor Then
+                        FailedBlocks += 1
                     Else
                         BuilderSpawned = True
-                        BuilderMoveDirection = RandomPosition.Next(1, 5)
+                        BuilderMoveDirection = RandomPosition.Next(1, 9)
                     End If
                 Else 'builderalready spawned and knows it's direction, move the builder
                     'move the builder
@@ -1515,13 +1781,86 @@ Public Class MainForm
                         BuilderPositionY += 1
                     ElseIf BuilderMoveDirection = West And BuilderPositionX > 0 Then
                         BuilderPositionX -= 1
+                    ElseIf BuilderMoveDirection = 5 And BuilderPositionX < MapSize And BuilderPositionY > 0 And GenerateRandomType = Tunnels2 Then 'northeast
+                        BuilderPositionY -= 1
+                        BuilderPositionX += 1
+                    ElseIf BuilderMoveDirection = 6 And BuilderPositionX < MapSize And BuilderPositionY < MapSize And GenerateRandomType = Tunnels2 Then 'southeast
+                        BuilderPositionY += 1
+                        BuilderPositionX += 1
+                    ElseIf BuilderMoveDirection = 7 And BuilderPositionX > 0 And BuilderPositionY < MapSize And GenerateRandomType = Tunnels2 Then 'southwest
+                        BuilderPositionY += 1
+                        BuilderPositionX -= 1
+                    ElseIf BuilderMoveDirection = 8 And BuilderPositionX > 0 And BuilderPositionY > 0 And GenerateRandomType = Tunnels2 Then
+                        BuilderPositionY -= 1
+                        BuilderPositionX -= 1
                     Else
                         'if it wasn't passed it must either be an error or near the side of the map
                         'so go ahead and respawn
                         BuilderSpawned = False
                     End If
-                    'see whether the builder is near an exit or near a existing spot
-
+                    'see whether the builder is near an existing spot
+                    'see whether the builder is near an exit
+                    If BuilderPositionX < MapSize And BuilderPositionY < MapSize And BuilderPositionX > 0 And BuilderPositionY > 0 Then
+                        If Map(MapLevel, BuilderPositionX + 1, BuilderPositionY) = Floor Then
+                            If Map(MapLevel, BuilderPositionX, BuilderPositionY) <> Floor Then
+                                Map(MapLevel, BuilderPositionX, BuilderPositionY) = Floor
+                                AllocatedBlocks += 1
+                            Else
+                                FailedBlocks += 1
+                            End If
+                        ElseIf Map(MapLevel, BuilderPositionX - 1, BuilderPositionY) = Floor Then
+                            If Map(MapLevel, BuilderPositionX, BuilderPositionY) <> Floor Then
+                                Map(MapLevel, BuilderPositionX, BuilderPositionY) = Floor
+                                AllocatedBlocks += 1
+                            Else
+                                FailedBlocks += 1
+                            End If
+                        ElseIf Map(MapLevel, BuilderPositionX, BuilderPositionY + 1) = Floor Then
+                            If Map(MapLevel, BuilderPositionX, BuilderPositionY) <> Floor Then
+                                Map(MapLevel, BuilderPositionX, BuilderPositionY) = Floor
+                                AllocatedBlocks += 1
+                            Else
+                                FailedBlocks += 1
+                            End If
+                        ElseIf Map(MapLevel, BuilderPositionX, BuilderPositionY - 1) = Floor Then
+                            If Map(MapLevel, BuilderPositionX, BuilderPositionY) <> Floor Then
+                                Map(MapLevel, BuilderPositionX, BuilderPositionY) = Floor
+                                AllocatedBlocks += 1
+                            Else
+                                FailedBlocks += 1
+                            End If
+                        ElseIf Map(MapLevel, BuilderPositionX + 1, BuilderPositionY + 1) = Floor Then
+                            If Map(MapLevel, BuilderPositionX, BuilderPositionY) <> Floor Then
+                                Map(MapLevel, BuilderPositionX, BuilderPositionY) = Floor
+                                AllocatedBlocks += 1
+                            Else
+                                FailedBlocks += 1
+                            End If
+                        ElseIf Map(MapLevel, BuilderPositionX + 1, BuilderPositionY - 1) = Floor Then
+                            If Map(MapLevel, BuilderPositionX, BuilderPositionY) <> Floor Then
+                                Map(MapLevel, BuilderPositionX, BuilderPositionY) = Floor
+                                AllocatedBlocks += 1
+                            Else
+                                FailedBlocks += 1
+                            End If
+                        ElseIf Map(MapLevel, BuilderPositionX - 1, BuilderPositionY - 1) = Floor Then
+                            If Map(MapLevel, BuilderPositionX, BuilderPositionY) <> Floor Then
+                                Map(MapLevel, BuilderPositionX, BuilderPositionY) = Floor
+                                AllocatedBlocks += 1
+                            Else
+                                FailedBlocks += 1
+                            End If
+                        ElseIf Map(MapLevel, BuilderPositionX - 1, BuilderPositionY + 1) = Floor Then
+                            If Map(MapLevel, BuilderPositionX, BuilderPositionY) <> Floor Then
+                                Map(MapLevel, BuilderPositionX, BuilderPositionY) = Floor
+                                AllocatedBlocks += 1
+                            Else
+                                FailedBlocks += 1
+                            End If
+                        End If
+                    Else
+                        BuilderSpawned = False
+                    End If
                 End If
             End While
         End If
@@ -1633,20 +1972,123 @@ Public Class MainForm
 #End Region
 #Region "Tick"
     Sub ReDraw() 'also known as 'tick'
+        'check to see if the player is in water and reduce their willpower
+        If Map(MapLevel, PlayerPosX, PlayerPosY) = Water Then
+            Dim Ignorewater = False
+            If RiverType = Water And WaterImmune = 0 Then
+                PlayerCurWillpower -= 10
+            ElseIf RiverType = Ice And IceImmune = 0 Then
+                PlayerCurWillpower -= 20
+            ElseIf RiverType = Lava And LavaImmune = 0 Then
+                PlayerCurWillpower -= 30
+            Else
+                IgnoreWater = True
+            End If
+            If PlayerCurWillpower <= 0 Then
+                PlayerCurHitpoints += PlayerCurWillpower
+                SND("You use up all your WP.")
+                If RiverType = Water And PlayerCurWillpower <> 0 Then
+                    SND("You drown for " + LTrim(Str(Math.Abs(PlayerCurWillpower))) + "HP.")
+                ElseIf RiverType = Ice And PlayerCurWillpower <> 0 Then
+                    SND("You freeze for " + LTrim(Str(Math.Abs(PlayerCurWillpower))) + "HP.")
+                ElseIf RiverType = Lava And PlayerCurWillpower <> 0 Then
+                    SND("You burn for " + LTrim(Str(Math.Abs(PlayerCurWillpower))) + "HP.")
+                End If
+                PlayerCurWillpower = 0
+            ElseIf Ignorewater = True Then
+                SND("You remain immune.")
+                If WaterImmune > 0 Then
+                    WaterImmune -= 1
+                    If WaterImmune = 0 Then
+                        SND("Drown immunity wears off.")
+                    End If
+                End If
+                If IceImmune > 0 Then
+                    IceImmune -= 1
+                    If IceImmune = 0 Then
+                        SND("Freeze immunity wears off.")
+                    End If
+                End If
+                If LavaImmune > 0 Then
+                    LavaImmune -= 1
+                    If LavaImmune = 0 Then
+                        SND("Burn immunity wears off.")
+                    End If
+                End If
+            Else
+                If RiverType = Water Then
+                    SND("You swim reducing WP by 10.")
+                ElseIf RiverType = Ice Then
+                    SND("You freeze reducing WP by 20.")
+                ElseIf RiverType = Lava Then
+                    SND("You burn reducing WP by 30.")
+                End If
+            End If
+            RefreshStats() 'updates willpower and health bar statistics
+        End If
         'Process the mobiles on the map and move them one at a time.
         Dim ProcessMobilePathNumber As Short = 0
+        Dim MobileNameString As String
         For ProcessMobilePathNumber = 0 To 9 Step 1
-            If Silence <= 0 Then
-                If MobileStun(MapLevel, ProcessMobilePathNumber) <= 0 Then
-                    If MobileHealth(MapLevel, ProcessMobilePathNumber) > 0 Then
-                        DetermineMobMov(ProcessMobilePathNumber)
+            If MobileHealth(MapLevel, ProcessMobilePathNumber) > 0 Then
+                If Silence <= 0 Then
+                    If MobileStun(MapLevel, ProcessMobilePathNumber) <= 0 Then
+                        If MobileHealth(MapLevel, ProcessMobilePathNumber) > 0 Then
+                            DetermineMobMov(ProcessMobilePathNumber)
+                        End If
+                    Else
+                        'mobile is stunned and can't move
+                        SND("Stunned enemy struggles.")
+                        'reduce the current time left on stun
+                        MobileStun(MapLevel, ProcessMobilePathNumber) -= 1
                     End If
-                Else
-                    'mobile is stunned and can't move
-                    SND("Stunned enemy struggles.")
-                    'reduce the current time left on stun
-                    MobileStun(MapLevel, ProcessMobilePathNumber) -= 1
                 End If
+                'after mobile moves, check to see if its on water and then reduce its health as it drowns, no mobile can swim
+                Try
+                    If Map(MapLevel, MobilePosX(MapLevel, ProcessMobilePathNumber), MobilePosY(MapLevel, ProcessMobilePathNumber)) = Water Then
+                        If MobileType(MapLevel, ProcessMobilePathNumber) = 1 Then
+                            MobileNameString = "A rat"
+                        ElseIf MobileType(MapLevel, ProcessMobilePathNumber) = 2 Then
+                            MobileNameString = "A bat"
+                        ElseIf MobileType(MapLevel, ProcessMobilePathNumber) = 3 Then
+                            MobileNameString = "An imp"
+                        ElseIf MobileType(MapLevel, ProcessMobilePathNumber) = 4 Then
+                            MobileNameString = "A goblin"
+                        ElseIf MobileType(MapLevel, ProcessMobilePathNumber) = 5 Then
+                            MobileNameString = "A troll"
+                        ElseIf MobileType(MapLevel, ProcessMobilePathNumber) = 6 Then
+                            MobileNameString = "An ogre"
+                        ElseIf MobileType(MapLevel, ProcessMobilePathNumber) = 7 Then
+                            MobileNameString = "A catoblepas"
+                        ElseIf MobileType(MapLevel, ProcessMobilePathNumber) = 8 Then
+                            MobileNameString = "A parandrus"
+                        ElseIf MobileType(MapLevel, ProcessMobilePathNumber) = 9 Then
+                            MobileNameString = "A clurichuan"
+                        ElseIf MobileType(MapLevel, ProcessMobilePathNumber) = 10 Then
+                            MobileNameString = "A dullahan"
+                        ElseIf MobileType(MapLevel, ProcessMobilePathNumber) = 11 Then
+                            MobileNameString = "A golem"
+                        ElseIf MobileType(MapLevel, ProcessMobilePathNumber) = 12 Then
+                            MobileNameString = "A sceadugengan"
+                        ElseIf MobileType(MapLevel, ProcessMobilePathNumber) = 13 Then
+                            MobileNameString = "A schilla"
+                        End If
+                        If RiverType = Water Then
+                            MobileHealth(MapLevel, ProcessMobilePathNumber) -= 1
+                            SND(MobileNameString + " is drowning.")
+                        ElseIf RiverType = Ice Then
+                            MobileHealth(MapLevel, ProcessMobilePathNumber) -= 2
+                            SND(MobileNameString + " is freezing.")
+                        ElseIf RiverType = Lava Then
+                            MobileHealth(MapLevel, ProcessMobilePathNumber) -= 3
+                            SND(MobileNameString + " is burning.")
+                        End If
+                        If MobileHealth(MapLevel, ProcessMobilePathNumber) <= 0 Then
+                            KillMob(ProcessMobilePathNumber, MobileNameString)
+                        End If
+                    End If
+                Catch
+                End Try
             End If
         Next
         'reduce global cooldown of skill by one round, as a round has just passed
@@ -1808,8 +2250,6 @@ Public Class MainForm
         PlayerLUC = Val(luccur.Text)
         PlayerHitpoints = Val(hpcur.Text)
         PlayerWillpower = Val(wpcur.Text)
-        PlayerCurHitpoints = PlayerHitpoints
-        PlayerCurWillpower = PlayerWillpower
         PlayerDefense += Math.Round(PlayerCON / 5, 0) - Math.Round(PrevCon / 5, 0)
         PlayerAttack += Math.Round(PlayerSTR / 5, 0) - Math.Round(PrevStr / 5, 0)
         LevelUpPanel.Visible = False
@@ -1825,6 +2265,118 @@ Public Class MainForm
     End Sub
 #End Region
 #Region "Skill Button Events"
+    Private Sub SkillRollOver(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Skill3.MouseEnter, Skill2.MouseEnter, Skill1.MouseEnter
+        SkillInfoBox.Visible = True
+        If sender Is Skill1 Then
+            ShowInfoboxText(Skill1Name.Text)
+        ElseIf sender Is Skill2 Then
+            ShowInfoboxText(Skill2Name.Text)
+        ElseIf sender Is Skill3 Then
+            ShowInfoboxText(Skill3Name.Text)
+        End If
+    End Sub
+    Private Sub ShowInfoboxText(ByVal Skill As String)
+        If Skill = "Punch" Then
+            SkillInfoBox.Text = "Punch"
+            SkillInfo.Text = "Basic attack plus 1 damage. Costs 5 willpower."
+        ElseIf Skill = "Heal" Then
+            SkillInfoBox.Text = "Heal"
+            SkillInfo.Text = "Heals 20 hitpoints. Costs 20 willpower. Causes a 5 round global cooldown of skills."
+        ElseIf Skill = "Shoot" Then
+            SkillInfoBox.Text = "Shoot"
+            SkillInfo.Text = "Basic ranged attack that damages target from afar for 1 damage. Costs 5 willpower."
+        ElseIf Skill = "Hide" Then
+            SkillInfoBox.Text = "Hide"
+            SkillInfo.Text = "Helpful skill that reduces all visibility instantly from enemies clearing all aggro tables. Costs willpower."
+        ElseIf Skill = "Fire Arrow" Then
+            SkillInfoBox.Text = "Fire Arrow"
+            SkillInfo.Text = "Ranged strike that damages target for 3 in addition to a regular attack. Costs 15 willpower. Causes a 3 round global cooldown of skills."
+        ElseIf Skill = "Kick" Then
+            SkillInfoBox.Text = "Kick"
+            SkillInfo.Text = "Basic attack plus 1 damage. Costs 5 willpower."
+        ElseIf Skill = "Bone Shield" Then
+            SkillInfoBox.Text = "Bone Shield"
+            SkillInfo.Text = "Protects gravedigger from all damage for 5 rounds. Costs 30 willpower. Causes a 10 round global cooldown of skills."
+        ElseIf Skill = "Leech" Then
+            SkillInfoBox.Text = "Leech"
+            SkillInfo.Text = "Gravedigger receives hitpoints in the amount of his attack score, leeched from the enemy. Costs the gravediggers attack score in amount of willpower."
+        ElseIf Skill = "Holy Bolt" Then
+            SkillInfoBox.Text = "Holy Bolt"
+            SkillInfo.Text = "Ranged attack that strikes target for 10 damage in addition to a normal attack. Costs 20 willpower. Causes a 4 round global cooldown of skills."
+        ElseIf Skill = "Magic Shield" Then
+            SkillInfoBox.Text = "Magic Shield"
+            SkillInfo.Text = "Reduces 1 damage from all attacks for 10 rounds. Costs 30 willpower. Causes a 10 round global cooldown of skills."
+        ElseIf Skill = "Fireball" Then
+            SkillInfoBox.Text = "Fireball"
+            SkillInfo.Text = "Ranged attack that damages target for 10 in addition to a regular attack. Costs 30 willpower. Causes a 3 round global cooldown of skills."
+        ElseIf Skill = "Hit" Then
+            SkillInfoBox.Text = "Hit"
+            SkillInfo.Text = "Basic attack plus 1 damage. Costs 5 willpower."
+        ElseIf Skill = "Counter" Then
+            SkillInfoBox.Text = "Counter"
+            SkillInfo.Text = "Counters all attacks from all enemies for 3 rounds. Counters can miss or be dodged. Costs 25 willpower. Causes a 5 round global cooldown of skills."
+        ElseIf Skill = "Clumsiness" Then
+            SkillInfoBox.Text = "Clumsiness"
+            SkillInfo.Text = "Reduces a targets chance to hit by 50 percent. Costs 20 willpower. Causes a 10 round global cooldown of skills."
+        ElseIf Skill = "Strike" Then
+            SkillInfoBox.Text = "Strike"
+            SkillInfo.Text = "Basic attack plus 1 damage. Costs 5 willpower."
+        ElseIf Skill = "Immolate" Then
+            SkillInfoBox.Text = "Immolate"
+            SkillInfo.Text = "Elementalist immolates a fire shield that causes 1 damage to all attackers for 5 rounds. Costs 20 willpower. Causes a 10 round global cooldown of skills."
+        ElseIf Skill = "Stab" Then
+            SkillInfoBox.Text = "Stab"
+            SkillInfo.Text = "Basic attack plus 1 damage. Costs 5 willpower."
+        ElseIf Skill = "Wound" Then
+            SkillInfoBox.Text = "Wound"
+            SkillInfo.Text = "Attack an enemy causing 5 damage in addition to a normal attack. Costs 20 willpower. Causes a 5 round global cooldown of skills."
+        ElseIf Skill = "Stun" Then
+            SkillInfoBox.Text = "Stun"
+            SkillInfo.Text = "Stun target for 3 rounds. Costs 25 willpower. Causes a 5 round global cooldown of skills."
+        ElseIf Skill = "Slice" Then
+            SkillInfoBox.Text = "Slice"
+            SkillInfo.Text = "Basic attack plus 1 damage. Costs 5 willpower."
+        ElseIf Skill = "Fury" Then
+            SkillInfoBox.Text = "Fury"
+            SkillInfo.Text = "Increases damage in regular attacks by 1 for 5 rounds. Costs 20 willpower. Causes a 5 round global cooldown of skills."
+        ElseIf Skill = "Sacrifice" Then
+            SkillInfoBox.Text = "Sacrifice"
+            SkillInfo.Text = "Sacrifice 10 HP and deal regular damage plus 10. Causes a 5 round global cooldown of skills."
+        ElseIf Skill = "Trip" Then
+            SkillInfoBox.Text = "Trip"
+            SkillInfo.Text = "Trip target preventing them from moving or attacking for 2 rounds. Costs 10 willpower. Causes a 2 round global cooldown of skills."
+        ElseIf Skill = "Backstab" Then
+            SkillInfoBox.Text = "Backstab"
+            SkillInfo.Text = "Attack target for regular attack damage plus 10. Costs 25 willpower. Causes a 5 round global cooldown of skills."
+        ElseIf Skill = "Block" Then
+            SkillInfoBox.Text = "Block"
+            SkillInfo.Text = "Reduces all damage for 2 rounds by 2. Costs 15 willpower. Causes a 2 round global cooldown of skills."
+        ElseIf Skill = "Slice" Then
+            SkillInfoBox.Text = "Slice"
+            SkillInfo.Text = "Basic attack plus 1 damage. Costs 5 willpower."
+        ElseIf Skill = "Double Slice" Then
+            SkillInfoBox.Text = "Double Slice"
+            SkillInfo.Text = "Attack the target twice in 1 round. Costs 15 willpower. Causes a 2 round global cooldown of skills."
+        ElseIf Skill = "Triple Slice" Then
+            SkillInfoBox.Text = "Triple Slice"
+            SkillInfo.Text = "Attack the target 3 times in 1 round. Costs 30 willpower. Causes a 4 round global cooldown of skills."
+        ElseIf Skill = "Runestrike" Then
+            SkillInfoBox.Text = "Runestrike"
+            SkillInfo.Text = "Attack the target normally and additionally prevent target from attacking for 2 rounds. Costs 20 willpower. Causes a 3 round global cooldown of skills."
+        ElseIf Skill = "Whisper" Then
+            SkillInfoBox.Text = "Whisper"
+            SkillInfo.Text = "Causes target to die immediately. Costs 50 willpower. Causes a 10 round global cooldown of skills."
+        ElseIf Skill = "Empower" Then
+            SkillInfoBox.Text = "Empower"
+            SkillInfo.Text = "Converts 30 hitpoints into 30 willpower and attacks a target with a basic attack."
+        ElseIf Skill = "Silence" Then
+            SkillInfoBox.Text = "Silence"
+            SkillInfo.Text = "Causes all targets attacking the minstrel to stop attacking for 5 rounds. Costs 50 willpower. Causes a 10 round global cooldown of skills."
+        End If
+    End Sub
+    Private Sub SkillRollOut(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Skill3.MouseLeave, Skill2.MouseLeave, Skill1.MouseLeave
+        SkillInfoBox.Visible = False
+    End Sub
     Private Sub Skill2Over(ByVal sender As System.Object, ByVal e As System.EventArgs)
         If SKillGobalCooldown <= 0 Then
             FilterBevel(Skill2)
@@ -2281,10 +2833,7 @@ Public Class MainForm
                 SND("No enemies are around.")
             End If
         End If
-        HealthBar.Caption = LTrim(Str(PlayerCurHitpoints)) + " / " + LTrim(Str(PlayerHitpoints)) + " HP"
-        HealthBar.Value = PlayerCurHitpoints
-        WillpowerBar.Caption = LTrim(Str(PlayerCurWillpower)) + " / " + LTrim(Str(PlayerWillpower)) + " WP"
-        WillpowerBar.Value = PlayerCurWillpower
+        RefreshStats() 'updates willpower and health bar statistics
     End Sub
     Private Sub SetSkillsToCooldown()
         FilterRed(Skill1)
@@ -2585,7 +3134,9 @@ Public Class MainForm
                     DrawingProcedures.TargetEnemy(False) 'just dictated false for visibility reasons
                 End If
             ElseIf e.KeyCode = Keys.Space And PlayerTargeting = True Then
+                DrawingProcedures.TargetEnemy(True)
                 PlayerHitLocation(MobileVisible(MapLevel, 0, 0), MobileVisible(MapLevel, 0, 1))
+                DrawingProcedures.LOSMap(MobileVisible(MapLevel, 0, 0), MobileVisible(MapLevel, 0, 1)) = DrawingProcedures.Redraw 'make sure that tile is redrawn next round to remove black box
                 PlayerTargeting = False
                 ReDraw()
             ElseIf e.KeyCode = Keys.Space And PlayerTargeting = False Then
@@ -2593,13 +3144,11 @@ Public Class MainForm
             ElseIf e.KeyCode = Keys.NumPad5 Then
                 If PlayerCurHitpoints < PlayerHitpoints Then
                     PlayerCurHitpoints += 1
-                    HealthBar.Caption = LTrim(Str(PlayerCurHitpoints)) + " / " + LTrim(Str(PlayerHitpoints)) + " HP"
-                    HealthBar.Value = PlayerCurHitpoints
+                    RefreshStats() 'updates willpower and health bar statistics
                 End If
                 If PlayerCurWillpower < PlayerWillpower Then
                     PlayerCurWillpower += 1
-                    WillpowerBar.Caption = LTrim(Str(PlayerCurWillpower)) + " / " + LTrim(Str(PlayerWillpower)) + " WP"
-                    WillpowerBar.Value = PlayerCurWillpower
+                    RefreshStats() 'updates willpower and health bar statistics
                 End If
                 ReDraw()
             ElseIf e.KeyCode = Keys.P Or e.KeyCode = Keys.T Then
@@ -2609,24 +3158,54 @@ Public Class MainForm
                     SND("Nothing is here to pickup.")
                 End If
                 ReDraw()
+                'control + # hotkeys for wearing or using items in inventory (visible via quick inventory)
+            ElseIf e.KeyCode = Keys.D1 And e.Control = True Then : Inventory.Processwear(1)
+            ElseIf e.KeyCode = Keys.D2 And e.Control = True Then : Inventory.Processwear(2)
+            ElseIf e.KeyCode = Keys.D3 And e.Control = True Then : Inventory.Processwear(3)
+            ElseIf e.KeyCode = Keys.D4 And e.Control = True Then : Inventory.Processwear(4)
+            ElseIf e.KeyCode = Keys.D5 And e.Control = True Then : Inventory.Processwear(5)
+            ElseIf e.KeyCode = Keys.D6 And e.Control = True Then : Inventory.Processwear(6)
+            ElseIf e.KeyCode = Keys.D7 And e.Control = True Then : Inventory.Processwear(7)
+            ElseIf e.KeyCode = Keys.D8 And e.Control = True Then : Inventory.Processwear(8)
+            ElseIf e.KeyCode = Keys.D9 And e.Control = True Then : Inventory.Processwear(9)
+            ElseIf e.KeyCode = Keys.D0 And e.Control = True Then : Inventory.Processwear(10)
+                'alt+# keys for wearing or using items in inventory (visible via quick inventory)
+            ElseIf e.KeyCode = Keys.D1 And e.Alt = True Then : Inventory.DropItem(Inventory.Drop1, EventArgs.Empty)
+            ElseIf e.KeyCode = Keys.D2 And e.Alt = True Then : Inventory.DropItem(Inventory.Drop2, EventArgs.Empty)
+            ElseIf e.KeyCode = Keys.D3 And e.Alt = True Then : Inventory.DropItem(Inventory.Drop3, EventArgs.Empty)
+            ElseIf e.KeyCode = Keys.D4 And e.Alt = True Then : Inventory.DropItem(Inventory.Drop4, EventArgs.Empty)
+            ElseIf e.KeyCode = Keys.D5 And e.Alt = True Then : Inventory.DropItem(Inventory.Drop5, EventArgs.Empty)
+            ElseIf e.KeyCode = Keys.D6 And e.Alt = True Then : Inventory.DropItem(Inventory.Drop6, EventArgs.Empty)
+            ElseIf e.KeyCode = Keys.D7 And e.Alt = True Then : Inventory.DropItem(Inventory.Drop7, EventArgs.Empty)
+            ElseIf e.KeyCode = Keys.D8 And e.Alt = True Then : Inventory.DropItem(Inventory.Drop8, EventArgs.Empty)
+            ElseIf e.KeyCode = Keys.D9 And e.Alt = True Then : Inventory.DropItem(Inventory.Drop9, EventArgs.Empty)
+            ElseIf e.KeyCode = Keys.D0 And e.Alt = True Then : Inventory.DropItem(Inventory.Drop10, EventArgs.Empty)
+                '1-3 skill commands
             ElseIf e.KeyCode = Keys.D1 Then
                 DecipherSkill(1)
             ElseIf e.KeyCode = Keys.D2 Then
                 DecipherSkill(2)
             ElseIf e.KeyCode = Keys.D3 Then
                 DecipherSkill(3)
+                'inventory
+            ElseIf e.KeyCode = Keys.I Then
+                InventoryClick(0, EventArgs.Empty)
+            ElseIf e.KeyCode = Keys.H Or e.KeyCode = Keys.OemQuestion And e.Shift = True Then
+                HelpClick(0, EventArgs.Empty)
             ElseIf e.KeyCode = Keys.OemPeriod And e.Shift = True Then 'go down
                 If Map(MapLevel, PlayerPosX, PlayerPosY) = StairsDown Then 'exit
                     MapLevel += 1
                     BuildNewMap(True)
                 End If
+            ElseIf e.KeyCode = Keys.Q And e.Control = True Then 'quit
+                ExitGameClick(0, EventArgs.Empty)
             ElseIf e.KeyCode = Keys.Oemcomma And e.Shift = True Then 'go up
                 If Map(MapLevel, PlayerPosX, PlayerPosY) = StairsUp Then 'entrance
                     MapLevel -= 1
                     BuildNewMap(False)
                 End If
             End If
-            If PlayerCurHitpoints <= 0 Then
+            If PlayerCurHitpoints <= 0 And InStr(Me.Text, "[Dead]") = False Then
                 PlayerDead = True
                 SNDScores()
                 HighScores = Output.Text
@@ -2634,71 +3213,10 @@ Public Class MainForm
                 Me.Text += " [Dead] : Press f1 to view scores list"
                 SND("Game Over.")
             End If
-        Else 'game is over input controls
-            If e.KeyCode = Keys.F1 Then
-                If ScoresBox.Visible = True Then
-                    ScoresBox.Visible = False
-                ElseIf ScoresBox.Visible = False Then
-                    CharStats.Visible = False
-                    ScoresBox.Visible = True
-                End If
-            ElseIf e.KeyCode = Keys.H Or e.KeyCode = Keys.OemQuestion And e.Shift = True Then
-                If HelpInfo.Visible = False Then
-                    HelpInfo.Visible = True
-                ElseIf HelpInfo.Visible = True Then
-                    HelpInfo.Visible = False
-                End If
-            ElseIf e.KeyCode = Keys.F4 Then
-                PlayerExperience = 0
-                PlayerGold = 0
-                PlayerTurns = 0
-                PlayerLevel = 0
-                PlayerLevelPoints = 0
-                PlayerDead = False
-                MapLevel = 0
-                Initialize(0, EventArgs.Empty)
-                Comment11.Visible = False
-                For tmp0 = 0 To 19 Step 1
-                    ItemInventoryName(tmp0) = ""
-                    ItemInventoryQuality(tmp0) = 0
-                    ItemInventoryType(tmp0) = 0
-                    PlayerEquipArms = 0
-                    PlayerEquipChest = 0
-                    PlayerEquipFeet = 0
-                    PlayerEquipHands = 0
-                    PlayerEquipHead = 0
-                    PlayerEquipLegs = 0
-                    PlayerEquipNArms = ""
-                    PlayerEquipNChest = ""
-                    PlayerEquipNFeet = ""
-                    PlayerEquipNHands = ""
-                    PlayerEquipNHead = ""
-                    PLayerEquipNLegs = ""
-                Next
-                Me.Hide()
-                ChooseCharacter.TabControl1.SelectedTab = ChooseCharacter.BasicTab
-                ChooseCharacter.CharacterName.Text = "Mykil Ironfist"
-                ChooseCharacter.Show()
-            ElseIf e.KeyCode = Keys.F2 Then
-                If CharStats.Visible = True Then
-                    CharStats.Visible = False
-                ElseIf CharStats.Visible = False Then
-                    StatBox.Text = "[Character Stats]" + Chr(13) + "Depth     : " + LTrim(Str(MapLevel)) + Chr(13) + "Level     : " + LTrim(Str(PlayerLevel)) + Chr(13) _
-+ "Experience: " + LTrim(Str(PlayerExperience)) + Chr(13) _
-+ "Gold      : " + LTrim(Str(PlayerGold)) + Chr(13) _
-+ "Turns     : " + LTrim(Str(PlayerTurns)) + Chr(13) + Chr(13) _
-+ "Strength    : " + LTrim(Str(PlayerSTR)) + Chr(13) _
-+ "Dexterity   : " + LTrim(Str(PlayerDEX)) + Chr(13) _
-+ "Intelligence: " + LTrim(Str(PlayerINT)) + Chr(13) _
-+ "Wisdom      : " + LTrim(Str(PlayerWIS)) + Chr(13) _
-+ "Constitution: " + LTrim(Str(PlayerCON)) + Chr(13) _
-+ "Charisma    : " + LTrim(Str(PlayerCHA)) + Chr(13) _
-+ "Luck        : " + LTrim(Str(PlayerLUC))
-                    StatBox.Visible = True
-                    ScoresBox.Visible = False
-                    CharStats.Visible = True
-                End If
-            End If
+        End If
+        'if the character stats panel is visble then recheck the stats and draw them after each round
+        If CharStats.Visible = True Then
+            CharacterStatsRefresh()
         End If
     End Sub
     Private Sub CloseCommentBox()
@@ -2720,118 +3238,7 @@ Public Class MainForm
     End Sub
     Public Sub SNDScores()
         Output.Text = HighScores + Chr(13) + AddSpace(PlayerName, 20) + AddSpace(PlayerRace, 14) + AddSpace(PlayerClass, 17) + AddSpace(LTrim(Str(PlayerLevel)), 8) + AddSpace(LTrim(Str(PlayerExperience)), 13) + AddSpace(LTrim(Str(MapLevel)), 13) + AddSpace(LTrim(Str(PlayerGold)), 10) + LTrim(Str(PlayerTurns))
-    End Sub
-    Private Sub SkillRollOver(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Skill3.MouseEnter, Skill2.MouseEnter, Skill1.MouseEnter
-        SkillInfoBox.Visible = True
-        If sender Is Skill1 Then
-            ShowInfoboxText(Skill1Name.Text)
-        ElseIf sender Is Skill2 Then
-            ShowInfoboxText(Skill2Name.Text)
-        ElseIf sender Is Skill3 Then
-            ShowInfoboxText(Skill3Name.Text)
-        End If
-    End Sub
-    Private Sub ShowInfoboxText(ByVal Skill As String)
-        If Skill = "Punch" Then
-            SkillInfoBox.Text = "Punch"
-            SkillInfo.Text = "Basic attack plus 1 damage. Costs 5 willpower."
-        ElseIf Skill = "Heal" Then
-            SkillInfoBox.Text = "Heal"
-            SkillInfo.Text = "Heals 20 hitpoints. Costs 20 willpower. Causes a 5 round global cooldown of skills."
-        ElseIf Skill = "Shoot" Then
-            SkillInfoBox.Text = "Shoot"
-            SkillInfo.Text = "Basic ranged attack that damages target from afar for 1 damage. Costs 5 willpower."
-        ElseIf Skill = "Hide" Then
-            SkillInfoBox.Text = "Hide"
-            SkillInfo.Text = "Helpful skill that reduces all visibility instantly from enemies clearing all aggro tables. Costs willpower."
-        ElseIf Skill = "Fire Arrow" Then
-            SkillInfoBox.Text = "Fire Arrow"
-            SkillInfo.Text = "Ranged strike that damages target for 3 in addition to a regular attack. Costs 15 willpower. Causes a 3 round global cooldown of skills."
-        ElseIf Skill = "Kick" Then
-            SkillInfoBox.Text = "Kick"
-            SkillInfo.Text = "Basic attack plus 1 damage. Costs 5 willpower."
-        ElseIf Skill = "Bone Shield" Then
-            SkillInfoBox.Text = "Bone Shield"
-            SkillInfo.Text = "Protects gravedigger from all damage for 5 rounds. Costs 30 willpower. Causes a 10 round global cooldown of skills."
-        ElseIf Skill = "Leech" Then
-            SkillInfoBox.Text = "Leech"
-            SkillInfo.Text = "Gravedigger receives hitpoints in the amount of his attack score, leeched from the enemy. Costs the gravediggers attack score in amount of willpower."
-        ElseIf Skill = "Holy Bolt" Then
-            SkillInfoBox.Text = "Holy Bolt"
-            SkillInfo.Text = "Ranged attack that strikes target for 10 damage in addition to a normal attack. Costs 20 willpower. Causes a 4 round global cooldown of skills."
-        ElseIf Skill = "Magic Shield" Then
-            SkillInfoBox.Text = "Magic Shield"
-            SkillInfo.Text = "Reduces 1 damage from all attacks for 10 rounds. Costs 30 willpower. Causes a 10 round global cooldown of skills."
-        ElseIf Skill = "Fireball" Then
-            SkillInfoBox.Text = "Fireball"
-            SkillInfo.Text = "Ranged attack that damages target for 10 in addition to a regular attack. Costs 30 willpower. Causes a 3 round global cooldown of skills."
-        ElseIf Skill = "Hit" Then
-            SkillInfoBox.Text = "Hit"
-            SkillInfo.Text = "Basic attack plus 1 damage. Costs 5 willpower."
-        ElseIf Skill = "Counter" Then
-            SkillInfoBox.Text = "Counter"
-            SkillInfo.Text = "Counters all attacks from all enemies for 3 rounds. Counters can miss or be dodged. Costs 25 willpower. Causes a 5 round global cooldown of skills."
-        ElseIf Skill = "Clumsiness" Then
-            SkillInfoBox.Text = "Clumsiness"
-            SkillInfo.Text = "Reduces a targets chance to hit by 50 percent. Costs 20 willpower. Causes a 10 round global cooldown of skills."
-        ElseIf Skill = "Strike" Then
-            SkillInfoBox.Text = "Strike"
-            SkillInfo.Text = "Basic attack plus 1 damage. Costs 5 willpower."
-        ElseIf Skill = "Immolate" Then
-            SkillInfoBox.Text = "Immolate"
-            SkillInfo.Text = "Elementalist immolates a fire shield that causes 1 damage to all attackers for 5 rounds. Costs 20 willpower. Causes a 10 round global cooldown of skills."
-        ElseIf Skill = "Stab" Then
-            SkillInfoBox.Text = "Stab"
-            SkillInfo.Text = "Basic attack plus 1 damage. Costs 5 willpower."
-        ElseIf Skill = "Wound" Then
-            SkillInfoBox.Text = "Wound"
-            SkillInfo.Text = "Attack an enemy causing 5 damage in addition to a normal attack. Costs 20 willpower. Causes a 5 round global cooldown of skills."
-        ElseIf Skill = "Stun" Then
-            SkillInfoBox.Text = "Stun"
-            SkillInfo.Text = "Stun target for 3 rounds. Costs 25 willpower. Causes a 5 round global cooldown of skills."
-        ElseIf Skill = "Slice" Then
-            SkillInfoBox.Text = "Slice"
-            SkillInfo.Text = "Basic attack plus 1 damage. Costs 5 willpower."
-        ElseIf Skill = "Fury" Then
-            SkillInfoBox.Text = "Fury"
-            SkillInfo.Text = "Increases damage in regular attacks by 1 for 5 rounds. Costs 20 willpower. Causes a 5 round global cooldown of skills."
-        ElseIf Skill = "Sacrifice" Then
-            SkillInfoBox.Text = "Sacrifice"
-            SkillInfo.Text = "Sacrifice 10 HP and deal regular damage plus 10. Causes a 5 round global cooldown of skills."
-        ElseIf Skill = "Trip" Then
-            SkillInfoBox.Text = "Trip"
-            SkillInfo.Text = "Trip target preventing them from moving or attacking for 2 rounds. Costs 10 willpower. Causes a 2 round global cooldown of skills."
-        ElseIf Skill = "Backstab" Then
-            SkillInfoBox.Text = "Backstab"
-            SkillInfo.Text = "Attack target for regular attack damage plus 10. Costs 25 willpower. Causes a 5 round global cooldown of skills."
-        ElseIf Skill = "Block" Then
-            SkillInfoBox.Text = "Block"
-            SkillInfo.Text = "Reduces all damage for 2 rounds by 2. Costs 15 willpower. Causes a 2 round global cooldown of skills."
-        ElseIf Skill = "Slice" Then
-            SkillInfoBox.Text = "Slice"
-            SkillInfo.Text = "Basic attack plus 1 damage. Costs 5 willpower."
-        ElseIf Skill = "Double Slice" Then
-            SkillInfoBox.Text = "Double Slice"
-            SkillInfo.Text = "Attack the target twice in 1 round. Costs 15 willpower. Causes a 2 round global cooldown of skills."
-        ElseIf Skill = "Triple Slice" Then
-            SkillInfoBox.Text = "Triple Slice"
-            SkillInfo.Text = "Attack the target 3 times in 1 round. Costs 30 willpower. Causes a 4 round global cooldown of skills."
-        ElseIf Skill = "Runestrike" Then
-            SkillInfoBox.Text = "Runestrike"
-            SkillInfo.Text = "Attack the target normally and additionally prevent target from attacking for 2 rounds. Costs 20 willpower. Causes a 3 round global cooldown of skills."
-        ElseIf Skill = "Whisper" Then
-            SkillInfoBox.Text = "Whisper"
-            SkillInfo.Text = "Causes target to die immediately. Costs 50 willpower. Causes a 10 round global cooldown of skills."
-        ElseIf Skill = "Empower" Then
-            SkillInfoBox.Text = "Empower"
-            SkillInfo.Text = "Converts 30 hitpoints into 30 willpower and attacks a target with a basic attack."
-        ElseIf Skill = "Silence" Then
-            SkillInfoBox.Text = "Silence"
-            SkillInfo.Text = "Causes all targets attacking the minstrel to stop attacking for 5 rounds. Costs 50 willpower. Causes a 10 round global cooldown of skills."
-        End If
-    End Sub
-    Private Sub SkillRollOut(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Skill3.MouseLeave, Skill2.MouseLeave, Skill1.MouseLeave
-        SkillInfoBox.Visible = False
+        HighScores = Output.Text 'incase character restarts game
     End Sub
 #Region "Menu Click"
     Private Sub NewGameClick(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles NewGameToolStripMenuItem.Click
@@ -2936,7 +3343,7 @@ Public Class MainForm
         If ScoresBox.Visible = True Then
             ScoresBox.Visible = False
         ElseIf ScoresBox.Visible = False Then
-            SNDScores()
+            Output.Text = HighScores 'refresh scores
             CharStats.Visible = False
             ScoresBox.Visible = True
         End If
@@ -2945,7 +3352,11 @@ Public Class MainForm
         If CharStats.Visible = True Then
             CharStats.Visible = False
         ElseIf CharStats.Visible = False Then
-            StatBox.Text = "[Character Stats]" + Chr(13) + "Depth     : " + LTrim(Str(MapLevel)) + Chr(13) + "Level     : " + LTrim(Str(PlayerLevel)) + Chr(13) _
+            CharacterStatsRefresh()
+        End If
+    End Sub
+    Private Sub CharacterStatsRefresh()
+        StatBox.Text = "[Character Stats]" + Chr(13) + "Depth     : " + LTrim(Str(MapLevel)) + Chr(13) + "Level     : " + LTrim(Str(PlayerLevel)) + Chr(13) _
 + "Experience: " + LTrim(Str(PlayerExperience)) + Chr(13) _
 + "Gold      : " + LTrim(Str(PlayerGold)) + Chr(13) _
 + "Turns     : " + LTrim(Str(PlayerTurns)) + Chr(13) + Chr(13) _
@@ -2956,19 +3367,18 @@ Public Class MainForm
 + "Constitution: " + LTrim(Str(PlayerCON)) + Chr(13) _
 + "Charisma    : " + LTrim(Str(PlayerCHA)) + Chr(13) _
 + "Luck        : " + LTrim(Str(PlayerLUC))
-            StatBox.Visible = True
-            ScoresBox.Visible = False
-            CharStats.Visible = True
-        End If
+        StatBox.Visible = True
+        ScoresBox.Visible = False
+        CharStats.Visible = True
     End Sub
     Private Sub ToggleActivityLogClick(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ShowHideActivityLogToolStripMenuItem.Click
         If LogVisible = True Then
             LogVisible = False
-            Panel1.Height -= DisplayText.Height + 10
+            Panel1.Height = Skill1Name.Top + 15
             Skill1Name.Top = 99 : Skill2Name.Top = 99 : Skill3Name.Top = 99
         ElseIf LogVisible = False Then
             LogVisible = True
-            Panel1.Height += DisplayText.Height + 10
+            Panel1.Height = Me.Height
             Skill1Name.Top = 99 : Skill2Name.Top = 99 : Skill3Name.Top = 99
         End If
     End Sub

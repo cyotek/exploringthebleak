@@ -131,20 +131,24 @@ Luck increases the amount of loot that you find.
 Charisma increases the chance to cause enemies to flee. 
 
 'p' or 't' picks up items.
-Ctrl +'i' shows your inventory. 
-Ctrl+ 'h' shows and hides this help.
+'i' shows your inventory. 
+'?' or 'h' shows and hides this help.
 '5' on the num pad waits a turn and allows you to heal 1HP/1WP.
 '1' is your primary skill
 '2' is your secondary skill
 '3' is your support skill
+'&lt;' goes up stairs.
 '&gt;' goes down stairs.
 'f1' shows the high scores.
 'f2' shows your character stats.
 'f3' shows or hides the activity log.
 'f4' exits game and restarts character creation.
-'f5' switches between ascii and tile-based graphics.
+'f5' enables graphical mode.
+'f6' enables ascii mode.
+'f7' turns on image filtering.
+'f8' turns off image filtering.
 
-&lt;Press Ctrl + 'h' to hide this help&gt;</value>
+&lt;Press '?' or 'h' to hide this help&gt;</value>
   </data>
   <data name="Output.Text" xml:space="preserve">
     <value>[Name]              [Race]        [Class]          [Level] [Experience] [Depth]      [Gold]    [Turns]               

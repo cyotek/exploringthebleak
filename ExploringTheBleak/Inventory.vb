@@ -63,6 +63,24 @@
                 Me.Text += " [Game Over] : Press f1 to view scores list"
             End If
         End If
+        ResetQuickInventory()
+        Return 0
+    End Function
+    Function ResetQuickInventory()
+        Dim InventoryItem As Short
+        Dim FoundSomething As Boolean
+        MainForm.QuickInventory.Text = ""
+        For InventoryItem = 0 To 9 Step 1
+            If MainForm.QuickInventory.Text = "" And MainForm.ItemInventoryName(InventoryItem) <> "" Then
+                MainForm.QuickInventory.Text = LTrim(Str(InventoryItem + 1)) + ". " + MainForm.ItemInventoryName(InventoryItem)
+                FoundSomething = True
+            ElseIf InventoryItem < 10 And MainForm.ItemInventoryName(InventoryItem) <> "" Then
+                MainForm.QuickInventory.Text += " " + LTrim(Str(InventoryItem + 1)) + ". " + MainForm.ItemInventoryName(InventoryItem)
+                FoundSomething = True
+            ElseIf InventoryItem = 9 And FoundSomething = False Then
+                MainForm.QuickInventory.Text = "Empty Inventory"
+            End If
+        Next
         Return 0
     End Function
     Function Processwear(ByVal Control As Short)
@@ -73,7 +91,11 @@
             PreviousItemName = MainForm.PlayerEquipNHead
             PreviousItemType = MainForm.PlayerEquipHead
             PreviousItemQuality = MainForm.PlayerEquipQHead
+            If PreviousItemName <> "" Then 'you had something previously equiped, detail what it was
+                MainForm.SND("You remove " + PreviousItemName + "+" + LTrim(Str(PreviousItemQuality)) + ".")
+            End If
             HeadEquip.Text = MainForm.CapitalizeFirstLetter(MainForm.ItemInventoryName(Control - 1) + " +" + LTrim(Str(MainForm.ItemInventoryQuality(Control - 1))))  'head armor
+            MainForm.SND("You equip " + MainForm.ItemInventoryName(Control - 1) + "+" + LTrim(Str(MainForm.ItemInventoryQuality(Control - 1))) + ".")
             MainForm.PlayerEquipNHead = MainForm.ItemInventoryName(Control - 1)
             MainForm.PlayerEquipHead = Head
             MainForm.PlayerEquipQHead = MainForm.ItemInventoryQuality(Control - 1)
@@ -82,7 +104,11 @@
             PreviousItemName = MainForm.PlayerEquipNChest
             PreviousItemType = MainForm.PlayerEquipChest
             PreviousItemQuality = MainForm.PlayerEquipQChest
+            If PreviousItemName <> "" Then 'you had something previously equiped, detail what it was
+                MainForm.SND("You remove " + PreviousItemName + "+" + LTrim(Str(PreviousItemQuality)) + ".")
+            End If
             ChestEquip.Text = MainForm.CapitalizeFirstLetter(MainForm.ItemInventoryName(Control - 1) + " +" + LTrim(Str(MainForm.ItemInventoryQuality(Control - 1))))  'you wield swords in your hand
+            MainForm.SND("You equip " + MainForm.ItemInventoryName(Control - 1) + "+" + LTrim(Str(MainForm.ItemInventoryQuality(Control - 1))) + ".")
             MainForm.PlayerEquipNChest = MainForm.ItemInventoryName(Control - 1)
             MainForm.PlayerEquipChest = Chest
             MainForm.PlayerEquipQChest = MainForm.ItemInventoryQuality(Control - 1)
@@ -91,7 +117,11 @@
             PreviousItemName = MainForm.PlayerEquipNArms
             PreviousItemType = MainForm.PlayerEquipArms
             PreviousItemQuality = MainForm.PlayerEquipQArms
+            If PreviousItemName <> "" Then 'you had something previously equiped, detail what it was
+                MainForm.SND("You remove " + PreviousItemName + "+" + LTrim(Str(PreviousItemQuality)) + ".")
+            End If
             ArmsEquip.Text = MainForm.CapitalizeFirstLetter(MainForm.ItemInventoryName(Control - 1) + " +" + LTrim(Str(MainForm.ItemInventoryQuality(Control - 1)))) 'you wield daggers in your hand
+            MainForm.SND("You equip " + MainForm.ItemInventoryName(Control - 1) + "+" + LTrim(Str(MainForm.ItemInventoryQuality(Control - 1))) + ".")
             MainForm.PlayerEquipNArms = MainForm.ItemInventoryName(Control - 1)
             MainForm.PlayerEquipArms = Arms
             MainForm.PlayerEquipQArms = MainForm.ItemInventoryQuality(Control - 1)
@@ -100,7 +130,11 @@
             PreviousItemName = MainForm.PlayerEquipNHands
             PreviousItemType = MainForm.PlayerEquipHands
             PreviousItemQuality = MainForm.PlayerEquipQHands
+            If PreviousItemName <> "" Then 'you had something previously equiped, detail what it was
+                MainForm.SND("You remove " + PreviousItemName + "+" + LTrim(Str(PreviousItemQuality)) + ".")
+            End If
             HandsEquip.Text = MainForm.CapitalizeFirstLetter(MainForm.ItemInventoryName(Control - 1) + " +" + LTrim(Str(MainForm.ItemInventoryQuality(Control - 1)))) 'you wear helmets on your head
+            MainForm.SND("You equip " + MainForm.ItemInventoryName(Control - 1) + "+" + LTrim(Str(MainForm.ItemInventoryQuality(Control - 1))) + ".")
             MainForm.PlayerEquipNHands = MainForm.ItemInventoryName(Control - 1)
             MainForm.PlayerEquipHands = Hands
             MainForm.PlayerEquipQHands = MainForm.ItemInventoryQuality(Control - 1)
@@ -109,7 +143,11 @@
             PreviousItemName = MainForm.PLayerEquipNLegs
             PreviousItemType = MainForm.PlayerEquipLegs
             PreviousItemQuality = MainForm.PLayerEquipQLegs
+            If PreviousItemName <> "" Then 'you had something previously equiped, detail what it was
+                MainForm.SND("You remove " + PreviousItemName + "+" + LTrim(Str(PreviousItemQuality)) + ".")
+            End If
             LegsEquip.Text = MainForm.CapitalizeFirstLetter(MainForm.ItemInventoryName(Control - 1) + " +" + LTrim(Str(MainForm.ItemInventoryQuality(Control - 1)))) 'you wear helmets on your head
+            MainForm.SND("You equip " + MainForm.ItemInventoryName(Control - 1) + "+" + LTrim(Str(MainForm.ItemInventoryQuality(Control - 1))) + ".")
             MainForm.PLayerEquipNLegs = MainForm.ItemInventoryName(Control - 1)
             MainForm.PlayerEquipLegs = Legs
             MainForm.PLayerEquipQLegs = MainForm.ItemInventoryQuality(Control - 1)
@@ -118,7 +156,11 @@
             PreviousItemName = MainForm.PlayerEquipNFeet
             PreviousItemType = MainForm.PlayerEquipFeet
             PreviousItemQuality = MainForm.PlayerEquipQFeet
+            If PreviousItemName <> "" Then 'you had something previously equiped, detail what it was
+                MainForm.SND("You remove " + PreviousItemName + "+" + LTrim(Str(PreviousItemQuality)) + ".")
+            End If
             BootsEquip.Text = MainForm.CapitalizeFirstLetter(MainForm.ItemInventoryName(Control - 1) + " +" + LTrim(Str(MainForm.ItemInventoryQuality(Control - 1)))) 'you wear helmets on your head
+            MainForm.SND("You equip " + MainForm.ItemInventoryName(Control - 1) + "+" + LTrim(Str(MainForm.ItemInventoryQuality(Control - 1))) + ".")
             MainForm.PlayerEquipNFeet = MainForm.ItemInventoryName(Control - 1)
             MainForm.PlayerEquipFeet = Feet
             MainForm.PlayerEquipQFeet = MainForm.ItemInventoryQuality(Control - 1)
@@ -127,7 +169,11 @@
             PreviousItemName = MainForm.PlayerEquipNHands
             PreviousItemType = MainForm.PlayerEquipHands
             PreviousItemQuality = MainForm.PlayerEquipQHands
+            If PreviousItemName <> "" Then 'you had something previously equiped, detail what it was
+                MainForm.SND("You remove " + PreviousItemName + "+" + LTrim(Str(PreviousItemQuality)) + ".")
+            End If
             HandsEquip.Text = MainForm.CapitalizeFirstLetter(MainForm.ItemInventoryName(Control - 1) + " +" + LTrim(Str(MainForm.ItemInventoryQuality(Control - 1)))) 'you wear helmets on your head
+            MainForm.SND("You equip " + MainForm.ItemInventoryName(Control - 1) + "+" + LTrim(Str(MainForm.ItemInventoryQuality(Control - 1))) + ".")
             MainForm.PlayerEquipNHands = MainForm.ItemInventoryName(Control - 1)
             MainForm.PlayerEquipHands = Weapon
             MainForm.PlayerEquipQHands = MainForm.ItemInventoryQuality(Control - 1)
@@ -142,18 +188,34 @@
             MainForm.PlayerCurWillpower += (5 * (MainForm.ItemInventoryQuality(Control - 1) + 1))
             If MainForm.PlayerCurWillpower > MainForm.PlayerWillpower Then MainForm.PlayerCurWillpower = MainForm.PlayerWillpower
             MainForm.SND("You were energized for " + LTrim(Str(MainForm.PlayerCurWillpower - tempwp)) + ".")
+        ElseIf MainForm.ItemInventoryType(Control - 1) = GenerateItem.Potion Then
+            Dim plural As String = "s"
+            If MainForm.ItemInventoryName(Control - 1) = "Swim Potion" Then
+                MainForm.WaterImmune = MainForm.ItemInventoryQuality(Control - 1) + 1
+                If MainForm.WaterImmune = 1 Then plural = ""
+                MainForm.SND("Drown immune for " + LTrim(Str(MainForm.WaterImmune)) + " round" + plural + ".")
+            ElseIf MainForm.ItemInventoryName(Control - 1) = "Freeze Potion" Then
+                MainForm.IceImmune = MainForm.ItemInventoryQuality(Control - 1) + 1
+                If MainForm.IceImmune = 1 Then plural = ""
+                MainForm.SND("Freeze immune for " + LTrim(Str(MainForm.IceImmune)) + " round" + plural + ".")
+            ElseIf MainForm.ItemInventoryName(Control - 1) = "Burn Potion" Then
+                MainForm.LavaImmune = MainForm.ItemInventoryQuality(Control - 1) + 1
+                If MainForm.LavaImmune = 1 Then plural = ""
+                MainForm.SND("Burn immune for " + LTrim(Str(MainForm.LavaImmune)) + " round" + plural + ".")
+            End If
         End If
-        MainForm.ReDraw() 'cause a tick every time something is drank, eaten, or worn
-        MainForm.RefreshStats()
-        MainForm.ItemInventoryType(Control - 1) = 0 'after item is worn, remove from inventory
-        MainForm.ItemInventoryName(Control - 1) = "" 'that includes it's string
-        MainForm.ItemInventoryQuality(Control - 1) = 0
-        If PreviousItemType > 0 Then
-            MainForm.ItemInventoryType(Control - 1) = PreviousItemType
-            MainForm.ItemInventoryName(Control - 1) = PreviousItemName
-            MainForm.ItemInventoryQuality(Control - 1) = PreviousItemQuality
+            MainForm.ReDraw() 'cause a tick every time something is drank, eaten, or worn
+            MainForm.RefreshStats()
+            MainForm.ItemInventoryType(Control - 1) = 0 'after item is worn, remove from inventory
+            MainForm.ItemInventoryName(Control - 1) = "" 'that includes it's string
+            MainForm.ItemInventoryQuality(Control - 1) = 0
+            If PreviousItemType > 0 Then
+                MainForm.ItemInventoryType(Control - 1) = PreviousItemType
+                MainForm.ItemInventoryName(Control - 1) = PreviousItemName
+                MainForm.ItemInventoryQuality(Control - 1) = PreviousItemQuality
         End If
-        Return 0
+        ResetQuickInventory()
+            Return 0
     End Function
     Private Sub ProcessKeys(ByVal sender As System.Object, ByVal e As System.Windows.Forms.KeyEventArgs) Handles MyBase.KeyDown
         If e.KeyValue = Keys.Escape Then
@@ -162,65 +224,85 @@
             Me.Close()
         End If
     End Sub
-    Private Sub DropItem(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Drop9.Click, Drop8.Click, Drop7.Click, Drop6.Click, Drop5.Click, Drop4.Click, Drop3.Click, Drop20.Click, Drop2.Click, Drop19.Click, Drop18.Click, Drop17.Click, Drop16.Click, Drop15.Click, Drop14.Click, Drop13.Click, Drop12.Click, Drop11.Click, Drop10.Click, Drop1.Click
+    Public Sub DropItem(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Drop9.Click, Drop8.Click, Drop7.Click, Drop6.Click, Drop5.Click, Drop4.Click, Drop3.Click, Drop20.Click, Drop2.Click, Drop19.Click, Drop18.Click, Drop17.Click, Drop16.Click, Drop15.Click, Drop14.Click, Drop13.Click, Drop12.Click, Drop11.Click, Drop10.Click, Drop1.Click
         If sender.Equals(Drop1) Then
+            MainForm.SND("You destroy " + MainForm.ItemInventoryName(0) + ".")
             MainForm.ItemInventoryName(0) = ""
             MainForm.ItemInventoryType(0) = 0
         ElseIf sender.Equals(Drop2) Then
+            MainForm.SND("You destroy " + MainForm.ItemInventoryName(1) + ".")
             MainForm.ItemInventoryName(1) = ""
             MainForm.ItemInventoryType(1) = 0
         ElseIf sender.Equals(Drop3) Then
+            MainForm.SND("You destroy " + MainForm.ItemInventoryName(2) + ".")
             MainForm.ItemInventoryName(2) = ""
             MainForm.ItemInventoryType(2) = 0
         ElseIf sender.Equals(Drop4) Then
+            MainForm.SND("You destroy " + MainForm.ItemInventoryName(3) + ".")
             MainForm.ItemInventoryName(3) = ""
             MainForm.ItemInventoryType(3) = 0
         ElseIf sender.Equals(Drop5) Then
+            MainForm.SND("You destroy " + MainForm.ItemInventoryName(4) + ".")
             MainForm.ItemInventoryName(4) = ""
             MainForm.ItemInventoryType(4) = 0
         ElseIf sender.Equals(Drop6) Then
+            MainForm.SND("You destroy " + MainForm.ItemInventoryName(5) + ".")
             MainForm.ItemInventoryName(5) = ""
             MainForm.ItemInventoryType(5) = 0
         ElseIf sender.Equals(Drop7) Then
+            MainForm.SND("You destroy " + MainForm.ItemInventoryName(6) + ".")
             MainForm.ItemInventoryName(6) = ""
             MainForm.ItemInventoryType(6) = 0
         ElseIf sender.Equals(Drop8) Then
+            MainForm.SND("You destroy " + MainForm.ItemInventoryName(7) + ".")
             MainForm.ItemInventoryName(7) = ""
             MainForm.ItemInventoryType(7) = 0
         ElseIf sender.Equals(Drop9) Then
+            MainForm.SND("You destroy " + MainForm.ItemInventoryName(8) + ".")
             MainForm.ItemInventoryName(8) = ""
             MainForm.ItemInventoryType(8) = 0
         ElseIf sender.Equals(Drop10) Then
+            MainForm.SND("You destroy " + MainForm.ItemInventoryName(9) + ".")
             MainForm.ItemInventoryName(9) = ""
             MainForm.ItemInventoryType(9) = 0
         ElseIf sender.Equals(Drop11) Then
+            MainForm.SND("You destroy " + MainForm.ItemInventoryName(10) + ".")
             MainForm.ItemInventoryName(10) = ""
             MainForm.ItemInventoryType(10) = 0
         ElseIf sender.Equals(Drop12) Then
+            MainForm.SND("You destroy " + MainForm.ItemInventoryName(11) + ".")
             MainForm.ItemInventoryName(11) = ""
             MainForm.ItemInventoryType(11) = 0
         ElseIf sender.Equals(Drop13) Then
+            MainForm.SND("You destroy " + MainForm.ItemInventoryName(12) + ".")
             MainForm.ItemInventoryName(12) = ""
             MainForm.ItemInventoryType(12) = 0
         ElseIf sender.Equals(Drop14) Then
+            MainForm.SND("You destroy " + MainForm.ItemInventoryName(13) + ".")
             MainForm.ItemInventoryName(13) = ""
             MainForm.ItemInventoryType(13) = 0
         ElseIf sender.Equals(Drop15) Then
+            MainForm.SND("You destroy " + MainForm.ItemInventoryName(14) + ".")
             MainForm.ItemInventoryName(14) = ""
             MainForm.ItemInventoryType(14) = 0
         ElseIf sender.Equals(Drop16) Then
+            MainForm.SND("You destroy " + MainForm.ItemInventoryName(15) + ".")
             MainForm.ItemInventoryName(15) = ""
             MainForm.ItemInventoryType(15) = 0
         ElseIf sender.Equals(Drop17) Then
+            MainForm.SND("You destroy " + MainForm.ItemInventoryName(16) + ".")
             MainForm.ItemInventoryName(16) = ""
             MainForm.ItemInventoryType(16) = 0
         ElseIf sender.Equals(Drop18) Then
+            MainForm.SND("You destroy " + MainForm.ItemInventoryName(17) + ".")
             MainForm.ItemInventoryName(17) = ""
             MainForm.ItemInventoryType(17) = 0
         ElseIf sender.Equals(Drop19) Then
+            MainForm.SND("You destroy " + MainForm.ItemInventoryName(18) + ".")
             MainForm.ItemInventoryName(18) = ""
             MainForm.ItemInventoryType(18) = 0
         ElseIf sender.Equals(Drop20) Then
+            MainForm.SND("You destroy " + MainForm.ItemInventoryName(19) + ".")
             MainForm.ItemInventoryName(19) = ""
             MainForm.ItemInventoryType(19) = 0
         End If
@@ -247,6 +329,7 @@
         If MainForm.ItemInventoryName(18) <> "" Then Line1 += "19. " + MainForm.CapitalizeFirstLetter(MainForm.ItemInventoryName(18)) + " +" + LTrim(Str(MainForm.ItemInventoryQuality(18))) + Chr(13) Else Line1 += "19." + Chr(13)
         If MainForm.ItemInventoryName(19) <> "" Then Line1 += "20. " + MainForm.CapitalizeFirstLetter(MainForm.ItemInventoryName(19)) + " +" + LTrim(Str(MainForm.ItemInventoryQuality(19))) + Chr(13) Else Line1 += "20." + Chr(13)
         Inventory2.Text = Line1 : Line1 = ""
+        ResetQuickInventory()
     End Sub
     Private Sub WearItem(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Wear9.Click, Wear8.Click, Wear7.Click, Wear6.Click, Wear5.Click, Wear4.Click, Wear3.Click, Wear20.Click, Wear2.Click, Wear19.Click, Wear18.Click, Wear17.Click, Wear16.Click, Wear15.Click, Wear14.Click, Wear13.Click, Wear12.Click, Wear11.Click, Wear10.Click, Wear1.Click
         If sender.Equals(Wear1) Then

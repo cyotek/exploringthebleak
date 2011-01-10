@@ -449,7 +449,10 @@
         Next
         If MobilePlaced = True Then
             MainForm.MobilePresent = True
-            SortEnemyRangeList() 'puts the closest enemy on 0
+            Try
+                SortEnemyRangeList() 'puts the closest enemy on 0
+            Catch
+            End Try
         Else
             MainForm.MobilePresent = False
         End If
@@ -467,9 +470,9 @@
                 MainForm.CANVAS.FillRectangle(Brushes.Black, xish, yish, TheRoomWidth, TheRoomHeight)
                 MainForm.CANVAS.DrawString("#", displayfont, Brushes.DarkGray, xish, yish)
             End If
-                'draw floor
-            ElseIf MainForm.Map(MainForm.MapLevel, x, y) = Floor Then
-                If GraphicalMode = Tiled Then
+            'draw floor
+        ElseIf MainForm.Map(MainForm.MapLevel, x, y) = Floor Then
+            If GraphicalMode = Tiled Then
                 If MainForm.ImageFilterOn.Checked = True Then
                     ShowFog(xish, yish, x, y, floorart)
                 Else
@@ -479,9 +482,9 @@
                 MainForm.CANVAS.FillRectangle(Brushes.Black, xish, yish, TheRoomWidth, TheRoomHeight)
                 MainForm.CANVAS.DrawString(".", displayfont, Brushes.DarkGray, xish, yish)
             End If
-                'draw floor with blood
-            ElseIf MainForm.Map(MainForm.MapLevel, x, y) = SpecialFloor Then
-                If GraphicalMode = Tiled Then
+            'draw floor with blood
+        ElseIf MainForm.Map(MainForm.MapLevel, x, y) = SpecialFloor Then
+            If GraphicalMode = Tiled Then
                 If MainForm.ImageFilterOn.Checked = True Then
                     ShowFog(xish, yish, x, y, FilterImageRed(floorart), True)
                 Else
@@ -492,44 +495,42 @@
                 MainForm.CANVAS.FillRectangle(Brushes.Black, xish, yish, TheRoomWidth, TheRoomHeight)
                 MainForm.CANVAS.DrawString("x", displayfont, Brushes.DarkRed, xish, yish)
             End If
-                'draw stairs up
-            ElseIf MainForm.Map(MainForm.MapLevel, x, y) = StairsUp Then
-                If GraphicalMode = Tiled Then
-                    MainForm.CANVAS.DrawImage(My.Resources.StairsUp, xish, yish, TheRoomWidth, TheRoomHeight)
-                ElseIf GraphicalMode = ASCII Then
-                    MainForm.CANVAS.FillRectangle(Brushes.Black, xish, yish, TheRoomWidth, TheRoomHeight)
-                    MainForm.CANVAS.DrawString("<", displayfont, Brushes.DarkGray, xish, yish)
+            'draw stairs up
+        ElseIf MainForm.Map(MainForm.MapLevel, x, y) = StairsUp Then
+            If GraphicalMode = Tiled Then
+                MainForm.CANVAS.DrawImage(My.Resources.StairsUp, xish, yish, TheRoomWidth, TheRoomHeight)
+            ElseIf GraphicalMode = ASCII Then
+                MainForm.CANVAS.FillRectangle(Brushes.Black, xish, yish, TheRoomWidth, TheRoomHeight)
+                MainForm.CANVAS.DrawString("<", displayfont, Brushes.DarkGray, xish, yish)
+            End If
+            'draw stairs down
+        ElseIf MainForm.Map(MainForm.MapLevel, x, y) = StairsDown Then
+            If GraphicalMode = Tiled Then
+                MainForm.CANVAS.DrawImage(My.Resources.StairsDown, xish, yish, TheRoomWidth, TheRoomHeight)
+            ElseIf GraphicalMode = ASCII Then
+                MainForm.CANVAS.FillRectangle(Brushes.Black, xish, yish, TheRoomWidth, TheRoomHeight)
+                MainForm.CANVAS.DrawString(">", displayfont, Brushes.DarkGray, xish, yish)
+            End If
+        ElseIf MainForm.Map(MainForm.MapLevel, x, y) = Water Then
+            If GraphicalMode = Tiled Then
+                If MainForm.RiverType = Water Then
+                    MainForm.CANVAS.DrawImage(FilterImageWall(floorart, My.Resources.Water, MainForm.WaterBlur(MainForm.MapLevel, x, y, 2), MainForm.WaterBlur(MainForm.MapLevel, x, y, 1), MainForm.WaterBlur(MainForm.MapLevel, x, y, 0), MainForm.WaterBlur(MainForm.MapLevel, x, y, 3)), xish, yish, TheRoomWidth, TheRoomHeight)
+                ElseIf MainForm.RiverType = Lava Then
+                    MainForm.CANVAS.DrawImage(FilterImageWall(floorart, My.Resources.Lava, MainForm.WaterBlur(MainForm.MapLevel, x, y, 2), MainForm.WaterBlur(MainForm.MapLevel, x, y, 1), MainForm.WaterBlur(MainForm.MapLevel, x, y, 0), MainForm.WaterBlur(MainForm.MapLevel, x, y, 3)), xish, yish, TheRoomWidth, TheRoomHeight)
+                ElseIf MainForm.RiverType = Ice Then
+                    MainForm.CANVAS.DrawImage(FilterImageWall(floorart, My.Resources.Ice, MainForm.WaterBlur(MainForm.MapLevel, x, y, 2), MainForm.WaterBlur(MainForm.MapLevel, x, y, 1), MainForm.WaterBlur(MainForm.MapLevel, x, y, 0), MainForm.WaterBlur(MainForm.MapLevel, x, y, 3)), xish, yish, TheRoomWidth, TheRoomHeight)
                 End If
-                'draw stairs down
-            ElseIf MainForm.Map(MainForm.MapLevel, x, y) = StairsDown Then
-                If GraphicalMode = Tiled Then
-                    MainForm.CANVAS.DrawImage(My.Resources.StairsDown, xish, yish, TheRoomWidth, TheRoomHeight)
-                ElseIf GraphicalMode = ASCII Then
-                    MainForm.CANVAS.FillRectangle(Brushes.Black, xish, yish, TheRoomWidth, TheRoomHeight)
-                    MainForm.CANVAS.DrawString(">", displayfont, Brushes.DarkGray, xish, yish)
-                End If
-            ElseIf MainForm.Map(MainForm.MapLevel, x, y) = Lava Then
-                If GraphicalMode = Tiled Then
-                    MainForm.CANVAS.DrawImage(FilterImageWall(floorart, My.Resources.Lava, True, True, False, False), xish, yish, TheRoomWidth, TheRoomHeight)
-                ElseIf GraphicalMode = ASCII Then
-                    MainForm.CANVAS.FillRectangle(Brushes.Black, xish, yish, TheRoomWidth, TheRoomHeight)
-                    MainForm.CANVAS.DrawString("~", displayfont, Brushes.DarkRed, xish, yish)
-                End If
-            ElseIf MainForm.Map(MainForm.MapLevel, x, y) = Water Then
-                If GraphicalMode = Tiled Then
-                    MainForm.CANVAS.DrawImage(FilterImageWater(floorart, My.Resources.Water), xish, yish, TheRoomWidth, TheRoomHeight)
-                ElseIf GraphicalMode = ASCII Then
-                    MainForm.CANVAS.FillRectangle(Brushes.Black, xish, yish, TheRoomWidth, TheRoomHeight)
+            ElseIf GraphicalMode = ASCII Then
+                MainForm.CANVAS.FillRectangle(Brushes.Black, xish, yish, TheRoomWidth, TheRoomHeight)
+                If MainForm.RiverType = Water Then
                     MainForm.CANVAS.DrawString("~", displayfont, Brushes.DarkBlue, xish, yish)
-                End If
-            ElseIf MainForm.Map(MainForm.MapLevel, x, y) = Ice Then
-                If GraphicalMode = Tiled Then
-                    MainForm.CANVAS.DrawImage(FilterImageWater(floorart, My.Resources.Ice), xish, yish, TheRoomWidth, TheRoomHeight)
-                ElseIf GraphicalMode = ASCII Then
-                    MainForm.CANVAS.FillRectangle(Brushes.Black, xish, yish, TheRoomWidth, TheRoomHeight)
-                    MainForm.CANVAS.DrawString("#", displayfont, Brushes.DarkCyan, xish, yish)
+                ElseIf MainForm.RiverType = Lava Then
+                    MainForm.CANVAS.DrawString("~", displayfont, Brushes.Red, xish, yish)
+                ElseIf MainForm.RiverType = Ice Then
+                    MainForm.CANVAS.DrawString("~", displayfont, Brushes.LightBlue, xish, yish)
                 End If
             End If
+        End If
     End Sub
     Sub SortEnemyRangeList()
         Dim MobileNumber As Short = 0
@@ -577,10 +578,13 @@
         End If
         'since map contains an enemy, throw that enemy and their details into a list that can be back-traced
         'this list is used for ranged weapons.
-        MainForm.MobileVisible(MainForm.MapLevel, CurrentlyDisplayedMobile, MobXPosition) = x
-        MainForm.MobileVisible(MainForm.MapLevel, CurrentlyDisplayedMobile, MobYPosition) = y
-        MainForm.MobileVisible(MainForm.MapLevel, CurrentlyDisplayedMobile, MobType) = EnemyNum
-        MainForm.MobileVisible(MainForm.MapLevel, CurrentlyDisplayedMobile, MobNumber) = MainForm.MobOccupied(MainForm.MapLevel, x, y)
+        Try
+            MainForm.MobileVisible(MainForm.MapLevel, CurrentlyDisplayedMobile, MobXPosition) = x
+            MainForm.MobileVisible(MainForm.MapLevel, CurrentlyDisplayedMobile, MobYPosition) = y
+            MainForm.MobileVisible(MainForm.MapLevel, CurrentlyDisplayedMobile, MobType) = EnemyNum
+            MainForm.MobileVisible(MainForm.MapLevel, CurrentlyDisplayedMobile, MobNumber) = MainForm.MobOccupied(MainForm.MapLevel, x, y)
+        Catch
+        End Try
     End Sub
     Sub TargetEnemy(Optional ByVal clear As Boolean = False)
         'to ensure all enemies within target list are still viable and alive, sort through list and null else
@@ -597,11 +601,16 @@
         Dim y As Short = MainForm.MobileVisible(MainForm.MapLevel, 0, MobYPosition)
         Dim xish As Short = TheRoomWidth * x + ColumnsSpace * x + 1
         Dim yish As Short = TheRoomHeight * y + RowSpace * y + 25
+        Dim pxish As Short = TheRoomWidth * PlayerPosX + ColumnsSpace * PlayerPosX + 1
+        Dim pyish As Short = TheRoomHeight * PlayerposY + ColumnsSpace * PlayerposY + 25
+        Dim halfroom As Short = TheRoomWidth / 2
         '
         If clear = False Then
             MainForm.CANVAS.DrawRectangle(Pens.IndianRed, xish, yish, TheRoomWidth - 2, TheRoomHeight - 2)
+            MainForm.CANVAS.DrawLine(Pens.IndianRed, pxish + halfroom, pyish + halfroom, xish + halfroom, yish + halfroom)
         ElseIf clear = True Then
             MainForm.CANVAS.DrawRectangle(Pens.Black, xish, yish, TheRoomWidth - 2, TheRoomHeight - 2)
+            MainForm.CANVAS.DrawLine(Pens.Black, pxish + halfroom, pyish + halfroom, xish + halfroom, yish + halfroom)
         End If
         MainForm.CreateGraphics.DrawImage(MainForm.PAD, 0, 0)
     End Sub
@@ -611,11 +620,13 @@
         ElseIf MainForm.ItemType(MainForm.MapLevel, MainForm.ItemOccupied(MainForm.MapLevel, x, y)) = TheEverspark Then
             MainForm.CANVAS.DrawString("E", displayfont, Brushes.White, xish, yish)
         ElseIf MainForm.ItemType(MainForm.MapLevel, MainForm.ItemOccupied(MainForm.MapLevel, x, y)) = Weapon Then
-            MainForm.CANVAS.DrawString("g", displayfont, Brushes.DarkCyan, xish, yish)
+            MainForm.CANVAS.DrawString(MainForm.ItemShowType(MainForm.MapLevel, x, y), displayfont, Brushes.DarkCyan, xish, yish)
         ElseIf MainForm.ItemType(MainForm.MapLevel, MainForm.ItemOccupied(MainForm.MapLevel, x, y)) = GenerateItem.Food Then
             MainForm.CANVAS.DrawString("f", displayfont, Brushes.LightYellow, xish, yish)
         ElseIf MainForm.ItemType(MainForm.MapLevel, MainForm.ItemOccupied(MainForm.MapLevel, x, y)) = GenerateItem.Water Then
             MainForm.CANVAS.DrawString("w", displayfont, Brushes.Aqua, xish, yish)
+        ElseIf MainForm.ItemType(MainForm.MapLevel, MainForm.ItemOccupied(MainForm.MapLevel, x, y)) = GenerateItem.Potion Then
+            MainForm.CANVAS.DrawString(MainForm.ItemShowType(MainForm.MapLevel, x, y), displayfont, Brushes.Magenta, xish, yish)
         Else
             MainForm.CANVAS.DrawString(MainForm.ItemShowType(MainForm.MapLevel, x, y), displayfont, Brushes.Green, xish, yish)
         End If
