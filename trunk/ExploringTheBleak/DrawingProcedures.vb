@@ -162,7 +162,7 @@
                             GoDirection = East
                         ElseIf x > TheObject.Width * NegPercent Then 'right side
                             GoDirection = West
-                        Else
+                        Else 'center of tile
                             GoDirection = 10 'none
                             AlphaBG = 1
                             AlphaFloor = 1
@@ -180,14 +180,25 @@
                             AlphaBG = ((TheObject.Width - (TheObject.Width * NegPercent)) - (TheObject.Width - x)) / (TheObject.Width - (TheObject.Width * NegPercent))
                             AlphaFloor = (TheObject.Width - x) / (TheObject.Width - (TheObject.Width * NegPercent))
                         Else
-                            AlphaBG = 1
                             AlphaFloor = 1
+                            If MainForm.EnvironmentType = 4 Or MainForm.EnvironmentType = 2 Then
+                                AlphaBG = 0
+                            ElseIf MainForm.EnvironmentType = 6 Then
+                                AlphaBG = 0
+                            Else
+                                AlphaBG = 1
+                            End If
                         End If
                         c2 = BG.GetPixel(x, y)
                         c1 = Floor.GetPixel(x, y)
                         r1 = c1.R : r2 = c2.R
                         g1 = c1.G : g2 = c2.G
                         b1 = c1.B : b2 = c2.B
+                        If MainForm.EnvironmentType = 4 Then
+                            r1 += 30
+                            g1 += 30
+                            b1 += 30
+                        End If
                         If r1 = 255 And g1 = 255 And b1 = 255 Then
                             ResultColor = Color.FromArgb(a, r2, g2, b2)
                             BG.SetPixel(x, y, ResultColor)
@@ -607,10 +618,10 @@
         '
         If clear = False Then
             MainForm.CANVAS.DrawRectangle(Pens.IndianRed, xish, yish, TheRoomWidth - 2, TheRoomHeight - 2)
-            MainForm.CANVAS.DrawLine(Pens.IndianRed, pxish + halfroom, pyish + halfroom, xish + halfroom, yish + halfroom)
+            'MainForm.CANVAS.DrawLine(Pens.IndianRed, pxish + halfroom, pyish + halfroom, xish + halfroom, yish + halfroom)
         ElseIf clear = True Then
             MainForm.CANVAS.DrawRectangle(Pens.Black, xish, yish, TheRoomWidth - 2, TheRoomHeight - 2)
-            MainForm.CANVAS.DrawLine(Pens.Black, pxish + halfroom, pyish + halfroom, xish + halfroom, yish + halfroom)
+            'MainForm.CANVAS.DrawLine(Pens.Black, pxish + halfroom, pyish + halfroom, xish + halfroom, yish + halfroom)
         End If
         MainForm.CreateGraphics.DrawImage(MainForm.PAD, 0, 0)
     End Sub
