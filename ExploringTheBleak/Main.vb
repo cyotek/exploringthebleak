@@ -40,9 +40,12 @@ Public Class MainForm
     Public Const TotalEnvironmentTypes As Short = 10
 
     Const Dungeon = 0
-    Const Ruins = 1
-    Const Tunnels = 2
-    Const Tunnels2 = 3
+    Const Ruins = 1 'using spiral functions, perlins noise
+    Const Tunnels = 2 'diffusion-limited aggregation (Cardinal)
+    Const Tunnels2 = 3 'diffusion-limited aggregation (w/ Ordinal or diagonal)
+    Const Catacombs = 4
+    Const Swamps = 5
+    Const Passage = 6 'single passage, stairs up start, stairs down ending
     Const Random = 10
 #End Region
 #Region "Form Enhancements"
@@ -922,15 +925,29 @@ Public Class MainForm
         If MapCreated(MapLevel) = False Then 'entering a new map, need to generate
             GenerateMap(8)
             GenerateBlur() 'walls blur
-            If GenerateRiverChance < 71 Then '70% chance to draw a river
-                GenerateRiver()
-                GenerateBlur(True) 'water blur
-                RiverType = RandomNumber.Next(6, 9)
-            End If
             DetermineEnvironment()
+            If GenerateType <> Swamps And GenerateType <> Passage And GenerateType <> Catacombs Then 'don't generate a river in a swamp or catacombs
+                If GenerateRiverChance < 71 Then '70% chance to draw a river
+                    GenerateRiver()
+                    GenerateBlur(True) 'water blur
+                    RiverType = RandomNumber.Next(6, 9)
+                    If EnvironmentType = 3 Then 'lava only
+                        RiverType = Lava
+                    ElseIf EnvironmentType = 5 Then 'ice only
+                        RiverType = Ice
+                    ElseIf EnvironmentType = 6 Then 'water only
+                        RiverType = Water
+                    End If
+                End If
+            Else 'it's a swamp must set water type to plain water
+                GenerateBlur(True)
+                RiverType = Water
+            End If
             GenerateFog()
             PopulateItems()
-            PopulateEntrances()
+            If GenerateType <> Passage And GenerateType <> Catacombs Then 'passage renders beginning and end locations, as does the maze/catacomb
+                PopulateEntrances()
+            End If
             PopulateMobiles()
             MapCreated(MapLevel) = True
         Else
@@ -1451,11 +1468,9 @@ Public Class MainForm
         Dim StopWhile = 0
         Dim PotentialGrowth As Short = 0 'this number is the potential size the room or corridor can be in that direction
         Dim PotentialSides As Short = 0
-        Dim GenerateRandomType As Short = Random
-        If GenerateRandomType = Random Then
-            GenerateRandomType = RandomNumber.Next(0, 4) 'returns 0:Dungeon,1:Ruins,2:Classic(nesw-dir),3:Classic2(nesw+ne,se,sw,nw-dir)
-        End If
-        If GenerateRandomType = Dungeon Then
+        'generate a random map type
+        GenerateType = RandomNumber.Next(0, 7) 'returns 0:Dungeon,1:Ruins,2:Tunnels(nesw-dir),3:TunnelsExpanded(nesw+ne,se,sw,nw-dir),4:Catacombs(mazes),5:Swamps,6:Passages
+        If GenerateType = Dungeon Then
             For RepeatToRecursion = 1 To Recursion Step 1
                 Map(MapLevel, BuilderPositionX, BuilderPositionY) = 1
                 While Turns > 0
@@ -1574,7 +1589,7 @@ Public Class MainForm
                 BuilderLastDirection = 0
                 Turns = 7
             Next
-        ElseIf GenerateRandomType = Ruins Then
+        ElseIf GenerateType = Ruins Then
             Dim RandomRuin As New Random
             Dim RuinStrength As Short
             Dim MaximumRuins As Short = MapSize
@@ -1743,7 +1758,259 @@ Public Class MainForm
                     End If
                 Next
             Next
-        ElseIf GenerateRandomType = Tunnels Or GenerateRandomType = Tunnels2 Then
+        ElseIf GenerateType = Passage Then
+            Dim CurX As Short = RandomNumber.Next(1, MapSize - 1)
+            Dim CurY As Short = RandomNumber.Next(1, MapSize - 1)
+            Dim CellsMade As Short = 1
+            Dim CurrentCell As Short = 1
+            Dim CellOrderX(1) As Short
+            Dim CellOrderY(1) As Short
+            Dim CellMade(MapSize, MapSize) As Boolean
+            Dim FoundDirection As Boolean = False
+            Dim TryDirection As Short
+            Dim TestDirection As Boolean = False
+            Dim TMapSize As Short = MapSize
+            'set start location as entrance or up stairs if maplevel is greater than 1
+            PlayerPosX = CurX
+            PlayerPosY = CurY
+            If MapLevel >= 2 Then
+                Map(MapLevel, CurX, CurY) = StairsUp
+            End If
+            While CellsMade < TMapSize * TMapSize
+                If Map(MapLevel, CurX, CurY) <> StairsUp Then Map(MapLevel, CurX, CurY) = Floor 'make sure you don't draw over the stairs up
+                CellMade(CurX, CurY) = True
+                TryDirection = RandomNumber.Next(1, 5)
+                TestDirection = False
+                If CurX + 2 <= MapSize Then 'check boundaries
+                    If Map(MapLevel, CurX + 2, CurY) = Wall Then TestDirection = True 'allowed to build to the right? if so then we can proceed
+                End If
+                If CurY + 2 <= MapSize Then 'check boundaries
+                    If Map(MapLevel, CurX, CurY + 2) = Wall Then TestDirection = True 'allowed to build to the south? if so then we can proceed
+                End If
+                If CurX - 2 >= 0 Then 'check boundaries
+                    If Map(MapLevel, CurX - 2, CurY) = Wall Then TestDirection = True 'allowed to build to the west? if so then we can proceed
+                End If
+                If CurY - 2 >= 0 Then 'check boundaries
+                    If Map(MapLevel, CurX, CurY - 2) = Wall Then TestDirection = True 'allowed to build to the north? if so then we can proceed
+                End If
+                If TestDirection = False Then 'there are no directions to build from this point, dead end
+                    If MapLevel < 28 Then Map(MapLevel, CurX, CurY) = StairsDown 'don't draw stairs down on last level
+                    Exit While
+                End If
+                If CellOrderX.Length < CurrentCell + 1 Then Array.Resize(CellOrderX, CurrentCell + 1) 'ensure the array is long enough
+                If CellOrderY.Length < CurrentCell + 1 Then Array.Resize(CellOrderY, CurrentCell + 1) 'ensure the array is long enough
+                If TryDirection = East Then
+                    'test right
+                    If CurX + 2 <= MapSize Then 'ensures the target is within boundaries
+                        If Map(MapLevel, CurX + 2, CurY) = Wall Then
+                            CellOrderX(CurrentCell) = CurX
+                            CellOrderY(CurrentCell) = CurY
+                            CurrentCell += 1
+                            Map(MapLevel, CurX + 1, CurY) = Floor 'build to the right
+                            CurX += 2
+                            CellsMade += 2
+                        End If
+                    End If
+                ElseIf TryDirection = South Then
+                    'test down
+                    If CurY + 2 <= MapSize Then 'ensures the target is within boundaries
+                        If Map(MapLevel, CurX, CurY + 2) = Wall Then
+                            CellOrderX(CurrentCell) = CurX
+                            CellOrderY(CurrentCell) = CurY
+                            CurrentCell += 1
+                            Map(MapLevel, CurX, CurY + 1) = Floor 'build to the south
+                            CurY += 2
+                            CellsMade += 2
+                        End If
+                    End If
+                ElseIf TryDirection = West Then
+                    'test left
+                    If CurX - 2 >= 0 Then 'ensures the target is within boundaries
+                        If Map(MapLevel, CurX - 2, CurY) = Wall Then
+                            CellOrderX(CurrentCell) = CurX
+                            CellOrderY(CurrentCell) = CurY
+                            CurrentCell += 1
+                            Map(MapLevel, CurX - 1, CurY) = Floor 'build to the left
+                            CurX -= 2
+                            CellsMade += 2
+                        End If
+                    End If
+                ElseIf TryDirection = North Then
+                    'test up
+                    If CurY - 2 >= 0 Then 'ensures the target is within boundaries
+                        If Map(MapLevel, CurX, CurY - 2) = Wall Then
+                            CellOrderX(CurrentCell) = CurX
+                            CellOrderY(CurrentCell) = CurY
+                            CurrentCell += 1
+                            Map(MapLevel, CurX, CurY - 1) = Floor 'build to the north
+                            CurY -= 2
+                            CellsMade += 2
+                        End If
+                    End If
+                End If
+            End While
+        ElseIf GenerateType = Catacombs Then
+            Dim CurX As Short = RandomNumber.Next(1, MapSize - 1)
+            Dim CurY As Short = RandomNumber.Next(1, MapSize - 1)
+            Dim CellsMade As Short = 1
+            Dim CurrentCell As Short = 1
+            Dim CellOrderX(1) As Short
+            Dim CellOrderY(1) As Short
+            Dim CellMade(MapSize, MapSize) As Boolean
+            Dim FoundDirection As Boolean = False
+            Dim TryDirection As Short
+            Dim TestDirection As Boolean = False
+            Dim TMapSize As Short = MapSize
+            'set start location as entrance or up stairs if maplevel is greater than 1
+            PlayerPosX = CurX
+            PlayerPosY = CurY
+            If MapLevel >= 2 Then
+                Map(MapLevel, CurX, CurY) = StairsUp
+            End If
+            While CellsMade < TMapSize * TMapSize
+                If Map(MapLevel, CurX, CurY) <> StairsUp Then Map(MapLevel, CurX, CurY) = Floor 'make sure you don't draw over the stairs up
+                CellMade(CurX, CurY) = True
+                TryDirection = RandomNumber.Next(1, 5)
+                TestDirection = False
+                If CurX + 2 <= MapSize Then 'check boundaries
+                    If Map(MapLevel, CurX + 2, CurY) = Wall Then TestDirection = True 'allowed to build to the right? if so then we can proceed
+                End If
+                If CurY + 2 <= MapSize Then 'check boundaries
+                    If Map(MapLevel, CurX, CurY + 2) = Wall Then TestDirection = True 'allowed to build to the south? if so then we can proceed
+                End If
+                If CurX - 2 >= 0 Then 'check boundaries
+                    If Map(MapLevel, CurX - 2, CurY) = Wall Then TestDirection = True 'allowed to build to the west? if so then we can proceed
+                End If
+                If CurY - 2 >= 0 Then 'check boundaries
+                    If Map(MapLevel, CurX, CurY - 2) = Wall Then TestDirection = True 'allowed to build to the north? if so then we can proceed
+                End If
+                If TestDirection = False Then 'there are no directions to build from this point, dead end
+                    CurrentCell -= 1
+                    CurX = CellOrderX(CurrentCell)
+                    CurY = CellOrderY(CurrentCell)
+                    If CurrentCell = 1 Then
+                        If MapLevel < 28 Then Map(MapLevel, CellOrderX(CellOrderX.Length - 1), CellOrderY(CellOrderY.Length - 1)) = StairsDown 'don't draw stairs down on last level
+                        Exit While
+                    End If
+                End If
+                If CellOrderX.Length < CurrentCell + 1 Then Array.Resize(CellOrderX, CurrentCell + 1) 'ensure the array is long enough
+                If CellOrderY.Length < CurrentCell + 1 Then Array.Resize(CellOrderY, CurrentCell + 1) 'ensure the array is long enough
+                If TryDirection = East Then
+                    'test right
+                    If CurX + 2 <= MapSize Then 'ensures the target is within boundaries
+                        If Map(MapLevel, CurX + 2, CurY) = Wall Then
+                            CellOrderX(CurrentCell) = CurX
+                            CellOrderY(CurrentCell) = CurY
+                            CurrentCell += 1
+                            Map(MapLevel, CurX + 1, CurY) = Floor 'build to the right
+                            CurX += 2
+                            CellsMade += 2
+                        End If
+                    End If
+                ElseIf TryDirection = South Then
+                    'test down
+                    If CurY + 2 <= MapSize Then 'ensures the target is within boundaries
+                        If Map(MapLevel, CurX, CurY + 2) = Wall Then
+                            CellOrderX(CurrentCell) = CurX
+                            CellOrderY(CurrentCell) = CurY
+                            CurrentCell += 1
+                            Map(MapLevel, CurX, CurY + 1) = Floor 'build to the south
+                            CurY += 2
+                            CellsMade += 2
+                        End If
+                    End If
+                ElseIf TryDirection = West Then
+                    'test left
+                    If CurX - 2 >= 0 Then 'ensures the target is within boundaries
+                        If Map(MapLevel, CurX - 2, CurY) = Wall Then
+                            CellOrderX(CurrentCell) = CurX
+                            CellOrderY(CurrentCell) = CurY
+                            CurrentCell += 1
+                            Map(MapLevel, CurX - 1, CurY) = Floor 'build to the left
+                            CurX -= 2
+                            CellsMade += 2
+                        End If
+                    End If
+                ElseIf TryDirection = North Then
+                    'test up
+                    If CurY - 2 >= 0 Then 'ensures the target is within boundaries
+                        If Map(MapLevel, CurX, CurY - 2) = Wall Then
+                            CellOrderX(CurrentCell) = CurX
+                            CellOrderY(CurrentCell) = CurY
+                            CurrentCell += 1
+                            Map(MapLevel, CurX, CurY - 1) = Floor 'build to the north
+                            CurY -= 2
+                            CellsMade += 2
+                        End If
+                    End If
+                End If
+            End While
+        ElseIf GenerateType = Swamps Then
+            Dim TMapSize As Short = MapSize 'can't multiply constants, so declaring a temp variable
+            Dim MapFilled As Short = 0
+            Dim BadPos As Boolean = False
+            Dim RetryPos As Boolean = True
+            Dim RoomWidthSize, RoomHeightSize As Short
+            Dim PosX, PosY, CurX, CurY As Integer
+            Dim FailedTimes As Short = 0
+            While MapFilled < (TMapSize * TMapSize) * 5 / 6
+                While RetryPos = True
+                    RoomWidthSize = RandomNumber.Next(1, 6) '2-5 roomsize
+                    RoomHeightSize = RandomNumber.Next(1, 6)
+                    PosX = RandomNumber.Next(0 - RoomWidthSize, MapSize + RoomWidthSize)
+                    PosY = RandomNumber.Next(0 - RoomHeightSize, MapSize + RoomHeightSize)
+                    For CurX = PosX To PosX + RoomWidthSize Step 1
+                        For CurY = PosY To PosY + RoomHeightSize Step 1
+                            If CurX >= 0 And CurX <= MapSize And CurY >= 0 And CurY <= MapSize Then
+                                If Map(MapLevel, CurX, CurY) = Floor Then
+                                    BadPos = True
+                                    Exit For
+                                End If
+                            End If
+                        Next
+                        If BadPos = True Then
+                            Exit For
+                        End If
+                    Next
+                    If BadPos = False Then 'draw floor and walls
+                        For CurX = PosX - 1 To PosX + RoomWidthSize + 1 Step 1
+                            For CurY = PosY - 1 To PosY + RoomHeightSize + 1 Step 1
+                                If CurX < PosX Or CurX > PosX + RoomWidthSize Or CurY < PosY Or CurY > PosY + RoomHeightSize Then 'walls
+                                    If CurX >= 0 And CurX <= MapSize And CurY >= 0 And CurY <= MapSize Then 'make sure it stays within the bound of the map
+                                        If Map(MapLevel, CurX, CurY) <> Water Then
+                                            Map(MapLevel, CurX, CurY) = Water : MapFilled += 1
+                                        End If
+                                    End If
+                                Else
+                                    If CurX >= 0 And CurX <= MapSize And CurY >= 0 And CurY <= MapSize Then  'make sure it stays within the bound of the map
+                                        If Map(MapLevel, CurX, CurY) <> Floor Then
+                                            Map(MapLevel, CurX, CurY) = Floor : MapFilled += 1
+                                        End If
+                                    End If
+                                End If
+                            Next
+                        Next
+                        RetryPos = False
+                    Else
+                        FailedTimes += 1
+                        If FailedTimes > 100 Then
+                            RetryPos = False
+                            MapFilled = TMapSize * TMapSize
+                        End If
+                        BadPos = False
+                    End If
+                End While
+                RetryPos = True
+            End While
+            'now set all walls to floor
+            For CurX = 0 To MapSize Step 1
+                For CurY = 0 To MapSize Step 1
+                    If Map(MapLevel, CurX, CurY) = Wall Then
+                        Map(MapLevel, CurX, CurY) = Floor
+                    End If
+                Next
+            Next
+        ElseIf GenerateType = Tunnels Or GenerateType = Tunnels2 Then
             Dim AllocatedBlocks As Short = 0
             Dim FailedBlocks As Short = 0
             Dim RandomPosition As New Random
@@ -1781,16 +2048,16 @@ Public Class MainForm
                         BuilderPositionY += 1
                     ElseIf BuilderMoveDirection = West And BuilderPositionX > 0 Then
                         BuilderPositionX -= 1
-                    ElseIf BuilderMoveDirection = 5 And BuilderPositionX < MapSize And BuilderPositionY > 0 And GenerateRandomType = Tunnels2 Then 'northeast
+                    ElseIf BuilderMoveDirection = 5 And BuilderPositionX < MapSize And BuilderPositionY > 0 And GenerateType = Tunnels2 Then 'northeast
                         BuilderPositionY -= 1
                         BuilderPositionX += 1
-                    ElseIf BuilderMoveDirection = 6 And BuilderPositionX < MapSize And BuilderPositionY < MapSize And GenerateRandomType = Tunnels2 Then 'southeast
+                    ElseIf BuilderMoveDirection = 6 And BuilderPositionX < MapSize And BuilderPositionY < MapSize And GenerateType = Tunnels2 Then 'southeast
                         BuilderPositionY += 1
                         BuilderPositionX += 1
-                    ElseIf BuilderMoveDirection = 7 And BuilderPositionX > 0 And BuilderPositionY < MapSize And GenerateRandomType = Tunnels2 Then 'southwest
+                    ElseIf BuilderMoveDirection = 7 And BuilderPositionX > 0 And BuilderPositionY < MapSize And GenerateType = Tunnels2 Then 'southwest
                         BuilderPositionY += 1
                         BuilderPositionX -= 1
-                    ElseIf BuilderMoveDirection = 8 And BuilderPositionX > 0 And BuilderPositionY > 0 And GenerateRandomType = Tunnels2 Then
+                    ElseIf BuilderMoveDirection = 8 And BuilderPositionX > 0 And BuilderPositionY > 0 And GenerateType = Tunnels2 Then
                         BuilderPositionY -= 1
                         BuilderPositionX -= 1
                     Else
