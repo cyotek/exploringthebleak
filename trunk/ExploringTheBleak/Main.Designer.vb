@@ -22,6 +22,7 @@ Partial Class MainForm
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
+        Me.components = New System.ComponentModel.Container()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(MainForm))
         Me.Panel1 = New System.Windows.Forms.Panel()
         Me.DisplayText = New System.Windows.Forms.RichTextBox()
@@ -110,6 +111,7 @@ Partial Class MainForm
         Me.ShowHideActivityLogToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.HelpToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.QuickInventory = New System.Windows.Forms.Label()
+        Me.Timer = New System.Windows.Forms.Timer(Me.components)
         Me.HealthBar = New Exploring_The_Bleak.MyProgBar()
         Me.WillpowerBar = New Exploring_The_Bleak.MyProgBar()
         Me.Panel1.SuspendLayout()
@@ -1009,6 +1011,11 @@ Partial Class MainForm
         Me.QuickInventory.Text = "Empty Inventory"
         Me.QuickInventory.TextAlign = System.Drawing.ContentAlignment.TopRight
         '
+        'Timer
+        '
+        Me.Timer.Enabled = True
+        Me.Timer.Interval = 1000
+        '
         'HealthBar
         '
         Me.HealthBar.BackColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(192, Byte), Integer), CType(CType(192, Byte), Integer))
@@ -1191,5 +1198,6 @@ Partial Class MainForm
     Friend WithEvents GraphicModeOn As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents GraphicModeOff As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents QuickInventory As System.Windows.Forms.Label
+    Friend WithEvents Timer As System.Windows.Forms.Timer
 
 End Class

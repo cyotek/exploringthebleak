@@ -3,6 +3,7 @@ Public Class MainForm
 #Region "Constants"
     Public Const MapSize As Byte = 30 'original 25
     Public Const MaxDepthLevel As Byte = 28
+    Public Const MaxMobiles As Byte = 20
 
     Const ASCII = False
     Const Tiled = True
@@ -56,6 +57,9 @@ Public Class MainForm
     Public AdminVisible As Boolean = False 'admin mode, allows full map view without exploration. generally used to debug generation techniques
     Public GraphicalMode As Boolean = Tiled
 
+    Public Screensaver As Boolean = True
+    Public Initialized As Boolean = False
+
     Public StandardColor As Color 'used for color types in fog display
     Public GenerateType As Short
     Public EnvironmentType As Byte = 0
@@ -101,9 +105,9 @@ Public Class MainForm
 
     Public PreviousAttack, PreviousDefense As Short
 
-    Public MobilePosX(MaxDepthLevel, 9), MobilePosY(MaxDepthLevel, 9), MobilePrevX(MaxDepthLevel, 9), MobilePrevY(MaxDepthLevel, 9), MobileLastMove(MaxDepthLevel, 9), MobileType(MaxDepthLevel, 9) As Short
-    Public MobileHealth(MaxDepthLevel, 9), MobileFlee(MaxDepthLevel, 9), MobileStun(MaxDepthLevel, 9), MobileClumsiness(MaxDepthLevel, 9) As Short
-    Public MobileVisible(MaxDepthLevel, 9, 3) As Short
+    Public MobilePosX(MaxDepthLevel, MaxMobiles), MobilePosY(MaxDepthLevel, MaxMobiles), MobilePrevX(MaxDepthLevel, MaxMobiles), MobilePrevY(MaxDepthLevel, MaxMobiles), MobileLastMove(MaxDepthLevel, MaxMobiles), MobileType(MaxDepthLevel, MaxMobiles) As Short
+    Public MobileHealth(MaxDepthLevel, MaxMobiles), MobileFlee(MaxDepthLevel, MaxMobiles), MobileStun(MaxDepthLevel, MaxMobiles), MobileClumsiness(MaxDepthLevel, MaxMobiles) As Short
+    Public MobileVisible(MaxDepthLevel, MaxMobiles, 3) As Short
     Public MobOccupied(MaxDepthLevel, MapSize, MapSize) As Short '0-9 mobile vnum loc
     Public MobileExists(MaxDepthLevel, MapSize, MapSize) As Boolean 'death flag
     Public MobilePresent As Boolean 'generic mobile is presently on screen to prevent erronerous targeting or skills w/o mobs present
@@ -211,63 +215,67 @@ Public Class MainForm
     End Function
 #End Region
 #Region "Mobile Actions & Battle"
-    Function Mv(ByVal Mobnum As Short, ByVal x As Short, ByVal y As Short) 'meta mobile move, all movement passed lastly through here
+    Function Mv(ByVal Mobnum As Short, ByVal x As Short, ByVal y As Short, Optional ByVal NPC As Boolean = False) 'meta mobile move, all movement passed lastly through here
         Dim PreviousX As Short = MobilePosX(MapLevel, Mobnum)
         Dim PreviousY As Short = MobilePosY(MapLevel, Mobnum)
         If PreviousX >= 0 And PreviousY >= 0 Then
-            MobileExists(MapLevel, PreviousX, PreviousY) = False
-            MobOccupied(MapLevel, PreviousX, PreviousY) = 10
-            MapOccupied(MapLevel, PreviousX, PreviousY) = 0
+            If NPC = False Then MobileExists(MapLevel, PreviousX, PreviousY) = False
+            If NPC = False Then MobOccupied(MapLevel, PreviousX, PreviousY) = 10
+            If NPC = False Then MapOccupied(MapLevel, PreviousX, PreviousY) = 0
             MobilePosX(MapLevel, Mobnum) = PreviousX + x
             MobilePosY(MapLevel, Mobnum) = PreviousY + y
-            MobileExists(MapLevel, MobilePosX(MapLevel, Mobnum), MobilePosY(MapLevel, Mobnum)) = True
-            MobOccupied(MapLevel, MobilePosX(MapLevel, Mobnum), MobilePosY(MapLevel, Mobnum)) = Mobnum
-            MapOccupied(MapLevel, MobilePosX(MapLevel, Mobnum), MobilePosY(MapLevel, Mobnum)) = MobileType(MapLevel, Mobnum)
+            If NPC = False Then MobileExists(MapLevel, MobilePosX(MapLevel, Mobnum), MobilePosY(MapLevel, Mobnum)) = True
+            If NPC = False Then MobOccupied(MapLevel, MobilePosX(MapLevel, Mobnum), MobilePosY(MapLevel, Mobnum)) = Mobnum
+            If NPC = False Then MapOccupied(MapLevel, MobilePosX(MapLevel, Mobnum), MobilePosY(MapLevel, Mobnum)) = MobileType(MapLevel, Mobnum)
         End If
         Return 0
     End Function
-    Function MoveMobile(ByVal MobNum As Short, ByVal MvType As Short)
+    Function MoveMobile(ByVal MobNum As Short, ByVal MvType As Short, Optional ByVal NPC As Boolean = False)
         Dim MobileDead As Boolean = False
         Dim x As Short = MobilePosX(MapLevel, MobNum)
         Dim y As Short = MobilePosY(MapLevel, MobNum)
         If MvType = North And MobilePosY(MapLevel, MobNum) > 0 Then 'North movement
             If Map(MapLevel, MobilePosX(MapLevel, MobNum), MobilePosY(MapLevel, MobNum) - 1) = Item Then 'mobile moves onto an item and picks it up
-            ElseIf MobilePosX(MapLevel, MobNum) = PlayerPosX And MobilePosY(MapLevel, MobNum) - 1 = PlayerPosY Then 'mobile moves into player
-                KillMob(MapLevel, Mobnum)
+            ElseIf MobilePosX(MapLevel, MobNum) = PlayerPosX And MobilePosY(MapLevel, MobNum) - 1 = PlayerPosY And NPC = False Then 'mobile moves into player
+                'if mobile is npc then obviously it can't move onto player, otherwise if mobile is screensaver player it...can't move on itself? hehe
+                KillMob(MapLevel, MobNum)
                 MobileDead = True
             End If
             If MobileDead = False Then
-                Mv(MobNum, 0, -1)
+                Mv(MobNum, 0, -1, NPC)
                 MobileLastMove(MapLevel, MobNum) = North
             End If
         ElseIf MvType = East And MobilePosX(MapLevel, MobNum) < MapSize Then 'East movement
             If Map(MapLevel, MobilePosX(MapLevel, MobNum) + 1, MobilePosY(MapLevel, MobNum)) = Item Then 'mobile moves onto a piece
-            ElseIf MobilePosX(MapLevel, MobNum) + 1 = PlayerPosX And MobilePosY(MapLevel, MobNum) = PlayerPosY Then 'mobile moves into player
-                KillMob(MapLevel, Mobnum)
+            ElseIf MobilePosX(MapLevel, MobNum) + 1 = PlayerPosX And MobilePosY(MapLevel, MobNum) = PlayerPosY And NPC = False Then 'mobile moves into player
+                'if mobile is npc then obviously it can't move onto player, otherwise if mobile is screensaver player it...can't move on itself? hehe
+                KillMob(MapLevel, MobNum)
                 MobileDead = True
             End If
             If MobileDead = False Then
-                Mv(MobNum, 1, 0)
+                Mv(MobNum, 1, 0, NPC)
                 MobileLastMove(MapLevel, MobNum) = East
             End If
         ElseIf MvType = South And MobilePosY(MapLevel, MobNum) < MapSize Then 'south movement
             If Map(MapLevel, MobilePosX(MapLevel, MobNum), MobilePosY(MapLevel, MobNum) + 1) = Item Then 'mobile moves onto a piece
-            ElseIf MobilePosX(MapLevel, MobNum) = PlayerPosX And MobilePosY(MapLevel, MobNum) + 1 = PlayerPosY Then 'mobile moves into player
-                KillMob(MapLevel, Mobnum)
+            ElseIf MobilePosX(MapLevel, MobNum) = PlayerPosX And MobilePosY(MapLevel, MobNum) + 1 = PlayerPosY And NPC = False Then 'mobile moves into player
+                'if mobile is npc then obviously it can't move onto player, otherwise if mobile is screensaver player it...can't move on itself? hehe
+                KillMob(MapLevel, MobNum)
                 MobileDead = True
             End If
             If MobileDead = False Then
-                Mv(MobNum, 0, 1)
+                Mv(MobNum, 0, 1, NPC)
                 MobileLastMove(MapLevel, MobNum) = South
             End If
         ElseIf MvType = West And MobilePosX(MapLevel, MobNum) > 0 Then 'west movement
             If Map(MapLevel, MobilePosX(MapLevel, MobNum) - 1, MobilePosY(MapLevel, MobNum)) = Item Then 'mobile moves onto a piece
-            ElseIf MobilePosX(MapLevel, MobNum) - 1 = PlayerPosX And MobilePosY(MapLevel, MobNum) = PlayerPosY Then 'mobile moves into player
-                KillMob(MapLevel, Mobnum)
+            ElseIf MobilePosX(MapLevel, MobNum) - 1 = PlayerPosX And MobilePosY(MapLevel, MobNum) = PlayerPosY And NPC = False Then 'mobile moves into player
+                'if mobile is npc then obviously it can't move onto player, otherwise if mobile is screensaver player it...can't move on itself? hehe
+                KillMob(MapLevel, MobNum)
                 MobileDead = True
             End If
             If MobileDead = False Then
-                Mv(MobNum, -1, 0)
+                Mv(MobNum, -1, 0, NPC)
                 MobileLastMove(MapLevel, MobNum) = West 'dictates the mobiles last movement direction for pattern-making movements
             End If
         End If
@@ -278,9 +286,6 @@ Public Class MainForm
             If Map(MapLevel, MobilePosX(MapLevel, Mobnum), MobilePosY(MapLevel, Mobnum)) = Floor Then
                 Map(MapLevel, MobilePosX(MapLevel, Mobnum), MobilePosY(MapLevel, Mobnum)) = SpecialFloor
             End If
-            MapOccupied(MapLevel, MobilePosX(MapLevel, Mobnum), MobilePosY(MapLevel, Mobnum)) = False 'clears mob type
-            MobileExists(MapLevel, MobilePosX(MapLevel, Mobnum), MobilePosY(MapLevel, Mobnum)) = False 'kills mob
-            MobileHealth(MapLevel, Mobnum) = 0
             PlayerExperience += 8  '+ MobileType(MapLevel, Mobnum)  'mobiletype distinguishes it's difficulty and therefor applys likewise to experience gained.
             If PlayerExperience >= 100 Then
                 LevelUp()
@@ -319,7 +324,11 @@ Public Class MainForm
                         ItemOccupied(MapLevel, MobilePosX(MapLevel, Mobnum), MobilePosY(MapLevel, Mobnum)) = ItemNum(MapLevel, ItemNumber)
                         DrawingProcedures.LOSMap(MobilePosX(MapLevel, Mobnum), MobilePosY(MapLevel, Mobnum)) = DrawingProcedures.Redraw
                     End If
-            End If
+                End If
+                MobileHealth(MapLevel, Mobnum) = 0
+                MapOccupied(MapLevel, MobilePosX(MapLevel, Mobnum), MobilePosY(MapLevel, Mobnum)) = False 'clears mob type
+                MobileExists(MapLevel, MobilePosX(MapLevel, Mobnum), MobilePosY(MapLevel, Mobnum)) = False 'kills mob
+                MobilePosX(MapLevel, Mobnum) = MapSize + 1 : MobilePosY(MapLevel, Mobnum) = MapSize + 1
             Else
                 MobileHealth(MapLevel, Mobnum) = 0
                 MapOccupied(MapLevel, MobilePosX(MapLevel, Mobnum), MobilePosY(MapLevel, Mobnum)) = False 'clears mob type
@@ -648,7 +657,7 @@ Public Class MainForm
         If Immolate > 0 Then HitMob(Mobnum, False, True)
         Return 0
     End Function
-    Function DetermineMobMov(ByVal MobNum As Short)
+    Function DetermineMobMov(ByVal MobNum As Short, Optional ByVal NPC As Boolean = False)
         'The way it works:
         '    Can mobile see character? If mobile can see character they race for him whether they have to swim or not. They lose 1 hp each round swimming
         '    If yes, mobile will walk towards him
@@ -658,22 +667,22 @@ Public Class MainForm
         Dim AlreadyMoved As Boolean = False
         Dim FleeinTerror As New Random
         Dim FleeResult As Short
-        If MobilePosX(MapLevel, Mobnum) = PlayerPosX And MobilePosY(MapLevel, Mobnum) = PlayerPosY Then
+        If MobilePosX(MapLevel, MobNum) = PlayerPosX And MobilePosY(MapLevel, MobNum) = PlayerPosY And NPC = False Then
             'player stepped on mob, mobile is dead, no path required. This sometimes happens on a bad spawn
             KillMob(MobNum, "SILENCE MOB KILL") 'send optional killmob text that supresses xp and message of mob dead
             Return 0
             Exit Function
         End If
         'check to see if character is close
-        If Math.Abs(MobilePosX(MapLevel, Mobnum) - PlayerPosX) < 3 And Math.Abs(MobilePosY(MapLevel, Mobnum) - PlayerPosY) < 3 Then '3 block radius of visibility
+        If Math.Abs(MobilePosX(MapLevel, MobNum) - PlayerPosX) < 3 And Math.Abs(MobilePosY(MapLevel, MobNum) - PlayerPosY) < 3 And NPC = False Then '3 block radius of visibility or npc
             Resolved = False
         End If
-        While Resolved = False And MobileFlee(MapLevel, Mobnum) = 0 And PlayerHidden = 0 'this is mobile pathfinding straight to the player
+        While Resolved = False And MobileFlee(MapLevel, MobNum) = 0 And PlayerHidden = 0 'this is mobile pathfinding straight to the player
             StepNum += 1
-            If PlayerPosX > MobilePosX(MapLevel, Mobnum) Then
+            If PlayerPosX > MobilePosX(MapLevel, MobNum) Then
                 'if the variable isn't passed into this if statement, it's because mobile tried moving onto another mobile or wall
-                If Map(MapLevel, MobilePosX(MapLevel, Mobnum) + 1, MobilePosY(MapLevel, Mobnum)) <> Wall Then
-                    If MobilePosX(MapLevel, Mobnum) + 1 = PlayerPosX And MobilePosY(MapLevel, Mobnum) = PlayerPosY Then 'if mobile plans on moving east and character is to the east, hit character instead of move
+                If Map(MapLevel, MobilePosX(MapLevel, MobNum) + 1, MobilePosY(MapLevel, MobNum)) <> Wall Then
+                    If MobilePosX(MapLevel, MobNum) + 1 = PlayerPosX And MobilePosY(MapLevel, MobNum) = PlayerPosY Then 'if mobile plans on moving east and character is to the east, hit character instead of move
                         FleeResult = FleeinTerror.Next(0, 101)
                         If FleeResult <= PlayerCHA Then
                             FleeMob(MobNum)
@@ -852,14 +861,13 @@ Public Class MainForm
                 RandomPick = RandomDirection.Next(1, 5)
             End While
         End If
-        MobilePrevX(MapLevel, Mobnum) = MobilePosX(MapLevel, Mobnum)
-        MobilePrevY(MapLevel, Mobnum) = MobilePosY(MapLevel, Mobnum)
+        MobilePrevX(MapLevel, MobNum) = MobilePosX(MapLevel, MobNum)
+        MobilePrevY(MapLevel, MobNum) = MobilePosY(MapLevel, MobNum)
         Return 0
     End Function
 #End Region
 #Region "Initialize"
-    Private Sub Initialize(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
-        'resize windows
+    Private Sub InitWindowSize()
         Dim Oldscreenheight As Integer = Me.Height 'used to distinguish the correct layout of the width
         Me.Height = Screen.PrimaryScreen.WorkingArea.Height - 5 'arranges the height to the screen, assorting tiles to perspective size
         Me.Width = Me.Height - Oldscreenheight 'ensures the width is correspondant to the height
@@ -868,14 +876,30 @@ Public Class MainForm
         TheRoomWidth = Math.Round(Me.Width / (MapSize + 2), 0) - 4  'test the room width
         If TheRoomHeight > TheRoomWidth Then TheRoomHeight = TheRoomWidth 'ensures that the window is scaled to the smallest of the two
         If TheRoomWidth > TheRoomHeight Then TheRoomWidth = TheRoomHeight 'ensures that the window is scaled to the smallest of the two
-        Me.Width = TheRoomWidth * MapSize + MapSize + 20 + Panel1.Width
+        If Screensaver = True Then
+            Me.Width = TheRoomWidth * MapSize + MapSize + 20
+        Else
+            Me.Width = TheRoomWidth * MapSize + MapSize + 20 + Panel1.Width
+        End If
         Me.Height = TheRoomWidth * MapSize + MapSize + 60
         Me.CenterToScreen() 'center to the screen
+        DisplayFont = New Font("Arial", -4 + (TheRoomHeight + TheRoomWidth / 2) / 2)
+    End Sub
+    Private Sub InitScreensaver()
+        If Screensaver = True Then
+            Panel1.Visible = False
+            HealthBar.Visible = False
+            WillpowerBar.Visible = False
+        End If
+    End Sub
+    Private Sub InitStatBar()
         Panel1.Left = Me.Width - Panel1.Width - 15 'sorts the panels width to the width of the window
         Panel1.Height = Me.Height
         HealthBar.Left = Me.Width - Panel1.Width - 10 'arranges the healthbar
         WillpowerBar.Left = Me.Width - Panel1.Width - 10 'arrange the willpowerbar according to the panel
         StatBox.Left = Me.Width - Panel1.Width - 10 'arrange the statbox according tot he panel
+    End Sub
+    Private Sub InitComments()
         Comment1.Left = (Me.Width / 2) - (Comment1.Width / 2) - (Panel1.Width / 2) : Comment1.Top = Me.Height - Comment1.Height - 30
         Comment2.Left = (Me.Width / 2) - (Comment2.Width / 2) - (Panel1.Width / 2) : Comment2.Top = Me.Height - Comment2.Height - 30
         Comment3.Left = (Me.Width / 2) - (Comment3.Width / 2) - (Panel1.Width / 2) : Comment3.Top = Me.Height - Comment3.Height - 30
@@ -887,26 +911,114 @@ Public Class MainForm
         Comment9.Left = (Me.Width / 2) - (Comment9.Width / 2) - (Panel1.Width / 2) : Comment9.Top = Me.Height - Comment9.Height - 30
         Comment10.Left = (Me.Width / 2) - (Comment10.Width / 2) - (Panel1.Width / 2) : Comment10.Top = Me.Height - Comment10.Height - 30
         Comment11.Left = (Me.Width / 2) - (Comment11.Width / 2) - (Panel1.Width / 2) : Comment11.Top = Me.Height - Comment11.Height - 30
-        'test display fonts
-        displayfont = New Font("Arial", -4 + (TheRoomHeight + TheRoomWidth / 2) / 2)
-        'end resize windows
-        UpdateSkills()
-        PlayerDefense = Math.Round(PlayerCON / 5, 0)
-        PlayerAttack = Math.Round(PlayerSTR / 5, 0)
-        PreviousDefense = PlayerDefense
-        PreviousAttack = PlayerAttack
-        RefreshStats() 'updates willpower and health bar statistics
-        SkillInfoBox.Left = Panel1.Left - SkillInfoBox.Width
-        BuildNewMap()
+    End Sub
+    Private Sub InitLog()
+        Array.Clear(SNDLog, 0, SNDLog.Length)
         SND("Press '?' or 'h' for help.")
-        SND("You ascend to depth 1.")
+        SND("You descend to depth 1.")
+    End Sub
+    Private Sub InitCharacter()
+        If Screensaver = False Then
+            If ChooseCharacter.Race_Human.Checked = True Then
+                PlayerRace = "Human"
+            ElseIf ChooseCharacter.Race_Dwarf.Checked = True Then
+                PlayerRace = "Dwarf"
+            ElseIf ChooseCharacter.Race_Gnome.Checked = True Then
+                PlayerRace = "Gnome"
+            ElseIf ChooseCharacter.Race_Elf.Checked = True Then
+                PlayerRace = "Elf"
+            ElseIf ChooseCharacter.Race_Halfelf.Checked = True Then
+                PlayerRace = "Half-elf"
+            ElseIf ChooseCharacter.Race_Halfling.Checked = True Then
+                PlayerRace = "Halfling"
+            ElseIf ChooseCharacter.Race_Goblin.Checked = True Then
+                PlayerRace = "Goblin"
+            ElseIf ChooseCharacter.Race_Troll.Checked = True Then
+                PlayerRace = "Troll"
+            ElseIf ChooseCharacter.Race_Orc.Checked = True Then
+                PlayerRace = "Orc"
+            ElseIf ChooseCharacter.Race_Halforc.Checked = True Then
+                PlayerRace = "Half-orc"
+            ElseIf ChooseCharacter.Race_Quickling.Checked = True Then
+                PlayerRace = "Quickling"
+            ElseIf ChooseCharacter.Race_Pixie.Checked = True Then
+                PlayerRace = "Pixie"
+            ElseIf ChooseCharacter.Race_Sprite.Checked = True Then
+                PlayerRace = "Sprite"
+            End If
+            If ChooseCharacter.Priest.Checked = True Then
+                PlayerClass = "Priest" : PlayerMaxCHA += 5 : PlayerMaxINT += 3
+            ElseIf ChooseCharacter.Woodsman.Checked = True Then
+                PlayerClass = "Woodsman" : PlayerMaxWIS += 5 : PlayerMaxCON += 3
+            ElseIf ChooseCharacter.Gravedigger.Checked = True Then
+                PlayerClass = "Gravedigger" : PlayerMaxINT += 5 : PlayerMaxCHA += 3
+            ElseIf ChooseCharacter.Mageling.Checked = True Then
+                PlayerClass = "Mageling" : PlayerMaxINT += 5 : PlayerMaxCHA += 3
+            ElseIf ChooseCharacter.Hermit.Checked = True Then
+                PlayerClass = "Hermit" : PlayerMaxWIS += 5 : PlayerMaxINT += 3
+            ElseIf ChooseCharacter.Elementalist.Checked = True Then
+                PlayerClass = "Elementalist" : PlayerMaxSTR += 5 : PlayerMaxINT += 3
+            ElseIf ChooseCharacter.Headhunter.Checked = True Then
+                PlayerClass = "Headhunter" : PlayerMaxSTR += 5 : PlayerMaxCHA += 3
+            ElseIf ChooseCharacter.PLainsman.Checked = True Then
+                PlayerClass = "Plainsman" : PlayerMaxSTR += 5 : PlayerMaxDEX += 3
+            ElseIf ChooseCharacter.Pickpocket.Checked = True Then
+                PlayerClass = "Pickpocket" : PlayerMaxDEX += 5 : PlayerMaxLuc += 3
+            ElseIf ChooseCharacter.Page.Checked = True Then
+                PlayerClass = "Page" : PlayerMaxCON += 5 : PlayerMaxSTR += 3
+            ElseIf ChooseCharacter.Scout.Checked = True Then
+                PlayerClass = "Scout" : PlayerMaxDEX += 5 : PlayerMaxCHA += 3
+            ElseIf ChooseCharacter.Runescribe.Checked = True Then
+                PlayerClass = "Runescribe" : PlayerMaxWIS += 5 : PlayerMaxCHA += 3
+            ElseIf ChooseCharacter.Monk.Checked = True Then
+                PlayerClass = "Monk" : PlayerMaxWIS += 5 : PlayerMaxDEX += 3
+            ElseIf ChooseCharacter.Minstrel.Checked = True Then
+                PlayerClass = "Minstrel" : PlayerMaxCHA += 5 : PlayerMaxLuc += 3
+            End If
+            PlayerSTR = Val(ChooseCharacter.str.Text) : PlayerMaxSTR += 5 + PlayerSTR
+            PlayerDEX = Val(ChooseCharacter.dex.Text) : PlayerMaxDEX += 5 + PlayerDEX
+            PlayerINT = Val(ChooseCharacter.int.Text) : PlayerMaxINT += 5 + PlayerINT
+            PlayerWIS = Val(ChooseCharacter.wis.Text) : PlayerMaxWIS += 5 + PlayerWIS
+            PlayerCON = Val(ChooseCharacter.con.Text) : PlayerMaxCON += 5 + PlayerCON
+            PlayerCHA = Val(ChooseCharacter.cha.Text) : PlayerMaxCHA += 5 + PlayerCHA
+            PlayerLUC = Val(ChooseCharacter.luc.Text) : PlayerMaxLuc += 5 + PlayerLUC
+            PlayerHitpoints = Val(ChooseCharacter.HealthValue.Text) : PlayerWillpower = Val(ChooseCharacter.WillpowerValue.Text)
+            PlayerCurHitpoints = Val(ChooseCharacter.HealthValue.Text) : PlayerCurWillpower = Val(ChooseCharacter.WillpowerValue.Text)
+            PlayerName = ChooseCharacter.CharacterName.Text
+            UpdateSkills()
+            PlayerDefense = Math.Round(PlayerCON / 5, 0)
+            PlayerAttack = Math.Round(PlayerSTR / 5, 0)
+            PreviousDefense = PlayerDefense
+            PreviousAttack = PlayerAttack
+            RefreshStats() 'updates willpower and health bar statistics
+            SkillInfoBox.Left = Panel1.Left - SkillInfoBox.Width
+            Skill1Name.Top = 99 : Skill2Name.Top = 99 : Skill3Name.Top = 99
+        End If
+    End Sub
+    Private Sub InitHighScores()
         If My.Computer.FileSystem.FileExists(CurDir() + "\HighScores.TG") Then 'this saves the location of the database for future reference if not found in correct spot
             HighScores = GetFileContents(CurDir() + "\HighScores.TG")
         Else
             SaveTextToFile("[Name]              [Race]        [Class]          [Level] [Experience] [Depth]      [Gold]    [Turns]" + Chr(13) + "Jarvis              Gnome         Gravedigger      4       45           6            141       1690", CurDir() + "\HighScores.TG", , True)
             HighScores = GetFileContents(CurDir() + "\HighScores.TG")
         End If
-        Skill1Name.Top = 99 : Skill2Name.Top = 99 : Skill3Name.Top = 99
+    End Sub
+    Private Sub InitMaps()
+        Array.Clear(MapCreated, 0, MapCreated.Length) 'set all to hidden
+        Array.Clear(Map, 0, Map.Length)
+        BuildNewMap()
+    End Sub
+    Public Sub Initialize(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
+        'resize windows
+        InitWindowSize()
+        InitScreensaver()
+        InitStatBar()
+        InitComments()
+        InitLog()
+        InitCharacter()
+        InitHighScores()
+        InitMaps()
+        Initialized = True
         Me.Focus()
     End Sub
 #End Region
@@ -916,11 +1028,7 @@ Public Class MainForm
         Dim GenerateRiverChance As Short = RandomNumber.Next(0, 101)
         CANVAS.FillRectangle(Brushes.Black, 1, 1, 1200, 1200)
         'refresh line of sight for new map
-        For x = 0 To MapSize Step 1
-            For y = 0 To MapSize Step 1
-                DrawingProcedures.LOSMap(x, y) = Hidden
-            Next
-        Next
+        Array.Clear(LOSMap, 0, LOSMap.Length) 'set all to hidden
         'check to see if the new map was one visited already
         If MapCreated(MapLevel) = False Then 'entering a new map, need to generate
             GenerateMap(8)
@@ -1313,25 +1421,25 @@ Public Class MainForm
         Else
             EnvironmentType = RandomEnvironment
         End If
-        If MapLevel = 1 Then
+        If MapLevel = 1 And Screensaver = False Then
             Comment1.Visible = True : CommentBoxOpen = True
-        ElseIf MapLevel = 4 Then
+        ElseIf MapLevel = 4 And Screensaver = False Then
             Comment2.Visible = True : CommentBoxOpen = True
-        ElseIf MapLevel = 7 Then
+        ElseIf MapLevel = 7 And Screensaver = False Then
             Comment3.Visible = True : CommentBoxOpen = True
-        ElseIf MapLevel = 10 Then
+        ElseIf MapLevel = 10 And Screensaver = False Then
             Comment4.Visible = True : CommentBoxOpen = True
-        ElseIf MapLevel = 13 Then
+        ElseIf MapLevel = 13 And Screensaver = False Then
             Comment5.Visible = True : CommentBoxOpen = True
-        ElseIf MapLevel = 16 Then
+        ElseIf MapLevel = 16 And Screensaver = False Then
             Comment6.Visible = True : CommentBoxOpen = True
-        ElseIf MapLevel = 19 Then
+        ElseIf MapLevel = 19 And Screensaver = False Then
             Comment7.Visible = True : CommentBoxOpen = True
-        ElseIf MapLevel = 22 Then
+        ElseIf MapLevel = 22 And Screensaver = False Then
             Comment8.Visible = True : CommentBoxOpen = True
-        ElseIf MapLevel = 25 Then
+        ElseIf MapLevel = 25 And Screensaver = False Then
             Comment9.Visible = True : CommentBoxOpen = True
-        ElseIf MapLevel = 28 Then
+        ElseIf MapLevel = 28 And Screensaver = False Then
             Comment10.Visible = True : CommentBoxOpen = True
         End If
     End Sub
@@ -1470,6 +1578,15 @@ Public Class MainForm
         Dim PotentialSides As Short = 0
         'generate a random map type
         GenerateType = RandomNumber.Next(0, 7) 'returns 0:Dungeon,1:Ruins,2:Tunnels(nesw-dir),3:TunnelsExpanded(nesw+ne,se,sw,nw-dir),4:Catacombs(mazes),5:Swamps,6:Passages
+        If MapLevel = MaxDepthLevel Then
+            GenerateType = Catacombs
+        ElseIf GenerateType = Catacombs Then
+            GenerateType = Ruins 'favors ruins when catacombs is picked and it's not the last level.
+        ElseIf GenerateType = Swamps Then
+            GenerateType = Dungeon 'favors dungeon when swamps is picked. swamps is only allowed on one dungeon, 22 (entrance to grassy area)
+        ElseIf MapLevel = 22 And GenerateType <> Swamps Then
+            GenerateType = Swamps
+        End If
         If GenerateType = Dungeon Then
             For RepeatToRecursion = 1 To Recursion Step 1
                 Map(MapLevel, BuilderPositionX, BuilderPositionY) = 1
@@ -3462,6 +3579,7 @@ Public Class MainForm
             ElseIf e.KeyCode = Keys.OemPeriod And e.Shift = True Then 'go down
                 If Map(MapLevel, PlayerPosX, PlayerPosY) = StairsDown Then 'exit
                     MapLevel += 1
+                    SND("You descend to depth " + LTrim(Str(MapLevel)) + ".")
                     BuildNewMap(True)
                 End If
             ElseIf e.KeyCode = Keys.Q And e.Control = True Then 'quit
@@ -3469,6 +3587,7 @@ Public Class MainForm
             ElseIf e.KeyCode = Keys.Oemcomma And e.Shift = True Then 'go up
                 If Map(MapLevel, PlayerPosX, PlayerPosY) = StairsUp Then 'entrance
                     MapLevel -= 1
+                    SND("You ascend to depth " + LTrim(Str(MapLevel)) + ".")
                     BuildNewMap(False)
                 End If
             End If
@@ -3509,6 +3628,13 @@ Public Class MainForm
     End Sub
 #Region "Menu Click"
     Private Sub NewGameClick(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles NewGameToolStripMenuItem.Click
+        Me.Hide()
+        Screensaver = False
+        Timer.Enabled = False
+        Panel1.Visible = True
+        HealthBar.Visible = True
+        WillpowerBar.Visible = True
+        InitWindowSize()
         PlayerExperience = 0
         PlayerGold = 0
         PlayerTurns = 0
@@ -3518,6 +3644,7 @@ Public Class MainForm
         MapLevel = 0
         Initialize(0, EventArgs.Empty)
         Comment11.Visible = False
+        Initialized = False
         For tmp0 = 0 To 19 Step 1
             ItemInventoryName(tmp0) = ""
             ItemInventoryQuality(tmp0) = 0
@@ -3535,7 +3662,6 @@ Public Class MainForm
             PlayerEquipNHead = ""
             PLayerEquipNLegs = ""
         Next
-        Me.Hide()
         ChooseCharacter.TabControl1.SelectedTab = ChooseCharacter.BasicTab
         ChooseCharacter.CharacterName.Text = "Mykil Ironfist"
         ChooseCharacter.TopMost = True
@@ -3652,11 +3778,7 @@ Public Class MainForm
 #End Region
 #Region "Graphic Mode Change Click"
     Private Sub ClearScreen(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ImageFilterOn.Click
-        For x = 0 To MapSize Step 1
-            For y = 0 To MapSize Step 1
-                DrawingProcedures.LOSMap(x, y) = Hidden
-            Next
-        Next
+        Array.Clear(LOSMap, 0, LOSMap.Length) 'set all to hidden
         DrawingProcedures.ChangedMode = True
         If PlayerTurns > 0 Then DrawingProcedures.DrawMap(GraphicalMode)
         DrawingProcedures.ChangedMode = False
@@ -3664,11 +3786,7 @@ Public Class MainForm
         IMageFilterOff.Checked = False
     End Sub
     Private Sub ClearScreen2(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles IMageFilterOff.Click
-        For x = 0 To MapSize Step 1
-            For y = 0 To MapSize Step 1
-                DrawingProcedures.LOSMap(x, y) = Hidden
-            Next
-        Next
+        Array.Clear(LOSMap, 0, LOSMap.Length) 'set all to hidden
         DrawingProcedures.ChangedMode = True
         If PlayerTurns > 0 Then DrawingProcedures.DrawMap(GraphicalMode)
         DrawingProcedures.ChangedMode = False
@@ -3678,11 +3796,7 @@ Public Class MainForm
     Private Sub GraphicModeChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles GraphicModeOn.Click
         If GraphicalMode = ASCII Then
             If GraphicalMode = ASCII Then GraphicalMode = Tiled Else GraphicalMode = ASCII
-            For x = 0 To MapSize Step 1
-                For y = 0 To MapSize Step 1
-                    DrawingProcedures.LOSMap(x, y) = Hidden
-                Next
-            Next
+            Array.Clear(LOSMap, 0, LOSMap.Length) 'set all to hidden
             DrawingProcedures.ChangedMode = True
             If PlayerTurns > 0 Then DrawingProcedures.DrawMap(GraphicalMode)
             DrawingProcedures.ChangedMode = False
@@ -3694,11 +3808,7 @@ Public Class MainForm
     Private Sub GraphicModeChanged2(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles GraphicModeOff.Click
         If GraphicalMode = Tiled Then
             If GraphicalMode = ASCII Then GraphicalMode = Tiled Else GraphicalMode = ASCII
-            For x = 0 To MapSize Step 1
-                For y = 0 To MapSize Step 1
-                    DrawingProcedures.LOSMap(x, y) = Hidden
-                Next
-            Next
+            Array.Clear(LOSMap, 0, LOSMap.Length) 'set all to hidden
             DrawingProcedures.ChangedMode = True
             If PlayerTurns > 0 Then DrawingProcedures.DrawMap(GraphicalMode)
             DrawingProcedures.ChangedMode = False
@@ -3708,4 +3818,35 @@ Public Class MainForm
         End If
     End Sub
 #End Region
+
+    ' the following accepts a mouse click and highlights the area, this will be used in the future for mouse moving
+    '    Private Sub MouseClick(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Click
+    '        Dim xish, xishPLUS, yish, yishPLUS As Integer
+    '        Dim TheX As Integer = Cursor.Position.X - Me.Left - 20
+    '        Dim TheY As Integer = Cursor.Position.Y - Me.Top - 40
+    '        Dim X As Integer = TheX / TheRoomWidth
+    '        Dim Y As Integer = TheY / TheRoomHeight
+    '        xish = TheRoomWidth * X
+    '        yish = TheRoomHeight * Y
+    '        Me.CANVAS.DrawRectangle(Pens.IndianRed, xish, yish, TheRoomWidth - 2, TheRoomHeight - 2)
+    '        Me.CreateGraphics.DrawImage(PAD, 0, 0)
+    '    End Sub
+
+    Private Sub ScreensaverActivate(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Timer.Tick
+        If Screensaver = True Then 'move character, it's the screensaver
+            MobilePosX(MapLevel, MaxMobiles) = PlayerPosX : MobilePosY(MapLevel, MaxMobiles) = PlayerPosY
+            MobilePrevX(MapLevel, MaxMobiles) = PlayerPosX : MobilePrevY(MapLevel, MaxMobiles) = PlayerPosY
+            MobileType(MapLevel, MaxMobiles) = 1
+            MobileHealth(MapLevel, MaxMobiles) = 100
+            PlayerHitpoints = 100 : PlayerCurHitpoints = 100
+            'MobileExists(MapLevel, PlayerPosX, PlayerPosY) = True 'set mobile to living
+            PlayerLastPosX = PlayerPosX
+            PlayerLastPosY = PlayerPosY
+            DetermineMobMov(MaxMobiles, True)
+            PlayerPosX = MobilePosX(MapLevel, MaxMobiles)
+            PlayerPosY = MobilePosY(MapLevel, MaxMobiles)
+            PlayerHidden = 1
+            ReDraw()
+        End If
+    End Sub
 End Class
