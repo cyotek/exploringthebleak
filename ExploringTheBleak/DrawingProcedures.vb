@@ -58,8 +58,19 @@
     Private CurrentlyDisplayedMobile As Byte
     Private FloorGraphic(3) As Image
     Private WallGraphic As Image
+    Private LineGraphic As Image
     Private DrawnGraphics(TotalEnvironmentTypes, 4) As Boolean '4 is wall
 #End Region
+    ' Copies a part of the bitmap.
+    Function CopyBitmap(ByVal source As Bitmap, ByVal part As Rectangle) As Bitmap
+        Dim bmp As New Bitmap(part.Width, part.Height)
+
+        Dim g As Graphics = Graphics.FromImage(bmp)
+        g.DrawImage(source, 0, 0, part, GraphicsUnit.Pixel)
+        g.Dispose()
+
+        Return bmp
+    End Function
 #Region "Image Filters"
     Function FilterImageRed(ByVal TheObject As Image) As System.Object
         If MainForm.ImageFilterOn.Checked = True Then
@@ -416,10 +427,14 @@
                         End If
                         'if map is occupied, show enemy
                         If MainForm.MapOccupied(MainForm.MapLevel, x, y) > 0 Then
-                            LOSMap(x, y) = Redraw
-                            MobilePlaced = True
-                            ShowEnemy(MainForm.MapOccupied(MainForm.MapLevel, x, y), xish, yish, x, y)
-                            CurrentlyDisplayedMobile += 1
+                            If x = PlayerPosX And y = PlayerposY Then
+                                'this is the screensaver person
+                            Else
+                                LOSMap(x, y) = Redraw
+                                MobilePlaced = True
+                                ShowEnemy(MainForm.MapOccupied(MainForm.MapLevel, x, y), xish, yish, x, y)
+                                CurrentlyDisplayedMobile += 1
+                            End If
                         Else
                             'if map isn't occupied by mobiles, is it occupied by items, if so show items (prioritize enemy showing over items)
                             If MainForm.ItemOccupied(MainForm.MapLevel, x, y) > 0 Then
@@ -428,9 +443,12 @@
                             End If
                         End If
                         'player can be shown over items for better visibility
-                        If x = PlayerPosX And y = PlayerposY Then
+                        If x = PlayerPosX And y = PlayerposY And MainForm.Screensaver = False Then
                             LOSMap(x, y) = Redraw
                             MainForm.CANVAS.DrawString("@", displayfont, Brushes.LimeGreen, xish, yish)
+                        ElseIf x = PlayerPosX And y = PlayerposY And MainForm.Screensaver = True Then
+                            LOSMap(x, y) = Redraw
+                            MainForm.CANVAS.DrawString("@", displayfont, Brushes.Red, xish, yish)
                         End If
                         MainForm.MapShown(MainForm.MapLevel, x, y) = True
                     ElseIf MainForm.MapShown(MainForm.MapLevel, x, y) = True Then
@@ -608,20 +626,26 @@
         Dim TheRoomHeight As Short = MainForm.TheRoomHeight
         Dim ColumnsSpace As Short = MainForm.ColumnsSpace
         Dim RowSpace As Short = MainForm.RowSpace
-        Dim x As Short = MainForm.MobileVisible(MainForm.MapLevel, 0, MobXPosition)
-        Dim y As Short = MainForm.MobileVisible(MainForm.MapLevel, 0, MobYPosition)
-        Dim xish As Short = TheRoomWidth * x + ColumnsSpace * x + 1
-        Dim yish As Short = TheRoomHeight * y + RowSpace * y + 25
-        Dim pxish As Short = TheRoomWidth * PlayerPosX + ColumnsSpace * PlayerPosX + 1
-        Dim pyish As Short = TheRoomHeight * PlayerposY + ColumnsSpace * PlayerposY + 25
-        Dim halfroom As Short = TheRoomWidth / 2
-        '
+        Dim x As Short = MainForm.MobileVisible(MainForm.MapLevel, 0, MobXPosition) 'current mobile x position
+        Dim y As Short = MainForm.MobileVisible(MainForm.MapLevel, 0, MobYPosition) 'current mobile y position
+        Dim xish As Short = TheRoomWidth * x + ColumnsSpace * x + 1 'current mobile sector x position
+        Dim yish As Short = TheRoomHeight * y + RowSpace * y + 25 'current mobile sector y position
+        Dim pxish As Short = TheRoomWidth * PlayerPosX + ColumnsSpace * PlayerPosX + 1 'current player sector x position
+        Dim pyish As Short = TheRoomHeight * PlayerposY + ColumnsSpace * PlayerposY + 25 'current player sector y position
+        Dim halfroom As Short = TheRoomWidth / 2 'half of the room in pixels
+        Dim CurX, TarX, CurY, TarY As Integer 'make sure that the rectangle starts from the lowest x and ends at the largest x, likewise with y variables
+        Dim CurAmtX, CurAmtY As Integer 'details whether the line will be on the right or left side of the square, 
+        If pxish >= xish Then : CurX = xish : TarX = pxish : CurAmtX = TheRoomWidth - 2 : Else : CurX = pxish : TarX = xish : CurAmtX = 0 : End If
+        If PlayerPosX = x Then CurAmtX = halfroom
+        If pyish >= yish Then : CurY = yish : TarY = pyish : CurAmtY = TheRoomHeight - 2 : Else : CurY = pyish : TarY = yish : CurAmtY = 0 : End If
+        If PlayerposY = y Then CurAmtY = halfroom
+        Dim Fromrectangle As New Rectangle(CurX, CurY, TarX, TarY) 'copy the original image before drawing on that image so it can be restored after finished.
         If clear = False Then
+            LineGraphic = CopyBitmap(MainForm.PAD, Fromrectangle)
             MainForm.CANVAS.DrawRectangle(Pens.IndianRed, xish, yish, TheRoomWidth - 2, TheRoomHeight - 2)
-            'MainForm.CANVAS.DrawLine(Pens.IndianRed, pxish + halfroom, pyish + halfroom, xish + halfroom, yish + halfroom)
+            MainForm.CANVAS.DrawLine(Pens.IndianRed, pxish + halfroom, pyish + halfroom, xish + CurAmtX, yish + CurAmtY)
         ElseIf clear = True Then
-            MainForm.CANVAS.DrawRectangle(Pens.Black, xish, yish, TheRoomWidth - 2, TheRoomHeight - 2)
-            'MainForm.CANVAS.DrawLine(Pens.Black, pxish + halfroom, pyish + halfroom, xish + halfroom, yish + halfroom)
+            MainForm.CANVAS.DrawImage(LineGraphic, Fromrectangle) 'this paints the original image before the drawing of the line and box as it is to be cleared.
         End If
         MainForm.CreateGraphics.DrawImage(MainForm.PAD, 0, 0)
     End Sub

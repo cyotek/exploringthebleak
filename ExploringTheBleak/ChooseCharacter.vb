@@ -371,80 +371,13 @@
             TabControl1.SelectedTab = ClassTab
             Button1.Text = "Ready"
         Else
-            If Race_Human.Checked = True Then
-                MainForm.PlayerRace = "Human"
-            ElseIf Race_Dwarf.Checked = True Then
-                MainForm.PlayerRace = "Dwarf"
-            ElseIf Race_Gnome.Checked = True Then
-                MainForm.PlayerRace = "Gnome"
-            ElseIf Race_Elf.Checked = True Then
-                MainForm.PlayerRace = "Elf"
-            ElseIf Race_Halfelf.Checked = True Then
-                MainForm.PlayerRace = "Half-elf"
-            ElseIf Race_Halfling.Checked = True Then
-                MainForm.PlayerRace = "Halfling"
-            ElseIf Race_Goblin.Checked = True Then
-                MainForm.PlayerRace = "Goblin"
-            ElseIf Race_Troll.Checked = True Then
-                MainForm.PlayerRace = "Troll"
-            ElseIf Race_Orc.Checked = True Then
-                MainForm.PlayerRace = "Orc"
-            ElseIf Race_Halforc.Checked = True Then
-                MainForm.PlayerRace = "Half-orc"
-            ElseIf Race_Quickling.Checked = True Then
-                MainForm.PlayerRace = "Quickling"
-            ElseIf Race_Pixie.Checked = True Then
-                MainForm.PlayerRace = "Pixie"
-            ElseIf Race_Sprite.Checked = True Then
-                MainForm.PlayerRace = "Sprite"
-            End If
-            If Priest.Checked = True Then
-                MainForm.PlayerClass = "Priest" : MainForm.PlayerMaxCHA += 5 : MainForm.PlayerMaxINT += 3
-            ElseIf Woodsman.Checked = True Then
-                MainForm.PlayerClass = "Woodsman" : MainForm.PlayerMaxWIS += 5 : MainForm.PlayerMaxCON += 3
-            ElseIf Gravedigger.Checked = True Then
-                MainForm.PlayerClass = "Gravedigger" : MainForm.PlayerMaxINT += 5 : MainForm.PlayerMaxCHA += 3
-            ElseIf Mageling.Checked = True Then
-                MainForm.PlayerClass = "Mageling" : MainForm.PlayerMaxINT += 5 : MainForm.PlayerMaxCHA += 3
-            ElseIf Hermit.Checked = True Then
-                MainForm.PlayerClass = "Hermit" : MainForm.PlayerMaxWIS += 5 : MainForm.PlayerMaxINT += 3
-            ElseIf Elementalist.Checked = True Then
-                MainForm.PlayerClass = "Elementalist" : MainForm.PlayerMaxSTR += 5 : MainForm.PlayerMaxINT += 3
-            ElseIf Headhunter.Checked = True Then
-                MainForm.PlayerClass = "Headhunter" : MainForm.PlayerMaxSTR += 5 : MainForm.PlayerMaxCHA += 3
-            ElseIf PLainsman.Checked = True Then
-                MainForm.PlayerClass = "Plainsman" : MainForm.PlayerMaxSTR += 5 : MainForm.PlayerMaxDEX += 3
-            ElseIf Pickpocket.Checked = True Then
-                MainForm.PlayerClass = "Pickpocket" : MainForm.PlayerMaxDEX += 5 : MainForm.PlayerMaxLuc += 3
-            ElseIf Page.Checked = True Then
-                MainForm.PlayerClass = "Page" : MainForm.PlayerMaxCON += 5 : MainForm.PlayerMaxSTR += 3
-            ElseIf Scout.Checked = True Then
-                MainForm.PlayerClass = "Scout" : MainForm.PlayerMaxDEX += 5 : MainForm.PlayerMaxCHA += 3
-            ElseIf Runescribe.Checked = True Then
-                MainForm.PlayerClass = "Runescribe" : MainForm.PlayerMaxWIS += 5 : MainForm.PlayerMaxCHA += 3
-            ElseIf Monk.Checked = True Then
-                MainForm.PlayerClass = "Monk" : MainForm.PlayerMaxWIS += 5 : MainForm.PlayerMaxDEX += 3
-            ElseIf Minstrel.Checked = True Then
-                MainForm.PlayerClass = "Minstrel" : MainForm.PlayerMaxCHA += 5 : MainForm.PlayerMaxLuc += 3
-            End If
-            MainForm.PlayerSTR = Val(str.Text) : MainForm.PlayerMaxSTR += 5 + MainForm.PlayerSTR
-            MainForm.PlayerDEX = Val(dex.Text) : MainForm.PlayerMaxDEX += 5 + MainForm.PlayerDEX
-            MainForm.PlayerINT = Val(int.Text) : MainForm.PlayerMaxINT += 5 + MainForm.PlayerINT
-            MainForm.PlayerWIS = Val(wis.Text) : MainForm.PlayerMaxWIS += 5 + MainForm.PlayerWIS
-            MainForm.PlayerCON = Val(con.Text) : MainForm.PlayerMaxCON += 5 + MainForm.PlayerCON
-            MainForm.PlayerCHA = Val(cha.Text) : MainForm.PlayerMaxCHA += 5 + MainForm.PlayerCHA
-            MainForm.PlayerLUC = Val(luc.Text) : MainForm.PlayerMaxLuc += 5 + MainForm.PlayerLUC
-            MainForm.PlayerHitpoints = Val(HealthValue.Text) : MainForm.PlayerWillpower = Val(WillpowerValue.Text)
-            MainForm.PlayerCurHitpoints = Val(HealthValue.Text) : MainForm.PlayerCurWillpower = Val(WillpowerValue.Text)
-            MainForm.PlayerName = CharacterName.Text
             Me.Hide()
             MainForm.Text = "Exploring The Bleak - " + MainForm.PlayerName
+            If MainForm.Initialized = False Then
+                MainForm.Initialize(0, EventArgs.Empty)
+            End If
             MainForm.Show()
         End If
-    End Sub
-    Private Sub Initialize(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
-        Race_Halforc.Checked = True
-        Woodsman.Checked = True
     End Sub
     Private Sub CheckKey(ByVal sender As System.Object, ByVal e As System.Windows.Forms.KeyEventArgs) Handles MyBase.KeyDown
         If e.KeyValue = Keys.Enter Then
