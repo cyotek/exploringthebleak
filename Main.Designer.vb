@@ -93,6 +93,7 @@ Partial Class MainForm
         Me.ShowHideActivityLogToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.HelpToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.Timer = New System.Windows.Forms.Timer(Me.components)
+        Me.HUDisplay = New System.Windows.Forms.Label()
         Me.HealthBar = New Exploring_The_Bleak.MyProgBar()
         Me.AmmunitionBar = New Exploring_The_Bleak.MyProgBar()
         Me.LevelUpPanel.SuspendLayout()
@@ -753,6 +754,19 @@ Partial Class MainForm
         Me.Timer.Enabled = True
         Me.Timer.Interval = 500
         '
+        'HUDisplay
+        '
+        Me.HUDisplay.AutoSize = True
+        Me.HUDisplay.BackColor = System.Drawing.Color.Gray
+        Me.HUDisplay.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
+        Me.HUDisplay.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.HUDisplay.ForeColor = System.Drawing.Color.Black
+        Me.HUDisplay.Location = New System.Drawing.Point(797, 476)
+        Me.HUDisplay.Name = "HUDisplay"
+        Me.HUDisplay.Size = New System.Drawing.Size(2, 22)
+        Me.HUDisplay.TabIndex = 99
+        Me.HUDisplay.Visible = False
+        '
         'HealthBar
         '
         Me.HealthBar.BackColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(192, Byte), Integer), CType(CType(192, Byte), Integer))
@@ -789,6 +803,7 @@ Partial Class MainForm
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.Color.Black
         Me.ClientSize = New System.Drawing.Size(1111, 852)
+        Me.Controls.Add(Me.HUDisplay)
         Me.Controls.Add(Me.GroupBox1)
         Me.Controls.Add(Me.SkillInfoBox)
         Me.Controls.Add(Me.CharStats)
@@ -890,5 +905,6 @@ Partial Class MainForm
     Friend WithEvents StatStrip As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents HelpToolStripMenuItem1 As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents ToolStripMenuItem3 As System.Windows.Forms.ToolStripSeparator
+    Friend WithEvents HUDisplay As System.Windows.Forms.Label
 
 End Class

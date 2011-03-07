@@ -61,8 +61,6 @@ Public Class MainForm
     Private ScreensaverMap(MapSize, MapSize) As Integer
     Private ExitPosX, ExitPosY As Short
     Public Initialized As Boolean = False
-    Private SNDGraphic As Image
-    Private ShownSND As Boolean = False
 
     Public StandardColor As Color 'used for color types in fog display
     Public GenerateType As Short
@@ -1152,7 +1150,7 @@ Public Class MainForm
     End Sub
 #End Region
 #Region "Build Map"
-    Private Sub BuildNewMap(Optional ByVal DirectionTraveled As Boolean = True)
+    Private Sub BuildNewMap(Optional ByVal DirectionTraveled As Boolean = True, Optional ByVal ShowString As String = "")
         Dim RandomNumber As New Random
         Dim GenerateRiverChance As Short = RandomNumber.Next(0, 101)
         CANVAS.FillRectangle(Brushes.Black, 1, 1, 1200, 1200)
@@ -1195,6 +1193,10 @@ Public Class MainForm
             Else 'down traveled
                 PlayerPosX = MapEntrances(MapLevel, 1, 0)
                 PlayerPosY = MapEntrances(MapLevel, 1, 1)
+            End If
+            'string must be shown here because HUD is @ playerlocation and playerlocation was just found
+            If ShowString <> "" Then
+                SND("You " + ShowString + " to depth " + LTrim(Str(MapLevel)) + ".")
             End If
         End If
         DrawingProcedures.ChangedMode = True
@@ -2823,24 +2825,25 @@ Public Class MainForm
     End Sub
 #End Region
     Public Sub SND(ByVal Text As String, Optional ByVal Clear As Boolean = False) 'this displays the display text
-        Dim pxish As Short = TheRoomWidth * PlayerPosX + ColumnsSpace * PlayerPosX + 1 'current player sector x position
+        Dim pxish As Short = TheRoomWidth * PlayerPosX + ColumnsSpace * PlayerPosX 'current player sector x position
         Dim pyish As Short = TheRoomHeight * PlayerPosY + ColumnsSpace * PlayerPosY + 25 'current player sector y position
-        Dim lessx As Short = pxish - 200
-        Dim Lessy As Short = pyish - 200
-        If lessx < 0 Then lessx = 0 : If Lessy < 0 Then Lessy = 0
-        Dim Fromrectangle As New Rectangle(pxish - lessx, pyish - Lessy, pxish + 200, pyish + 200) 'copy the original image before drawing on that image so it can be restored after finished.
-        If Clear = False Then
-            If ShownSND = True Then
-                CANVAS.DrawImage(SNDGraphic, Fromrectangle) 'this paints the original image before the drawing of the line and box as it is to be cleared.
-                ShownSND = False
+        If Clear = True Then
+            HUDisplay.Text = ""
+            HUDisplay.Visible = False
+        ElseIf Screensaver = False Then
+            If HUDisplay.Text <> "" Then HUDisplay.Text = HUDisplay.Text + Chr(13) + Text Else HUDisplay.Text = Text
+            HUDisplay.Left = pxish + TheRoomWidth
+            'make sure the display is still on screen and fix it if it isn't
+            If HUDisplay.Left + HUDisplay.Width > Me.Width Then
+                HUDisplay.Left = Me.Width - HUDisplay.Width
             End If
-            SNDGraphic = CopyBitmap(PAD, Fromrectangle)
-            CANVAS.DrawString(Text, displayfont, Brushes.Red, pxish, pyish) 'Schilla
-            ShownSND = True
-        ElseIf Clear = True And ShownSND = True Then
-            CANVAS.DrawImage(SNDGraphic, Fromrectangle) 'this paints the original image before the drawing of the line and box as it is to be cleared.
+            HUDisplay.Top = pyish - TheRoomHeight
+            'make sure hte display is still on screen and fix it if it isn't
+            If HUDisplay.Top < 0 Then
+                HUDisplay.Top = pyish + TheRoomHeight
+            End If
+            HUDisplay.Visible = True
         End If
-        CreateGraphics.DrawImage(PAD, 0, 0)
     End Sub
     Private Sub Repaint(ByVal sender As System.Object, ByVal e As System.Windows.Forms.PaintEventArgs) Handles MyBase.Paint
         Me.CreateGraphics.DrawImage(PAD, 0, 0)
@@ -2986,16 +2989,14 @@ Public Class MainForm
             ElseIf e.KeyCode = Keys.OemPeriod And e.Shift = True Then 'go down
                 If Map(MapLevel, PlayerPosX, PlayerPosY) = StairsDown Then 'exit
                     MapLevel += 1
-                    'SND("You descend to depth " + LTrim(Str(MapLevel)) + ".")
-                    BuildNewMap(True)
+                    BuildNewMap(True, "descend")
                 End If
             ElseIf e.KeyCode = Keys.Q And e.Control = True Then 'quit
                 ExitGameClick(0, EventArgs.Empty)
             ElseIf e.KeyCode = Keys.Oemcomma And e.Shift = True Then 'go up
                 If Map(MapLevel, PlayerPosX, PlayerPosY) = StairsUp Then 'entrance
                     MapLevel -= 1
-                    'SND("You ascend to depth " + LTrim(Str(MapLevel)) + ".")
-                    BuildNewMap(False)
+                    BuildNewMap(False, "ascend")
                 End If
             End If
             If PlayerCurHitpoints <= 0 And InStr(Me.Text, "[Dead]") = False Then
@@ -3034,7 +3035,7 @@ Public Class MainForm
         PlayerLevel = 0
         PlayerLevelPoints = 0
         PlayerDead = False
-        MapLevel = 0
+        MapLevel = 1
         'setup window
         Initialize(0, EventArgs.Empty)
         Array.Clear(LOSMap, 0, LOSMap.Length) 'set all to hidden
@@ -3125,6 +3126,7 @@ Public Class MainForm
     '    End Sub
 
     Private Sub ScreensaverActivate(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Timer.Tick
+        SND(0, True) 'mobile moves each tick, go ahead and clear snd logs if visible
         If Screensaver = True Then 'move character, it's the screensaver
             If PlayerPosX = ExitPosX And PlayerPosY = ExitPosY Then
                 MapLevel += 1
@@ -3148,5 +3150,4 @@ Public Class MainForm
             ReDraw()
         End If
     End Sub
-
 End Class
