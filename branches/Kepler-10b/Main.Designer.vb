@@ -24,11 +24,6 @@ Partial Class MainForm
     Private Sub InitializeComponent()
         Me.components = New System.ComponentModel.Container()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(MainForm))
-        Me.Panel1 = New System.Windows.Forms.Panel()
-        Me.DisplayText = New System.Windows.Forms.RichTextBox()
-        Me.Skill3 = New System.Windows.Forms.PictureBox()
-        Me.Skill2 = New System.Windows.Forms.PictureBox()
-        Me.Skill1 = New System.Windows.Forms.PictureBox()
         Me.HelpInfo = New System.Windows.Forms.Label()
         Me.LevelUpPanel = New System.Windows.Forms.GroupBox()
         Me.Label11 = New System.Windows.Forms.Label()
@@ -78,6 +73,16 @@ Partial Class MainForm
         Me.SkillInfo = New System.Windows.Forms.RichTextBox()
         Me.GroupBox1 = New System.Windows.Forms.GroupBox()
         Me.MenuStrip1 = New System.Windows.Forms.MenuStrip()
+        Me.FileToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem()
+        Me.NewGameToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem()
+        Me.HighScoresToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripMenuItem3 = New System.Windows.Forms.ToolStripSeparator()
+        Me.ToggleStrip = New System.Windows.Forms.ToolStripMenuItem()
+        Me.LogStrip = New System.Windows.Forms.ToolStripMenuItem()
+        Me.StatStrip = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripMenuItem2 = New System.Windows.Forms.ToolStripSeparator()
+        Me.ExitGameToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem()
+        Me.HelpToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem()
         Me.FileToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.NewGameToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripMenuItem1 = New System.Windows.Forms.ToolStripSeparator()
@@ -88,21 +93,8 @@ Partial Class MainForm
         Me.ShowHideActivityLogToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.HelpToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.Timer = New System.Windows.Forms.Timer(Me.components)
-        Me.FileToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem()
-        Me.NewGameToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem()
-        Me.ExitGameToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem()
-        Me.ToolStripMenuItem2 = New System.Windows.Forms.ToolStripSeparator()
-        Me.HelpToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem()
-        Me.HighScoresToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.ToggleToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.CharacterLogToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.CharacterStatsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.HealthBar = New Exploring_The_Bleak.MyProgBar()
-        Me.WillpowerBar = New Exploring_The_Bleak.MyProgBar()
-        Me.Panel1.SuspendLayout()
-        CType(Me.Skill3, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.Skill2, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.Skill1, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.AmmunitionBar = New Exploring_The_Bleak.MyProgBar()
         Me.LevelUpPanel.SuspendLayout()
         Me.ScoresBox.SuspendLayout()
         Me.CharStats.SuspendLayout()
@@ -110,57 +102,6 @@ Partial Class MainForm
         Me.GroupBox1.SuspendLayout()
         Me.MenuStrip1.SuspendLayout()
         Me.SuspendLayout()
-        '
-        'Panel1
-        '
-        Me.Panel1.BackColor = System.Drawing.Color.FromArgb(CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer))
-        Me.Panel1.Controls.Add(Me.DisplayText)
-        Me.Panel1.Controls.Add(Me.Skill3)
-        Me.Panel1.Controls.Add(Me.Skill2)
-        Me.Panel1.Controls.Add(Me.Skill1)
-        Me.Panel1.Location = New System.Drawing.Point(900, 28)
-        Me.Panel1.Name = "Panel1"
-        Me.Panel1.Size = New System.Drawing.Size(207, 461)
-        Me.Panel1.TabIndex = 14
-        '
-        'DisplayText
-        '
-        Me.DisplayText.BackColor = System.Drawing.Color.FromArgb(CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer))
-        Me.DisplayText.BorderStyle = System.Windows.Forms.BorderStyle.None
-        Me.DisplayText.Font = New System.Drawing.Font("Courier New", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.DisplayText.ForeColor = System.Drawing.Color.White
-        Me.DisplayText.Location = New System.Drawing.Point(7, 49)
-        Me.DisplayText.Name = "DisplayText"
-        Me.DisplayText.ReadOnly = True
-        Me.DisplayText.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None
-        Me.DisplayText.Size = New System.Drawing.Size(193, 402)
-        Me.DisplayText.TabIndex = 96
-        Me.DisplayText.TabStop = False
-        Me.DisplayText.Text = ""
-        '
-        'Skill3
-        '
-        Me.Skill3.Location = New System.Drawing.Point(0, 0)
-        Me.Skill3.Name = "Skill3"
-        Me.Skill3.Size = New System.Drawing.Size(100, 50)
-        Me.Skill3.TabIndex = 97
-        Me.Skill3.TabStop = False
-        '
-        'Skill2
-        '
-        Me.Skill2.Location = New System.Drawing.Point(0, 0)
-        Me.Skill2.Name = "Skill2"
-        Me.Skill2.Size = New System.Drawing.Size(100, 50)
-        Me.Skill2.TabIndex = 98
-        Me.Skill2.TabStop = False
-        '
-        'Skill1
-        '
-        Me.Skill1.Location = New System.Drawing.Point(0, 0)
-        Me.Skill1.Name = "Skill1"
-        Me.Skill1.Size = New System.Drawing.Size(100, 50)
-        Me.Skill1.TabIndex = 99
-        Me.Skill1.TabStop = False
         '
         'HelpInfo
         '
@@ -679,6 +620,75 @@ Partial Class MainForm
         Me.MenuStrip1.TabIndex = 98
         Me.MenuStrip1.Text = "MenuStrip1"
         '
+        'FileToolStripMenuItem1
+        '
+        Me.FileToolStripMenuItem1.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.NewGameToolStripMenuItem1, Me.HighScoresToolStripMenuItem, Me.ToolStripMenuItem3, Me.ToggleStrip, Me.ToolStripMenuItem2, Me.ExitGameToolStripMenuItem1})
+        Me.FileToolStripMenuItem1.Name = "FileToolStripMenuItem1"
+        Me.FileToolStripMenuItem1.Size = New System.Drawing.Size(37, 20)
+        Me.FileToolStripMenuItem1.Text = "File"
+        '
+        'NewGameToolStripMenuItem1
+        '
+        Me.NewGameToolStripMenuItem1.Name = "NewGameToolStripMenuItem1"
+        Me.NewGameToolStripMenuItem1.ShortcutKeys = System.Windows.Forms.Keys.F4
+        Me.NewGameToolStripMenuItem1.Size = New System.Drawing.Size(166, 22)
+        Me.NewGameToolStripMenuItem1.Text = "&New Game"
+        '
+        'HighScoresToolStripMenuItem
+        '
+        Me.HighScoresToolStripMenuItem.Name = "HighScoresToolStripMenuItem"
+        Me.HighScoresToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F1
+        Me.HighScoresToolStripMenuItem.Size = New System.Drawing.Size(166, 22)
+        Me.HighScoresToolStripMenuItem.Text = "&High Scores"
+        '
+        'ToolStripMenuItem3
+        '
+        Me.ToolStripMenuItem3.Name = "ToolStripMenuItem3"
+        Me.ToolStripMenuItem3.Size = New System.Drawing.Size(163, 6)
+        '
+        'ToggleStrip
+        '
+        Me.ToggleStrip.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.LogStrip, Me.StatStrip})
+        Me.ToggleStrip.Enabled = False
+        Me.ToggleStrip.Name = "ToggleStrip"
+        Me.ToggleStrip.Size = New System.Drawing.Size(166, 22)
+        Me.ToggleStrip.Text = "&Toggle"
+        '
+        'LogStrip
+        '
+        Me.LogStrip.Enabled = False
+        Me.LogStrip.Name = "LogStrip"
+        Me.LogStrip.ShortcutKeys = System.Windows.Forms.Keys.F2
+        Me.LogStrip.Size = New System.Drawing.Size(172, 22)
+        Me.LogStrip.Text = "&Character Log"
+        '
+        'StatStrip
+        '
+        Me.StatStrip.Enabled = False
+        Me.StatStrip.Name = "StatStrip"
+        Me.StatStrip.ShortcutKeys = System.Windows.Forms.Keys.F3
+        Me.StatStrip.Size = New System.Drawing.Size(172, 22)
+        Me.StatStrip.Text = "Character &Stats"
+        '
+        'ToolStripMenuItem2
+        '
+        Me.ToolStripMenuItem2.Name = "ToolStripMenuItem2"
+        Me.ToolStripMenuItem2.Size = New System.Drawing.Size(163, 6)
+        '
+        'ExitGameToolStripMenuItem1
+        '
+        Me.ExitGameToolStripMenuItem1.Name = "ExitGameToolStripMenuItem1"
+        Me.ExitGameToolStripMenuItem1.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.X), System.Windows.Forms.Keys)
+        Me.ExitGameToolStripMenuItem1.Size = New System.Drawing.Size(166, 22)
+        Me.ExitGameToolStripMenuItem1.Text = "E&xit game"
+        '
+        'HelpToolStripMenuItem1
+        '
+        Me.HelpToolStripMenuItem1.Name = "HelpToolStripMenuItem1"
+        Me.HelpToolStripMenuItem1.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.H), System.Windows.Forms.Keys)
+        Me.HelpToolStripMenuItem1.Size = New System.Drawing.Size(44, 20)
+        Me.HelpToolStripMenuItem1.Text = "Help"
+        '
         'FileToolStripMenuItem
         '
         Me.FileToolStripMenuItem.Name = "FileToolStripMenuItem"
@@ -743,94 +753,35 @@ Partial Class MainForm
         Me.Timer.Enabled = True
         Me.Timer.Interval = 500
         '
-        'FileToolStripMenuItem1
-        '
-        Me.FileToolStripMenuItem1.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.NewGameToolStripMenuItem1, Me.HighScoresToolStripMenuItem, Me.ToolStripMenuItem2, Me.ExitGameToolStripMenuItem1, Me.ToggleToolStripMenuItem})
-        Me.FileToolStripMenuItem1.Name = "FileToolStripMenuItem1"
-        Me.FileToolStripMenuItem1.Size = New System.Drawing.Size(37, 20)
-        Me.FileToolStripMenuItem1.Text = "File"
-        '
-        'NewGameToolStripMenuItem1
-        '
-        Me.NewGameToolStripMenuItem1.Name = "NewGameToolStripMenuItem1"
-        Me.NewGameToolStripMenuItem1.ShortcutKeys = System.Windows.Forms.Keys.F4
-        Me.NewGameToolStripMenuItem1.Size = New System.Drawing.Size(166, 22)
-        Me.NewGameToolStripMenuItem1.Text = "&New Game"
-        '
-        'ExitGameToolStripMenuItem1
-        '
-        Me.ExitGameToolStripMenuItem1.Name = "ExitGameToolStripMenuItem1"
-        Me.ExitGameToolStripMenuItem1.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.X), System.Windows.Forms.Keys)
-        Me.ExitGameToolStripMenuItem1.Size = New System.Drawing.Size(166, 22)
-        Me.ExitGameToolStripMenuItem1.Text = "E&xit game"
-        '
-        'ToolStripMenuItem2
-        '
-        Me.ToolStripMenuItem2.Name = "ToolStripMenuItem2"
-        Me.ToolStripMenuItem2.Size = New System.Drawing.Size(163, 6)
-        '
-        'HelpToolStripMenuItem1
-        '
-        Me.HelpToolStripMenuItem1.Name = "HelpToolStripMenuItem1"
-        Me.HelpToolStripMenuItem1.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.H), System.Windows.Forms.Keys)
-        Me.HelpToolStripMenuItem1.Size = New System.Drawing.Size(44, 20)
-        Me.HelpToolStripMenuItem1.Text = "Help"
-        '
-        'HighScoresToolStripMenuItem
-        '
-        Me.HighScoresToolStripMenuItem.Name = "HighScoresToolStripMenuItem"
-        Me.HighScoresToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F1
-        Me.HighScoresToolStripMenuItem.Size = New System.Drawing.Size(166, 22)
-        Me.HighScoresToolStripMenuItem.Text = "&High Scores"
-        '
-        'ToggleToolStripMenuItem
-        '
-        Me.ToggleToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.CharacterLogToolStripMenuItem, Me.CharacterStatsToolStripMenuItem})
-        Me.ToggleToolStripMenuItem.Name = "ToggleToolStripMenuItem"
-        Me.ToggleToolStripMenuItem.Size = New System.Drawing.Size(166, 22)
-        Me.ToggleToolStripMenuItem.Text = "&Toggle"
-        '
-        'CharacterLogToolStripMenuItem
-        '
-        Me.CharacterLogToolStripMenuItem.Name = "CharacterLogToolStripMenuItem"
-        Me.CharacterLogToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F2
-        Me.CharacterLogToolStripMenuItem.Size = New System.Drawing.Size(172, 22)
-        Me.CharacterLogToolStripMenuItem.Text = "&Character Log"
-        '
-        'CharacterStatsToolStripMenuItem
-        '
-        Me.CharacterStatsToolStripMenuItem.Name = "CharacterStatsToolStripMenuItem"
-        Me.CharacterStatsToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F3
-        Me.CharacterStatsToolStripMenuItem.Size = New System.Drawing.Size(172, 22)
-        Me.CharacterStatsToolStripMenuItem.Text = "Character &Stats"
-        '
         'HealthBar
         '
         Me.HealthBar.BackColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(192, Byte), Integer), CType(CType(192, Byte), Integer))
         Me.HealthBar.Caption = "Health Bar"
         Me.HealthBar.Enabled = False
         Me.HealthBar.ForeColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(128, Byte), Integer), CType(CType(128, Byte), Integer))
-        Me.HealthBar.Location = New System.Drawing.Point(907, 34)
+        Me.HealthBar.Location = New System.Drawing.Point(363, 569)
         Me.HealthBar.Max = 100
         Me.HealthBar.Min = 0
         Me.HealthBar.Name = "HealthBar"
         Me.HealthBar.Size = New System.Drawing.Size(193, 18)
         Me.HealthBar.TabIndex = 12
         Me.HealthBar.Value = 70
+        Me.HealthBar.Visible = False
         '
-        'WillpowerBar
+        'AmmunitionBar
         '
-        Me.WillpowerBar.BackColor = System.Drawing.Color.FromArgb(CType(CType(192, Byte), Integer), CType(CType(192, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.WillpowerBar.Caption = "Mana Bar"
-        Me.WillpowerBar.Enabled = False
-        Me.WillpowerBar.ForeColor = System.Drawing.Color.FromArgb(CType(CType(128, Byte), Integer), CType(CType(128, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.WillpowerBar.Location = New System.Drawing.Point(907, 52)
-        Me.WillpowerBar.Max = 100
-        Me.WillpowerBar.Min = 0
-        Me.WillpowerBar.Name = "WillpowerBar"
-        Me.WillpowerBar.Size = New System.Drawing.Size(193, 19)
-        Me.WillpowerBar.TabIndex = 13
-        Me.WillpowerBar.Value = 30
+        Me.AmmunitionBar.BackColor = System.Drawing.Color.FromArgb(CType(CType(192, Byte), Integer), CType(CType(192, Byte), Integer), CType(CType(255, Byte), Integer))
+        Me.AmmunitionBar.Caption = "Mana Bar"
+        Me.AmmunitionBar.Enabled = False
+        Me.AmmunitionBar.ForeColor = System.Drawing.Color.FromArgb(CType(CType(128, Byte), Integer), CType(CType(128, Byte), Integer), CType(CType(255, Byte), Integer))
+        Me.AmmunitionBar.Location = New System.Drawing.Point(363, 587)
+        Me.AmmunitionBar.Max = 100
+        Me.AmmunitionBar.Min = 0
+        Me.AmmunitionBar.Name = "AmmunitionBar"
+        Me.AmmunitionBar.Size = New System.Drawing.Size(193, 19)
+        Me.AmmunitionBar.TabIndex = 13
+        Me.AmmunitionBar.Value = 30
+        Me.AmmunitionBar.Visible = False
         '
         'MainForm
         '
@@ -844,8 +795,7 @@ Partial Class MainForm
         Me.Controls.Add(Me.ScoresBox)
         Me.Controls.Add(Me.LevelUpPanel)
         Me.Controls.Add(Me.HealthBar)
-        Me.Controls.Add(Me.WillpowerBar)
-        Me.Controls.Add(Me.Panel1)
+        Me.Controls.Add(Me.AmmunitionBar)
         Me.Controls.Add(Me.MenuStrip1)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D
         Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
@@ -856,10 +806,6 @@ Partial Class MainForm
         Me.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
         Me.Text = "Kepler-10b"
-        Me.Panel1.ResumeLayout(False)
-        CType(Me.Skill3, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.Skill2, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.Skill1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.LevelUpPanel.ResumeLayout(False)
         Me.LevelUpPanel.PerformLayout()
         Me.ScoresBox.ResumeLayout(False)
@@ -874,11 +820,7 @@ Partial Class MainForm
 
     End Sub
     Friend WithEvents HealthBar As Exploring_The_Bleak.MyProgBar
-    Friend WithEvents WillpowerBar As Exploring_The_Bleak.MyProgBar
-    Friend WithEvents Panel1 As System.Windows.Forms.Panel
-    Friend WithEvents Skill3 As System.Windows.Forms.PictureBox
-    Friend WithEvents Skill2 As System.Windows.Forms.PictureBox
-    Friend WithEvents Skill1 As System.Windows.Forms.PictureBox
+    Friend WithEvents AmmunitionBar As Exploring_The_Bleak.MyProgBar
     Friend WithEvents HelpInfo As System.Windows.Forms.Label
     Friend WithEvents LevelUpPanel As System.Windows.Forms.GroupBox
     Friend WithEvents Label11 As System.Windows.Forms.Label
@@ -924,7 +866,6 @@ Partial Class MainForm
     Friend WithEvents Output As System.Windows.Forms.RichTextBox
     Friend WithEvents CharStats As System.Windows.Forms.GroupBox
     Friend WithEvents StatBox As System.Windows.Forms.RichTextBox
-    Friend WithEvents DisplayText As System.Windows.Forms.RichTextBox
     Friend WithEvents SkillInfoBox As System.Windows.Forms.GroupBox
     Friend WithEvents SkillInfo As System.Windows.Forms.RichTextBox
     Friend WithEvents GroupBox1 As System.Windows.Forms.GroupBox
@@ -944,9 +885,10 @@ Partial Class MainForm
     Friend WithEvents HighScoresToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents ToolStripMenuItem2 As System.Windows.Forms.ToolStripSeparator
     Friend WithEvents ExitGameToolStripMenuItem1 As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents ToggleToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents CharacterLogToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents CharacterStatsToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents ToggleStrip As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents LogStrip As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents StatStrip As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents HelpToolStripMenuItem1 As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents ToolStripMenuItem3 As System.Windows.Forms.ToolStripSeparator
 
 End Class
