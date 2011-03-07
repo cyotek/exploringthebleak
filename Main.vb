@@ -95,8 +95,8 @@ Public Class MainForm
     Public PlayerEquipHead, PlayerEquipChest, PlayerEquipArms, PlayerEquipHands, PlayerEquipLegs, PlayerEquipFeet As Byte
     Public PlayerEquipQHead, PlayerEquipQChest, PlayerEquipQArms, PlayerEquipQHands, PLayerEquipQLegs, PlayerEquipQFeet As Byte
     Public PlayerEquipNHead, PlayerEquipNChest, PlayerEquipNArms, PlayerEquipNHands, PLayerEquipNLegs, PlayerEquipNFeet As String
-    Public PlayerHitpoints, PlayerWillpower As Short
-    Public PlayerCurHitpoints, PlayerCurWillpower As Short
+    Public PlayerHitpoints, PlayerAmmunition As Short
+    Public PlayerCurHitpoints, PlayerCurAmmunition As Short
     Public PlayerLevelPoints As Short
     Public PlayerTurns As Long
     Public PlayerGold As Short
@@ -1065,50 +1065,62 @@ Public Class MainForm
 #End Region
 #Region "Initialize"
     Private Sub InitWindowSize()
+        'this will calculate the height and width that the form should be, check to see if it was already set, and then
+        'set it if it wasn't. The reason we check before just setting it is to prevent the form from flickering during the
+        'testing of hte width and height.
+        Dim OldHeight As Integer = Me.Height
+        Dim OldWidth As Integer = Me.Width
+        Dim PossibleHeight As Integer
+        Dim PossibleWidth As Integer
         Dim Oldscreenheight As Integer = Me.Height 'used to distinguish the correct layout of the width
-        Me.Height = Screen.PrimaryScreen.WorkingArea.Height - 5 'arranges the height to the screen, assorting tiles to perspective size
-        Me.Width = Me.Height - Oldscreenheight 'ensures the width is correspondant to the height
-        If Me.Width < Me.Height Then Me.Width = Me.Height
-        TheRoomHeight = Math.Round(Me.Height / (MapSize + 2), 0) - 4  'test the room height
-        TheRoomWidth = Math.Round(Me.Width / (MapSize + 2), 0) - 4  'test the room width
+        PossibleHeight = Screen.PrimaryScreen.WorkingArea.Height - 5 'arranges the height to the screen, assorting tiles to perspective size
+        PossibleWidth = PossibleHeight - Oldscreenheight 'ensures the width is correspondant to the height
+        If PossibleWidth < PossibleHeight Then PossibleWidth = PossibleHeight
+        TheRoomHeight = Math.Round(PossibleHeight / (MapSize + 2), 0) - 4  'test the room height
+        TheRoomWidth = Math.Round(PossibleWidth / (MapSize + 2), 0) - 4  'test the room width
         If TheRoomHeight > TheRoomWidth Then TheRoomHeight = TheRoomWidth 'ensures that the window is scaled to the smallest of the two
         If TheRoomWidth > TheRoomHeight Then TheRoomWidth = TheRoomHeight 'ensures that the window is scaled to the smallest of the two
-        If Screensaver = True Then
-            Me.Width = TheRoomWidth * MapSize + MapSize + 20
-        Else
-            Me.Width = TheRoomWidth * MapSize + MapSize + 20 + Panel1.Width
+        PossibleWidth = TheRoomWidth * MapSize + MapSize + 20
+        PossibleHeight = TheRoomWidth * MapSize + MapSize + 60 + 25 'thelast 25 height is for the stat bars, remove that when they're unnecessary
+        If OldHeight <> PossibleHeight Or OldWidth <> PossibleWidth Then
+            Me.Width = PossibleWidth
+            Me.Height = PossibleHeight
+            Me.CenterToScreen() 'center to the screen
+            displayfont = New Font("Arial", -4 + (TheRoomHeight + TheRoomWidth / 2) / 2)
         End If
-        Me.Height = TheRoomWidth * MapSize + MapSize + 60
-        Me.CenterToScreen() 'center to the screen
-        DisplayFont = New Font("Arial", -4 + (TheRoomHeight + TheRoomWidth / 2) / 2)
     End Sub
     Private Sub InitScreensaver()
         If Screensaver = True Then
-            Panel1.Visible = False
             HealthBar.Visible = False
-            WillpowerBar.Visible = False
+            AmmunitionBar.Visible = False
+        Else
+            HealthBar.Visible = True
+            AmmunitionBar.Visible = True
         End If
     End Sub
     Private Sub InitStatBar()
-        Panel1.Left = Me.Width - Panel1.Width - 15 'sorts the panels width to the width of the window
-        Panel1.Height = Me.Height
-        HealthBar.Left = Me.Width - Panel1.Width - 10 'arranges the healthbar
-        WillpowerBar.Left = Me.Width - Panel1.Width - 10 'arrange the willpowerbar according to the panel
-        StatBox.Left = Me.Width - Panel1.Width - 10 'arrange the statbox according tot he panel
+        HealthBar.Top = Me.Height - HealthBar.Height - 32
+        HealthBar.Left = 0 'arranges the healthbar
+        HealthBar.Width = Me.Width / 2
+        HealthBar.Height = 25
+        AmmunitionBar.Top = Me.Height - AmmunitionBar.Height - 32
+        AmmunitionBar.Left = Me.Width / 2 'arrange the Ammunitionbar according to the panel
+        AmmunitionBar.Width = Me.Width / 2
+        AmmunitionBar.Height = 25
     End Sub
     Private Sub InitLog()
         Array.Clear(SNDLog, 0, SNDLog.Length)
-        SND("Press '?' or 'h' for help.")
-        SND("You descend to depth 1.")
+        'SND("Press '?' or 'h' for help.")
+        'SND("You descend to depth 1.")
     End Sub
     Private Sub InitCharacter()
         If Screensaver = False Then
+            PlayerSTR = 10 : PlayerDEX = 10 : PlayerCON = 10 : PlayerINT = 10 : PlayerWIS = 10 : PlayerCHA = 10 : PlayerLUC = 10
             PlayerDefense = Math.Round(PlayerCON / 5, 0)
             PlayerAttack = Math.Round(PlayerSTR / 5, 0)
             PreviousDefense = PlayerDefense
             PreviousAttack = PlayerAttack
-            RefreshStats() 'updates willpower and health bar statistics
-            SkillInfoBox.Left = Panel1.Left - SkillInfoBox.Width
+            RefreshStats() 'updates Ammunition and health bar statistics
         End If
     End Sub
     Private Sub InitHighScores()
@@ -1127,8 +1139,8 @@ Public Class MainForm
     Public Sub Initialize(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
         'resize windows
         InitWindowSize()
-        InitScreensaver()
         InitStatBar()
+        InitScreensaver()
         InitLog()
         InitCharacter()
         InitHighScores()
@@ -1143,7 +1155,7 @@ Public Class MainForm
         Dim GenerateRiverChance As Short = RandomNumber.Next(0, 101)
         CANVAS.FillRectangle(Brushes.Black, 1, 1, 1200, 1200)
         'refresh line of sight for new map
-        Array.Clear(LOSMap, 0, LOSMap.Length) 'set all to hidden
+        Array.Clear(MapShown, 0, MapShown.Length) 'clear all shown sectors
         'check to see if the new map was one visited already
         If MapCreated(MapLevel) = False Then 'entering a new map, need to generate
             GenerateMap(8)
@@ -2462,29 +2474,29 @@ Public Class MainForm
 #End Region
 #Region "Tick"
     Sub ReDraw() 'also known as 'tick'
-        'check to see if the player is in water and reduce their willpower
+        'check to see if the player is in water and reduce their Ammunition
         If Map(MapLevel, PlayerPosX, PlayerPosY) = Water Then
             Dim Ignorewater = False
             If RiverType = Water And WaterImmune = 0 Then
-                PlayerCurWillpower -= 10
+                PlayerCurAmmunition -= 10
             ElseIf RiverType = Ice And IceImmune = 0 Then
-                PlayerCurWillpower -= 20
+                PlayerCurAmmunition -= 20
             ElseIf RiverType = Lava And LavaImmune = 0 Then
-                PlayerCurWillpower -= 30
+                PlayerCurAmmunition -= 30
             Else
                 IgnoreWater = True
             End If
-            If PlayerCurWillpower <= 0 Then
-                PlayerCurHitpoints += PlayerCurWillpower
+            If PlayerCurAmmunition <= 0 Then
+                PlayerCurHitpoints += PlayerCurAmmunition
                 SND("You use up all your WP.")
-                If RiverType = Water And PlayerCurWillpower <> 0 Then
-                    SND("You drown for " + LTrim(Str(Math.Abs(PlayerCurWillpower))) + "HP.")
-                ElseIf RiverType = Ice And PlayerCurWillpower <> 0 Then
-                    SND("You freeze for " + LTrim(Str(Math.Abs(PlayerCurWillpower))) + "HP.")
-                ElseIf RiverType = Lava And PlayerCurWillpower <> 0 Then
-                    SND("You burn for " + LTrim(Str(Math.Abs(PlayerCurWillpower))) + "HP.")
+                If RiverType = Water And PlayerCurAmmunition <> 0 Then
+                    SND("You drown for " + LTrim(Str(Math.Abs(PlayerCurAmmunition))) + "HP.")
+                ElseIf RiverType = Ice And PlayerCurAmmunition <> 0 Then
+                    SND("You freeze for " + LTrim(Str(Math.Abs(PlayerCurAmmunition))) + "HP.")
+                ElseIf RiverType = Lava And PlayerCurAmmunition <> 0 Then
+                    SND("You burn for " + LTrim(Str(Math.Abs(PlayerCurAmmunition))) + "HP.")
                 End If
-                PlayerCurWillpower = 0
+                PlayerCurAmmunition = 0
             ElseIf Ignorewater = True Then
                 SND("You remain immune.")
                 If WaterImmune > 0 Then
@@ -2514,7 +2526,7 @@ Public Class MainForm
                     SND("You burn reducing WP by 30.")
                 End If
             End If
-            RefreshStats() 'updates willpower and health bar statistics
+            RefreshStats() 'updates Ammunition and health bar statistics
         End If
         'Process the mobiles on the map and move them one at a time.
         Dim ProcessMobilePathNumber As Short = 0
@@ -2613,7 +2625,7 @@ Public Class MainForm
         chacur.Text = LTrim(Str(PlayerCHA)) : chamax.Text = LTrim(Str(PlayerMaxCHA)) : If PlayerCHA < PlayerMaxCHA Then chaadd.Enabled = True
         luccur.Text = LTrim(Str(PlayerLUC)) : lucmax.Text = LTrim(Str(PlayerMaxLuc)) : If PlayerLUC < PlayerMaxLuc Then lucadd.Enabled = True
         hpcur.Text = LTrim(Str(PlayerHitpoints)) : hpadd.Enabled = True
-        wpcur.Text = LTrim(Str(PlayerWillpower)) : wpadd.Enabled = True
+        wpcur.Text = LTrim(Str(PlayerAmmunition)) : wpadd.Enabled = True
         PlayerLevelPoints += Math.Round(PlayerWIS / 4, 0)
         CurPoints.Text = LTrim(Str(PlayerLevelPoints))
         HelpInfo.Visible = False
@@ -2738,7 +2750,7 @@ Public Class MainForm
         PlayerCHA = Val(chacur.Text)
         PlayerLUC = Val(luccur.Text)
         PlayerHitpoints = Val(hpcur.Text)
-        PlayerWillpower = Val(wpcur.Text)
+        PlayerAmmunition = Val(wpcur.Text)
         PlayerDefense += Math.Round(PlayerCON / 5, 0) - Math.Round(PrevCon / 5, 0)
         PlayerAttack += Math.Round(PlayerSTR / 5, 0) - Math.Round(PrevStr / 5, 0)
         LevelUpPanel.Visible = False
@@ -2748,9 +2760,9 @@ Public Class MainForm
         HealthBar.Caption = LTrim(Str(PlayerCurHitpoints)) + " / " + LTrim(Str(PlayerHitpoints)) + " HP"
         HealthBar.Value = PlayerCurHitpoints
         HealthBar.Max = PlayerHitpoints
-        WillpowerBar.Caption = LTrim(Str(PlayerCurWillpower)) + " / " + LTrim(Str(PlayerWillpower)) + " WP"
-        WillpowerBar.Value = PlayerCurWillpower
-        WillpowerBar.Max = PlayerWillpower
+        AmmunitionBar.Caption = LTrim(Str(PlayerCurAmmunition)) + " / " + LTrim(Str(PlayerAmmunition)) + " WP"
+        AmmunitionBar.Value = PlayerCurAmmunition
+        AmmunitionBar.Max = PlayerAmmunition
     End Sub
 #End Region
 #Region "Image Filters"
@@ -2809,22 +2821,10 @@ Public Class MainForm
     End Sub
 #End Region
     Public Sub SND(ByVal Text As String) 'this displays the display text
-        Dim LengthTo0 As Short
-        DisplayText.Text = ""
-        For LengthTo0 = 27 To 0 Step -1
-            If LengthTo0 > 0 Then
-                SNDLog(LengthTo0) = SNDLog(LengthTo0 - 1) 'moves all old text to make room
-            Else
-                SNDLog(LengthTo0) = Text 'for the new text
-            End If
-        Next
-        For LengthTo0 = 0 To 27 Step 1
-            If LengthTo0 < 27 And SNDLog(LengthTo0) <> "" Then
-                DisplayText.Text += SNDLog(LengthTo0) + Chr(13) 'add a paragraph character after each line sent
-            Else
-                DisplayText.Text += SNDLog(LengthTo0) + Chr(13) 'except for the last
-            End If
-        Next
+        Dim pxish As Short = TheRoomWidth * PlayerPosX + ColumnsSpace * PlayerPosX + 1 'current player sector x position
+        Dim pyish As Short = TheRoomHeight * PlayerPosY + ColumnsSpace * PlayerPosY + 25 'current player sector y position
+        CANVAS.DrawString(Text, displayfont, Brushes.Red, pxish, pyish) 'Schilla
+        CreateGraphics.DrawImage(PAD, 0, 0)
     End Sub
     Private Sub Repaint(ByVal sender As System.Object, ByVal e As System.Windows.Forms.PaintEventArgs) Handles MyBase.Paint
         Me.CreateGraphics.DrawImage(PAD, 0, 0)
@@ -2937,16 +2937,31 @@ Public Class MainForm
                 DrawingProcedures.LOSMap(MobileVisible(MapLevel, 0, 0), MobileVisible(MapLevel, 0, 1)) = DrawingProcedures.Redraw 'make sure that tile is redrawn next round to remove black box
                 PlayerTargeting = False
                 ReDraw()
+            ElseIf e.KeyCode = Keys.S Then
+                If MobilePresent = True Then
+                    If PlayerCurAmmunition >= 5 Then
+                        SND("Shoot in what direction?")
+                        SkillType = "Shoot"
+                        PlayerCurAmmunition -= 5
+                        DrawingProcedures.TargetEnemy()
+                        SND("Press Spacebar to shoot.")
+                        PlayerTargeting = True
+                    Else
+                        SND("Not enough Ammunition.")
+                    End If
+                Else
+                    SND("No enemies are around.")
+                End If
             ElseIf e.KeyCode = Keys.Space And PlayerTargeting = False Then
                 SND("You are not targeting anything.")
             ElseIf e.KeyCode = Keys.NumPad5 Then
                 If PlayerCurHitpoints < PlayerHitpoints Then
                     PlayerCurHitpoints += 1
-                    RefreshStats() 'updates willpower and health bar statistics
+                    RefreshStats() 'updates Ammunition and health bar statistics
                 End If
-                If PlayerCurWillpower < PlayerWillpower Then
-                    PlayerCurWillpower += 1
-                    RefreshStats() 'updates willpower and health bar statistics
+                If PlayerCurAmmunition < PlayerAmmunition Then
+                    PlayerCurAmmunition += 1
+                    RefreshStats() 'updates Ammunition and health bar statistics
                 End If
                 ReDraw()
             ElseIf e.KeyCode = Keys.H Or e.KeyCode = Keys.OemQuestion And e.Shift = True Then
@@ -2954,7 +2969,7 @@ Public Class MainForm
             ElseIf e.KeyCode = Keys.OemPeriod And e.Shift = True Then 'go down
                 If Map(MapLevel, PlayerPosX, PlayerPosY) = StairsDown Then 'exit
                     MapLevel += 1
-                    SND("You descend to depth " + LTrim(Str(MapLevel)) + ".")
+                    'SND("You descend to depth " + LTrim(Str(MapLevel)) + ".")
                     BuildNewMap(True)
                 End If
             ElseIf e.KeyCode = Keys.Q And e.Control = True Then 'quit
@@ -2962,7 +2977,7 @@ Public Class MainForm
             ElseIf e.KeyCode = Keys.Oemcomma And e.Shift = True Then 'go up
                 If Map(MapLevel, PlayerPosX, PlayerPosY) = StairsUp Then 'entrance
                     MapLevel -= 1
-                    SND("You ascend to depth " + LTrim(Str(MapLevel)) + ".")
+                    'SND("You ascend to depth " + LTrim(Str(MapLevel)) + ".")
                     BuildNewMap(False)
                 End If
             End If
@@ -2986,12 +3001,16 @@ Public Class MainForm
     End Sub
 #Region "Menu Click"
     Private Sub NewGameClick(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles NewGameToolStripMenuItem.Click, NewGameToolStripMenuItem1.Click
+        'enable the toggle strip on the file menu
+        StatStrip.Enabled = True
+        ToggleStrip.Enabled = True
+        LogStrip.Enabled = True
+        'disable screensaver variables
         Screensaver = False
         Timer.Enabled = False
-        Panel1.Visible = True
-        HealthBar.Visible = True
-        WillpowerBar.Visible = True
-        InitWindowSize()
+        ScreensaverFound = False
+        Screensaver = False
+        'setup character variables
         PlayerExperience = 0
         PlayerGold = 0
         PlayerTurns = 0
@@ -2999,8 +3018,11 @@ Public Class MainForm
         PlayerLevelPoints = 0
         PlayerDead = False
         MapLevel = 0
+        'setup window
         Initialize(0, EventArgs.Empty)
-        Initialized = False
+        Array.Clear(LOSMap, 0, LOSMap.Length) 'set all to hidden
+        Array.Clear(MapCreated, 0, MapCreated.Length)
+        'inventory shizzy
         For tmp0 = 0 To 19 Step 1
             ItemInventoryName(tmp0) = ""
             ItemInventoryQuality(tmp0) = 0
@@ -3018,7 +3040,6 @@ Public Class MainForm
             PlayerEquipNHead = ""
             PLayerEquipNLegs = ""
         Next
-        BuildNewMap(False)
     End Sub
     Private Sub ExitGameClick(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ExitGameToolStripMenuItem.Click, ExitGameToolStripMenuItem1.Click
         Me.Close()
@@ -3042,7 +3063,7 @@ Public Class MainForm
             ScoresBox.Visible = True
         End If
     End Sub
-    Private Sub ToggleCharacterStatsClick(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ToggleCharacterStatsToolStripMenuItem.Click, CharacterStatsToolStripMenuItem.Click
+    Private Sub ToggleCharacterStatsClick(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ToggleCharacterStatsToolStripMenuItem.Click, StatStrip.Click
         If CharStats.Visible = True Then
             CharStats.Visible = False
         ElseIf CharStats.Visible = False Then
@@ -3065,14 +3086,11 @@ Public Class MainForm
         ScoresBox.Visible = False
         CharStats.Visible = True
     End Sub
-    Private Sub ToggleActivityLogClick(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ShowHideActivityLogToolStripMenuItem.Click, CharacterLogToolStripMenuItem.Click
+    Private Sub ToggleActivityLogClick(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ShowHideActivityLogToolStripMenuItem.Click, LogStrip.Click
         If LogVisible = True Then
             LogVisible = False
-            Panel1.Visible = false
         ElseIf LogVisible = False Then
             LogVisible = True
-            Panel1.Visible = True
-            Panel1.Height = Me.Height
         End If
     End Sub
 #End Region
@@ -3094,13 +3112,13 @@ Public Class MainForm
             If PlayerPosX = ExitPosX And PlayerPosY = ExitPosY Then
                 MapLevel += 1
                 BuildNewMap(True)
-                ScreensaverFound = False
             Else
                 MobilePosX(MapLevel, MaxMobiles) = PlayerPosX : MobilePosY(MapLevel, MaxMobiles) = PlayerPosY
                 MobilePrevX(MapLevel, MaxMobiles) = PlayerPosX : MobilePrevY(MapLevel, MaxMobiles) = PlayerPosY
                 MobileType(MapLevel, MaxMobiles) = 1
                 MobileHealth(MapLevel, MaxMobiles) = 100
                 PlayerHitpoints = 100 : PlayerCurHitpoints = 100
+                PlayerAmmunition = 100 : PlayerCurAmmunition = 100
                 'MobileExists(MapLevel, PlayerPosX, PlayerPosY) = True 'set mobile to living
                 PlayerLastPosX = PlayerPosX
                 PlayerLastPosY = PlayerPosY
