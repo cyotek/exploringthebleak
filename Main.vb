@@ -61,6 +61,8 @@ Public Class MainForm
     Private ScreensaverMap(MapSize, MapSize) As Integer
     Private ExitPosX, ExitPosY As Short
     Public Initialized As Boolean = False
+    Private SNDGraphic As Image
+    Private ShownSND As Boolean = False
 
     Public StandardColor As Color 'used for color types in fog display
     Public GenerateType As Short
@@ -2484,7 +2486,7 @@ Public Class MainForm
             ElseIf RiverType = Lava And LavaImmune = 0 Then
                 PlayerCurAmmunition -= 30
             Else
-                IgnoreWater = True
+                Ignorewater = True
             End If
             If PlayerCurAmmunition <= 0 Then
                 PlayerCurHitpoints += PlayerCurAmmunition
@@ -2820,16 +2822,31 @@ Public Class MainForm
         Next
     End Sub
 #End Region
-    Public Sub SND(ByVal Text As String) 'this displays the display text
+    Public Sub SND(ByVal Text As String, Optional ByVal Clear As Boolean = False) 'this displays the display text
         Dim pxish As Short = TheRoomWidth * PlayerPosX + ColumnsSpace * PlayerPosX + 1 'current player sector x position
         Dim pyish As Short = TheRoomHeight * PlayerPosY + ColumnsSpace * PlayerPosY + 25 'current player sector y position
-        CANVAS.DrawString(Text, displayfont, Brushes.Red, pxish, pyish) 'Schilla
+        Dim lessx As Short = pxish - 200
+        Dim Lessy As Short = pyish - 200
+        If lessx < 0 Then lessx = 0 : If Lessy < 0 Then Lessy = 0
+        Dim Fromrectangle As New Rectangle(pxish - lessx, pyish - Lessy, pxish + 200, pyish + 200) 'copy the original image before drawing on that image so it can be restored after finished.
+        If Clear = False Then
+            If ShownSND = True Then
+                CANVAS.DrawImage(SNDGraphic, Fromrectangle) 'this paints the original image before the drawing of the line and box as it is to be cleared.
+                ShownSND = False
+            End If
+            SNDGraphic = CopyBitmap(PAD, Fromrectangle)
+            CANVAS.DrawString(Text, displayfont, Brushes.Red, pxish, pyish) 'Schilla
+            ShownSND = True
+        ElseIf Clear = True And ShownSND = True Then
+            CANVAS.DrawImage(SNDGraphic, Fromrectangle) 'this paints the original image before the drawing of the line and box as it is to be cleared.
+        End If
         CreateGraphics.DrawImage(PAD, 0, 0)
     End Sub
     Private Sub Repaint(ByVal sender As System.Object, ByVal e As System.Windows.Forms.PaintEventArgs) Handles MyBase.Paint
         Me.CreateGraphics.DrawImage(PAD, 0, 0)
     End Sub
     Private Sub ProcessCommand(ByVal sender As System.Object, ByVal e As System.Windows.Forms.KeyEventArgs) Handles MyBase.KeyDown
+        SND(0, True)
         If PlayerDead = False Then
             If e.KeyCode = Keys.Up And PlayerPosY > 0 And PlayerTargeting = False Or e.KeyCode = Keys.NumPad8 And PlayerPosY > 0 And PlayerTargeting = False Then
                 If Map(MapLevel, PlayerPosX, PlayerPosY - 1) > 0 And MapOccupied(MapLevel, PlayerPosX, PlayerPosY - 1) = 0 Then
@@ -3111,7 +3128,8 @@ Public Class MainForm
         If Screensaver = True Then 'move character, it's the screensaver
             If PlayerPosX = ExitPosX And PlayerPosY = ExitPosY Then
                 MapLevel += 1
-                BuildNewMap(True)
+                BuildNewMap(False)
+                ScreensaverFound = False
             Else
                 MobilePosX(MapLevel, MaxMobiles) = PlayerPosX : MobilePosY(MapLevel, MaxMobiles) = PlayerPosY
                 MobilePrevX(MapLevel, MaxMobiles) = PlayerPosX : MobilePrevY(MapLevel, MaxMobiles) = PlayerPosY
