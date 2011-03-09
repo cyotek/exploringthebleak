@@ -106,7 +106,7 @@ Partial Class MainForm
         Me.Panel1 = New System.Windows.Forms.Panel()
         Me.PlayerNameInput = New System.Windows.Forms.TextBox()
         Me.HealthBar = New Exploring_The_Bleak.MyProgBar()
-        Me.AmmunitionBar = New Exploring_The_Bleak.MyProgBar()
+        Me.EnergyBar = New Exploring_The_Bleak.MyProgBar()
         Me.LevelUpPanel.SuspendLayout()
         Me.ScoresBox.SuspendLayout()
         Me.CharStats.SuspendLayout()
@@ -917,20 +917,20 @@ Partial Class MainForm
         Me.HealthBar.Value = 70
         Me.HealthBar.Visible = False
         '
-        'AmmunitionBar
+        'EnergyBar
         '
-        Me.AmmunitionBar.BackColor = System.Drawing.Color.FromArgb(CType(CType(192, Byte), Integer), CType(CType(192, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.AmmunitionBar.Caption = "Mana Bar"
-        Me.AmmunitionBar.Enabled = False
-        Me.AmmunitionBar.ForeColor = System.Drawing.Color.FromArgb(CType(CType(128, Byte), Integer), CType(CType(128, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.AmmunitionBar.Location = New System.Drawing.Point(363, 587)
-        Me.AmmunitionBar.Max = 100
-        Me.AmmunitionBar.Min = 0
-        Me.AmmunitionBar.Name = "AmmunitionBar"
-        Me.AmmunitionBar.Size = New System.Drawing.Size(193, 19)
-        Me.AmmunitionBar.TabIndex = 13
-        Me.AmmunitionBar.Value = 30
-        Me.AmmunitionBar.Visible = False
+        Me.EnergyBar.BackColor = System.Drawing.Color.FromArgb(CType(CType(192, Byte), Integer), CType(CType(192, Byte), Integer), CType(CType(255, Byte), Integer))
+        Me.EnergyBar.Caption = "Mana Bar"
+        Me.EnergyBar.Enabled = False
+        Me.EnergyBar.ForeColor = System.Drawing.Color.FromArgb(CType(CType(128, Byte), Integer), CType(CType(128, Byte), Integer), CType(CType(255, Byte), Integer))
+        Me.EnergyBar.Location = New System.Drawing.Point(363, 587)
+        Me.EnergyBar.Max = 100
+        Me.EnergyBar.Min = 0
+        Me.EnergyBar.Name = "EnergyBar"
+        Me.EnergyBar.Size = New System.Drawing.Size(193, 19)
+        Me.EnergyBar.TabIndex = 13
+        Me.EnergyBar.Value = 30
+        Me.EnergyBar.Visible = False
         '
         'MainForm
         '
@@ -945,7 +945,7 @@ Partial Class MainForm
         Me.Controls.Add(Me.ScoresBox)
         Me.Controls.Add(Me.LevelUpPanel)
         Me.Controls.Add(Me.HealthBar)
-        Me.Controls.Add(Me.AmmunitionBar)
+        Me.Controls.Add(Me.EnergyBar)
         Me.Controls.Add(Me.MenuStrip1)
         Me.Controls.Add(Me.Panel1)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D
@@ -981,7 +981,7 @@ Partial Class MainForm
 
     End Sub
     Friend WithEvents HealthBar As Exploring_The_Bleak.MyProgBar
-    Friend WithEvents AmmunitionBar As Exploring_The_Bleak.MyProgBar
+    Friend WithEvents EnergyBar As Exploring_The_Bleak.MyProgBar
     Friend WithEvents HelpInfo As System.Windows.Forms.Label
     Friend WithEvents LevelUpPanel As System.Windows.Forms.GroupBox
     Friend WithEvents Label11 As System.Windows.Forms.Label

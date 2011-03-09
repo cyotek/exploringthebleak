@@ -95,8 +95,8 @@ Public Class MainForm
     Public PlayerEquipHead, PlayerEquipChest, PlayerEquipArms, PlayerEquipHands, PlayerEquipLegs, PlayerEquipFeet As Byte
     Public PlayerEquipQHead, PlayerEquipQChest, PlayerEquipQArms, PlayerEquipQHands, PLayerEquipQLegs, PlayerEquipQFeet As Byte
     Public PlayerEquipNHead, PlayerEquipNChest, PlayerEquipNArms, PlayerEquipNHands, PLayerEquipNLegs, PlayerEquipNFeet As String
-    Public PlayerHitpoints, PlayerAmmunition As Short
-    Public PlayerCurHitpoints, PlayerCurAmmunition As Short
+    Public PlayerHitpoints, PlayerEnergy As Short
+    Public PlayerCurHitpoints, PlayerCurEnergy As Short
     Public PlayerLevelPoints As Short
     Public PlayerTurns As Long
     Public PlayerGold As Short
@@ -1003,10 +1003,10 @@ Public Class MainForm
     Private Sub InitScreensaver()
         If Screensaver = True Then
             HealthBar.Visible = False
-            AmmunitionBar.Visible = False
+            EnergyBar.Visible = False
         Else
             HealthBar.Visible = True
-            AmmunitionBar.Visible = True
+            EnergyBar.Visible = True
         End If
     End Sub
     Private Sub InitStatBar()
@@ -1014,10 +1014,10 @@ Public Class MainForm
         HealthBar.Left = 0 'arranges the healthbar
         HealthBar.Width = Me.Width / 2
         HealthBar.Height = 25
-        AmmunitionBar.Top = Me.Height - AmmunitionBar.Height - 32
-        AmmunitionBar.Left = Me.Width / 2 'arrange the Ammunitionbar according to the panel
-        AmmunitionBar.Width = Me.Width / 2
-        AmmunitionBar.Height = 25
+        EnergyBar.Top = Me.Height - EnergyBar.Height - 32
+        EnergyBar.Left = Me.Width / 2 'arrange the Energybar according to the panel
+        EnergyBar.Width = Me.Width / 2
+        EnergyBar.Height = 25
     End Sub
     Private Sub InitLog()
         Array.Clear(SNDLog, 0, SNDLog.Length)
@@ -1031,7 +1031,7 @@ Public Class MainForm
             PlayerAttack = Math.Round(PlayerSTR / 5, 0)
             PreviousDefense = PlayerDefense
             PreviousAttack = PlayerAttack
-            RefreshStats() 'updates Ammunition and health bar statistics
+            RefreshStats() 'updates Energy and health bar statistics
         End If
     End Sub
     Private Sub InitHighScores()
@@ -2394,29 +2394,29 @@ Public Class MainForm
 #End Region
 #Region "Tick"
     Sub ReDraw() 'also known as 'tick'
-        'check to see if the player is in water and reduce their Ammunition
+        'check to see if the player is in water and reduce their Energy
         If Map(MapLevel, PlayerPosX, PlayerPosY) = Water Then
             Dim Ignorewater = False
             If RiverType = Water And WaterImmune = 0 Then
-                PlayerCurAmmunition -= 10
+                PlayerCurEnergy -= 10
             ElseIf RiverType = Ice And IceImmune = 0 Then
-                PlayerCurAmmunition -= 20
+                PlayerCurEnergy -= 20
             ElseIf RiverType = Lava And LavaImmune = 0 Then
-                PlayerCurAmmunition -= 30
+                PlayerCurEnergy -= 30
             Else
                 Ignorewater = True
             End If
-            If PlayerCurAmmunition <= 0 Then
-                PlayerCurHitpoints += PlayerCurAmmunition
+            If PlayerCurEnergy <= 0 Then
+                PlayerCurHitpoints += PlayerCurEnergy
                 SND("You use up all your WP.")
-                If RiverType = Water And PlayerCurAmmunition <> 0 Then
-                    SND("You drown for " + LTrim(Str(Math.Abs(PlayerCurAmmunition))) + "HP.")
-                ElseIf RiverType = Ice And PlayerCurAmmunition <> 0 Then
-                    SND("You freeze for " + LTrim(Str(Math.Abs(PlayerCurAmmunition))) + "HP.")
-                ElseIf RiverType = Lava And PlayerCurAmmunition <> 0 Then
-                    SND("You burn for " + LTrim(Str(Math.Abs(PlayerCurAmmunition))) + "HP.")
+                If RiverType = Water And PlayerCurEnergy <> 0 Then
+                    SND("You drown for " + LTrim(Str(Math.Abs(PlayerCurEnergy))) + "HP.")
+                ElseIf RiverType = Ice And PlayerCurEnergy <> 0 Then
+                    SND("You freeze for " + LTrim(Str(Math.Abs(PlayerCurEnergy))) + "HP.")
+                ElseIf RiverType = Lava And PlayerCurEnergy <> 0 Then
+                    SND("You burn for " + LTrim(Str(Math.Abs(PlayerCurEnergy))) + "HP.")
                 End If
-                PlayerCurAmmunition = 0
+                PlayerCurEnergy = 0
             ElseIf Ignorewater = True Then
                 SND("You remain immune.")
                 If WaterImmune > 0 Then
@@ -2446,7 +2446,7 @@ Public Class MainForm
                     SND("You burn reducing WP by 30.")
                 End If
             End If
-            RefreshStats() 'updates Ammunition and health bar statistics
+            RefreshStats() 'updates Energy and health bar statistics
         End If
         'Process the mobiles on the map and move them one at a time.
         Dim ProcessMobilePathNumber As Short = 0
@@ -2519,7 +2519,7 @@ Public Class MainForm
         chacur.Text = LTrim(Str(PlayerCHA)) : chamax.Text = LTrim(Str(PlayerMaxCHA)) : If PlayerCHA < PlayerMaxCHA Then chaadd.Enabled = True
         luccur.Text = LTrim(Str(PlayerLUC)) : lucmax.Text = LTrim(Str(PlayerMaxLuc)) : If PlayerLUC < PlayerMaxLuc Then lucadd.Enabled = True
         hpcur.Text = LTrim(Str(PlayerHitpoints)) : hpadd.Enabled = True
-        wpcur.Text = LTrim(Str(PlayerAmmunition)) : wpadd.Enabled = True
+        wpcur.Text = LTrim(Str(PlayerEnergy)) : wpadd.Enabled = True
         PlayerLevelPoints += Math.Round(PlayerWIS / 4, 0)
         CurPoints.Text = LTrim(Str(PlayerLevelPoints))
         HelpInfo.Visible = False
@@ -2644,7 +2644,7 @@ Public Class MainForm
         PlayerCHA = Val(chacur.Text)
         PlayerLUC = Val(luccur.Text)
         PlayerHitpoints = Val(hpcur.Text)
-        PlayerAmmunition = Val(wpcur.Text)
+        PlayerEnergy = Val(wpcur.Text)
         PlayerDefense += Math.Round(PlayerCON / 5, 0) - Math.Round(PrevCon / 5, 0)
         PlayerAttack += Math.Round(PlayerSTR / 5, 0) - Math.Round(PrevStr / 5, 0)
         LevelUpPanel.Visible = False
@@ -2654,9 +2654,9 @@ Public Class MainForm
         HealthBar.Caption = LTrim(Str(PlayerCurHitpoints)) + " / " + LTrim(Str(PlayerHitpoints)) + " HP"
         HealthBar.Value = PlayerCurHitpoints
         HealthBar.Max = PlayerHitpoints
-        AmmunitionBar.Caption = LTrim(Str(PlayerCurAmmunition)) + " / " + LTrim(Str(PlayerAmmunition)) + " WP"
-        AmmunitionBar.Value = PlayerCurAmmunition
-        AmmunitionBar.Max = PlayerAmmunition
+        EnergyBar.Caption = LTrim(Str(PlayerCurEnergy)) + " / " + LTrim(Str(PlayerEnergy)) + " EN"
+        EnergyBar.Value = PlayerCurEnergy
+        EnergyBar.Max = PlayerEnergy
     End Sub
 #End Region
 #Region "Image Filters"
@@ -2849,15 +2849,17 @@ Public Class MainForm
                 ReDraw()
             ElseIf e.KeyCode = Keys.S Then
                 If MobilePresent = True Then
-                    If PlayerCurAmmunition >= 5 Then
+                    If PlayerCurEnergy >= 5 Then
                         SND("Shoot in what direction?")
                         SkillType = "Shoot"
-                        PlayerCurAmmunition -= 5
+                        PlayerCurEnergy -= 5
                         DrawingProcedures.TargetEnemy()
                         SND("Press Spacebar to shoot.")
                         PlayerTargeting = True
+                        EnergyBar.Caption = LTrim(Str(PlayerCurEnergy)) + " / " + LTrim(Str(PlayerEnergy)) + " EN"
+                        EnergyBar.Value = PlayerCurEnergy
                     Else
-                        SND("Not enough Ammunition.")
+                        SND("Not enough Energy.")
                     End If
                 Else
                     SND("No enemies are around.")
@@ -2867,11 +2869,11 @@ Public Class MainForm
             ElseIf e.KeyCode = Keys.NumPad5 Then
                 If PlayerCurHitpoints < PlayerHitpoints Then
                     PlayerCurHitpoints += 1
-                    RefreshStats() 'updates Ammunition and health bar statistics
+                    RefreshStats() 'updates Energy and health bar statistics
                 End If
-                If PlayerCurAmmunition < PlayerAmmunition Then
-                    PlayerCurAmmunition += 1
-                    RefreshStats() 'updates Ammunition and health bar statistics
+                If PlayerCurEnergy < PlayerEnergy Then
+                    PlayerCurEnergy += 1
+                    RefreshStats() 'updates Energy and health bar statistics
                 End If
                 ReDraw()
             ElseIf e.KeyCode = Keys.H Or e.KeyCode = Keys.OemQuestion And e.Shift = True Then
@@ -2993,7 +2995,7 @@ Public Class MainForm
                 MobileType(MapLevel, MaxMobiles) = 1
                 MobileHealth(MapLevel, MaxMobiles) = 100
                 PlayerHitpoints = 100 : PlayerCurHitpoints = 100
-                PlayerAmmunition = 100 : PlayerCurAmmunition = 100
+                PlayerEnergy = 100 : PlayerCurEnergy = 100
                 'MobileExists(MapLevel, PlayerPosX, PlayerPosY) = True 'set mobile to living
                 PlayerLastPosX = PlayerPosX
                 PlayerLastPosY = PlayerPosY

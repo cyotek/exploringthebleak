@@ -78,6 +78,7 @@
     <Compile Include="ApplicationEvents.vb" />
     <Compile Include="DrawingProcedures.vb" />
     <Compile Include="GenerateItem.vb" />
+    <Compile Include="LineOfSight.vb" />
     <Compile Include="Main.vb">
       <SubType>Form</SubType>
     </Compile>
