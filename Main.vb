@@ -129,8 +129,19 @@ Public Class MainForm
     Public RowSpace As Integer = 0
 
     Public CommentBoxOpen As Boolean = False
+
+    Public MusicOn As Boolean = True
+    Public Music_FileToPlay As String
+    Public MusicBaseName(9) As String
+    Public MusicDecrease(9) As Short
+    Public MusicIncrease(9) As Short
+    Public MusicIncreaseTar(9) As Short
+    Public MusicIncreaseRatio(9) As Short
+    Public MusicDecreaseName(9) As String
+    Public MusicIncreaseName(9) As String
 #End Region
 #Region "Basic Functions"
+    Private Declare Function mciSendString Lib "winmm.dll" Alias "mciSendStringA" (ByVal lpstrCommand As String, ByVal lpstrReturnString As String, ByVal uReturnLength As Integer, ByVal hwndCallback As Integer) As Integer
     Function CapitalizeFirstLetter(ByVal TheString As String) As String
         TheString = UCase(Mid(TheString, 1, 1)) + Mid(TheString, 2, Len(TheString))
         Return TheString
@@ -340,35 +351,73 @@ Public Class MainForm
         End If
         Return 0
     End Function
+    Function AssignMobileString(ByVal MobNum As Short) As String
+        If MobileType(MapLevel, MobNum) = 1 Then
+            Return "Плутон" 'russian for pluto
+        ElseIf MobileType(MapLevel, MobNum) = 2 Then
+            Return "Нептун" 'russian for neptune
+        ElseIf MobileType(MapLevel, MobNum) = 3 Then
+            Return "Уран" 'russian for uranus
+        ElseIf MobileType(MapLevel, MobNum) = 4 Then
+            Return "Сатурн" 'saturn
+        ElseIf MobileType(MapLevel, MobNum) = 5 Then
+            Return "Юпитер" 'jupiter
+        ElseIf MobileType(MapLevel, MobNum) = 6 Then
+            Return "Марс" 'mars
+        ElseIf MobileType(MapLevel, MobNum) = 7 Then
+            Return "Земли" 'earth
+        ElseIf MobileType(MapLevel, MobNum) = 8 Then
+            Return "Венера" 'venus
+        ElseIf MobileType(MapLevel, MobNum) = 9 Then
+            Return "ртути" 'mercury
+        ElseIf MobileType(MapLevel, MobNum) = 10 Then
+            Return "Солнце" 'sun
+        ElseIf MobileType(MapLevel, MobNum) = 11 Then
+            Return "демон" 'demon in russian
+        ElseIf MobileType(MapLevel, MobNum) = 12 Then
+            Return "уничтожения" 'russian for destruction
+        ElseIf MobileType(MapLevel, MobNum) = 13 Then
+            Return "армагеддон" 'russian for armageddon
+        Else
+            Return "Unknown"
+        End If
+    End Function
+    Function AssignMobileDamage(ByVal mobnum As Short) As Short
+        If MobileType(MapLevel, mobnum) = 1 Then
+            Return 3
+        ElseIf MobileType(MapLevel, mobnum) = 2 Then
+            Return 6
+        ElseIf MobileType(MapLevel, mobnum) = 3 Then
+            Return 9
+        ElseIf MobileType(MapLevel, mobnum) = 4 Then
+            Return 12
+        ElseIf MobileType(MapLevel, mobnum) = 5 Then
+            Return 15
+        ElseIf MobileType(MapLevel, mobnum) = 6 Then
+            Return 18
+        ElseIf MobileType(MapLevel, mobnum) = 7 Then
+            Return 21
+        ElseIf MobileType(MapLevel, mobnum) = 8 Then
+            Return 24
+        ElseIf MobileType(MapLevel, mobnum) = 9 Then
+            Return 27
+        ElseIf MobileType(MapLevel, mobnum) = 10 Then
+            Return 30
+        ElseIf MobileType(MapLevel, mobnum) = 11 Then
+            Return 33
+        ElseIf MobileType(MapLevel, mobnum) = 12 Then
+            Return 36
+        ElseIf MobileType(MapLevel, mobnum) = 13 Then
+            Return 39
+        Else
+            PlayerCurHitpoints -= 10
+            SND("You trip and damage yourself.")
+            Return 0
+        End If
+    End Function
     Function MobileFleeFail(ByVal Mobnum As Short)
         Dim MobileNameString As String = ""
-        If MobileType(MapLevel, Mobnum) = 1 Then
-            MobileNameString = "A rat"
-        ElseIf MobileType(MapLevel, Mobnum) = 2 Then
-            MobileNameString = "A bat"
-        ElseIf MobileType(MapLevel, Mobnum) = 3 Then
-            MobileNameString = "An imp"
-        ElseIf MobileType(MapLevel, Mobnum) = 4 Then
-            MobileNameString = "A goblin"
-        ElseIf MobileType(MapLevel, Mobnum) = 5 Then
-            MobileNameString = "A troll"
-        ElseIf MobileType(MapLevel, Mobnum) = 6 Then
-            MobileNameString = "An ogre"
-        ElseIf MobileType(MapLevel, Mobnum) = 7 Then
-            MobileNameString = "A catoblepas"
-        ElseIf MobileType(MapLevel, Mobnum) = 8 Then
-            MobileNameString = "A parandrus"
-        ElseIf MobileType(MapLevel, Mobnum) = 9 Then
-            MobileNameString = "A clurichuan"
-        ElseIf MobileType(MapLevel, Mobnum) = 10 Then
-            MobileNameString = "A dullahan"
-        ElseIf MobileType(MapLevel, Mobnum) = 11 Then
-            MobileNameString = "A golem"
-        ElseIf MobileType(MapLevel, Mobnum) = 12 Then
-            MobileNameString = "A sceadugengan"
-        ElseIf MobileType(MapLevel, Mobnum) = 13 Then
-            MobileNameString = "A schilla"
-        End If
+        MobileNameString = AssignMobileString(Mobnum)
         SND(MobileNameString + " trips in its terror.")
         MobileHealth(MapLevel, Mobnum) -= 1
         If MobileHealth(MapLevel, Mobnum) <= 0 Then
@@ -379,33 +428,7 @@ Public Class MainForm
     End Function
     Function FleeMob(ByVal Mobnum As Short)
         Dim MobileNameString As String = ""
-        If MobileType(MapLevel, Mobnum) = 1 Then
-            MobileNameString = "a rat"
-        ElseIf MobileType(MapLevel, Mobnum) = 2 Then
-            MobileNameString = "a bat"
-        ElseIf MobileType(MapLevel, Mobnum) = 3 Then
-            MobileNameString = "an imp"
-        ElseIf MobileType(MapLevel, Mobnum) = 4 Then
-            MobileNameString = "a goblin"
-        ElseIf MobileType(MapLevel, Mobnum) = 5 Then
-            MobileNameString = "a troll"
-        ElseIf MobileType(MapLevel, Mobnum) = 6 Then
-            MobileNameString = "an ogre"
-        ElseIf MobileType(MapLevel, Mobnum) = 7 Then
-            MobileNameString = "a catoblepas"
-        ElseIf MobileType(MapLevel, Mobnum) = 8 Then
-            MobileNameString = "a parandrus"
-        ElseIf MobileType(MapLevel, Mobnum) = 9 Then
-            MobileNameString = "a clurichuan"
-        ElseIf MobileType(MapLevel, Mobnum) = 10 Then
-            MobileNameString = "a dullahan"
-        ElseIf MobileType(MapLevel, Mobnum) = 11 Then
-            MobileNameString = "a golem"
-        ElseIf MobileType(MapLevel, Mobnum) = 12 Then
-            MobileNameString = "a sceadugengan"
-        ElseIf MobileType(MapLevel, Mobnum) = 13 Then
-            MobileNameString = "a schilla"
-        End If
+        MobileNameString = AssignMobileString(Mobnum)
         SND(MobileNameString + " turns to flee.")
         MobileFlee(MapLevel, Mobnum) = Math.Round(PlayerCHA / 10, 0)
         Return 0
@@ -414,33 +437,7 @@ Public Class MainForm
         Dim MobileNameString As String = ""
         Dim TestCriticalStrike As New Random
         Dim CritStrike As Short = 0
-        If MobileType(MapLevel, Mobnum) = 1 Then
-            MobileNameString = "a rat"
-        ElseIf MobileType(MapLevel, Mobnum) = 2 Then
-            MobileNameString = "a bat"
-        ElseIf MobileType(MapLevel, Mobnum) = 3 Then
-            MobileNameString = "an imp"
-        ElseIf MobileType(MapLevel, Mobnum) = 4 Then
-            MobileNameString = "a goblin"
-        ElseIf MobileType(MapLevel, Mobnum) = 5 Then
-            MobileNameString = "a troll"
-        ElseIf MobileType(MapLevel, Mobnum) = 6 Then
-            MobileNameString = "an ogre"
-        ElseIf MobileType(MapLevel, Mobnum) = 7 Then
-            MobileNameString = "a catoblepas"
-        ElseIf MobileType(MapLevel, Mobnum) = 8 Then
-            MobileNameString = "a parandrus"
-        ElseIf MobileType(MapLevel, Mobnum) = 9 Then
-            MobileNameString = "a clurichuan"
-        ElseIf MobileType(MapLevel, Mobnum) = 10 Then
-            MobileNameString = "a dullahan"
-        ElseIf MobileType(MapLevel, Mobnum) = 11 Then
-            MobileNameString = "a golem"
-        ElseIf MobileType(MapLevel, Mobnum) = 12 Then
-            MobileNameString = "a sceadugengan"
-        ElseIf MobileType(MapLevel, Mobnum) = 13 Then
-            MobileNameString = "a schilla"
-        End If
+        MobileNameString = AssignMobileString(Mobnum)
         If HideAttack = False Then
             If SkillType = "" Then CritStrike = TestCriticalStrike.Next(0, 101) Else CritStrike = TestCriticalStrike.Next(0, 101)
             If CritStrike <= PlayerSTR And SkillType = "" Then 'player critically striked. chance to critically strike is the players strength
@@ -450,14 +447,13 @@ Public Class MainForm
                 Else
                     SND("You counter CRITS " + MobileNameString + ".")
                 End If
+                PlayMusic("PlayerHit")
             ElseIf CritStrike <= PlayerINT * 2 And SkillType <> "" Then 'player critically striked with a skill.
-                If SkillType = "Punch" Or SkillType = "Kick" Or SkillType = "Hit" Or SkillType = "Strike" Or SkillType = "Slice" Or SkillType = "Stab" Or SkillType = "Shoot" Then
+                If SkillType = "Shoot" Then
                     'these are the basic +1 skilltypes, and all do the same
                     MobileHealth(MapLevel, Mobnum) -= PlayerAttack * 2 + 2
-                    SND("Your skill CRITS " + MobileNameString + ".")
-                ElseIf SkillType = "Wound" Then
-                    MobileHealth(MapLevel, Mobnum) -= 40
-                    SND("Your skill CRITS " + MobileNameString + ".")
+                    SND("Your shot CRITS " + MobileNameString + ".")
+                    PlayMusic("PlayerShoot")
                 End If
             ElseIf SkillType = "" Then 'basic attack, test mobile dodge, then mobile miss
                 CritStrike = TestCriticalStrike.Next(0, 101)
@@ -467,12 +463,14 @@ Public Class MainForm
                     Else
                         SND("Your counter is dodged.")
                     End If
+                    PlayMusic("PlayerMiss")
                 ElseIf CritStrike <= 15 Then 'all attacks have 8% chance to miss
                     If Counter = False Then
                         SND("Your attack misses.")
                     Else
                         SND("Your counter misses.")
                     End If
+                    PlayMusic("PlayerMiss")
                 Else
                     If Fury > 0 Then 'fury increases regular attack strength by 1
                         MobileHealth(MapLevel, Mobnum) -= PlayerAttack + 1
@@ -484,66 +482,13 @@ Public Class MainForm
                     Else
                         SND("You counter " + MobileNameString + ".")
                     End If
+                    PlayMusic("PlayerHit")
                 End If
             ElseIf SkillType <> "" Then 'basic skill
-                If SkillType = "Punch" Then 'just a +1 attack
-                    MobileHealth(MapLevel, Mobnum) -= PlayerAttack + 1
-                    SND("You punch " + MobileNameString + ".")
-                ElseIf SkillType = "Kick" Then 'just a +1 attack
-                    MobileHealth(MapLevel, Mobnum) -= PlayerAttack + 1
-                    SND("You kick " + MobileNameString + ".")
-                ElseIf SkillType = "Hit" Then 'just a +1 attack
-                    MobileHealth(MapLevel, Mobnum) -= PlayerAttack + 1
-                    SND("You hit " + MobileNameString + ".")
-                ElseIf SkillType = "Strike" Then 'just a +1 attack
-                    MobileHealth(MapLevel, Mobnum) -= PlayerAttack + 1
-                    SND("You strike " + MobileNameString + ".")
-                ElseIf SkillType = "Slice" Then 'just a +1 attack
-                    MobileHealth(MapLevel, Mobnum) -= PlayerAttack + 1
-                    SND("You slice " + MobileNameString + ".")
-                ElseIf SkillType = "Stab" Then 'just a +1 attack
-                    MobileHealth(MapLevel, Mobnum) -= PlayerAttack + 1
-                    SND("You stab " + MobileNameString + ".")
-                ElseIf SkillType = "Shoot" Then 'just a +1 attack
+                If SkillType = "Shoot" Then 'just a +1 attack
                     MobileHealth(MapLevel, Mobnum) -= PlayerAttack + 1
                     SND("You shoot " + MobileNameString + ".")
-                ElseIf SkillType = "Wound" Then '20 attack
-                    MobileHealth(MapLevel, Mobnum) -= 20
-                    SND("You decimate " + MobileNameString + ".")
-                ElseIf SkillType = "Stun" Then 'stun enemy preventing movement and attacks for 3 rounds
-                    MobileStun(MapLevel, Mobnum) = 3
-                    SND("You stun " + MobileNameString + ".")
-                ElseIf SkillType = "Double Slice" Then 'double slice the enemy
-                    MobileHealth(MapLevel, Mobnum) -= PlayerAttack * 2
-                    SND("You slice " + MobileNameString + ".")
-                    SND("You slice " + MobileNameString + ".")
-                ElseIf SkillType = "Trip" Then 'stun enemy for 2 rounds
-                    MobileStun(MapLevel, Mobnum) = 2
-                    SND("You trip " + MobileNameString + ".")
-                ElseIf SkillType = "Runestrike" Then 'runstrike enemy
-                    MobileStun(MapLevel, Mobnum) = 2
-                    MobileHealth(MapLevel, Mobnum) -= PlayerAttack
-                    SND("You runstrike " + MobileNameString + ".")
-                ElseIf SkillType = "Fireball" Then 'fireball enemy
-                    MobileHealth(MapLevel, Mobnum) -= PlayerAttack + 10
-                    SND("A fireball mutilates " + MobileNameString + ".")
-                ElseIf SkillType = "Clumsiness" Then 'clumsiness enemy
-                    SND("You clumsiness " + MobileNameString + ".")
-                    MobileClumsiness(MapLevel, Mobnum) = 5
-                ElseIf SkillType = "Holy Bolt" Then 'holy bolt enemy
-                    SND("Holy Bolt erradicates " + MobileNameString + ".")
-                    MobileHealth(MapLevel, Mobnum) -= PlayerAttack + 10
-                ElseIf SkillType = "Fire Arrow" Then 'fire arrow enemy
-                    SND("Fire Arrow sears " + MobileNameString + ".")
-                    MobileHealth(MapLevel, Mobnum) -= PlayerAttack + 3
-                ElseIf SkillType = "Sacrifice" Then 'sacrifice hp for extra damage attack
-                    SND("You demolish " + MobileNameString + ".")
-                    MobileHealth(MapLevel, Mobnum) -= PlayerAttack + 10
-                ElseIf SkillType = "Triple Slice" Then 'double slice the enemy
-                    MobileHealth(MapLevel, Mobnum) -= PlayerAttack * 3
-                    SND("You slice " + MobileNameString + ".")
-                    SND("You slice " + MobileNameString + ".")
-                    SND("You slice " + MobileNameString + ".")
+                    PlayMusic("PlayerShoot")
                 End If
                 SkillType = "" 'makes sure you don't use the skill again for free ;0
             End If
@@ -572,50 +517,9 @@ Public Class MainForm
         Dim SupressDueToCriticalStrike As Boolean = False
         Dim TestDodgeRandom As New Random
         Dim TestDodge As Short = 0
-        If MobileType(MapLevel, Mobnum) = 1 Then
-            DamageAmount = 3
-            MobileNameString = "A rat"
-        ElseIf MobileType(MapLevel, Mobnum) = 2 Then
-            DamageAmount = 6
-            MobileNameString = "A bat"
-        ElseIf MobileType(MapLevel, Mobnum) = 3 Then
-            DamageAmount = 9
-            MobileNameString = "An imp"
-        ElseIf MobileType(MapLevel, Mobnum) = 4 Then
-            DamageAmount = 12
-            MobileNameString = "A goblin"
-        ElseIf MobileType(MapLevel, Mobnum) = 5 Then
-            DamageAmount = 15
-            MobileNameString = "A troll"
-        ElseIf MobileType(MapLevel, Mobnum) = 6 Then
-            DamageAmount = 18
-            MobileNameString = "An ogre"
-        ElseIf MobileType(MapLevel, Mobnum) = 7 Then
-            DamageAmount = 21
-            MobileNameString = "A catoblepas"
-        ElseIf MobileType(MapLevel, Mobnum) = 8 Then
-            DamageAmount = 24
-            MobileNameString = "A parandrus"
-        ElseIf MobileType(MapLevel, Mobnum) = 9 Then
-            DamageAmount = 27
-            MobileNameString = "A clurichuan"
-        ElseIf MobileType(MapLevel, Mobnum) = 10 Then
-            DamageAmount = 30
-            MobileNameString = "A dullahan"
-        ElseIf MobileType(MapLevel, Mobnum) = 11 Then
-            DamageAmount = 33
-            MobileNameString = "A golem"
-        ElseIf MobileType(MapLevel, Mobnum) = 12 Then
-            DamageAmount = 36
-            MobileNameString = "A sceadugengan"
-        ElseIf MobileType(MapLevel, Mobnum) = 13 Then
-            DamageAmount = 39
-            MobileNameString = "A schilla"
-        Else
-            PlayerCurHitpoints -= 10
-            SND("You trip and damage yourself.")
-            SupressDueToCriticalStrike = True
-        End If
+        MobileNameString = AssignMobileString(Mobnum)
+        DamageAmount = AssignMobileDamage(Mobnum)
+        If DamageAmount = 0 Then Return 0 'player trips, exit hitcharacter
         If BoneShield > 0 Then
             SupressDueToCriticalStrike = True
             SND(MobileNameString + " attacks bone shield.")
@@ -628,14 +532,17 @@ Public Class MainForm
         If PlayerDEX >= TestDodge Then 'player dodged the attack due to their dexterity score
             SupressDueToCriticalStrike = True
             SND("You dodge an attack.")
+            PlayMusic("PlayerMiss")
         End If
         TestDodge = TestDodgeRandom.Next(0, 100) 'test miss, 10%
         If TestDodge <= 10 And MobileClumsiness(MapLevel, Mobnum) <= 0 Then
             SupressDueToCriticalStrike = True
             SND(MobileNameString + "'s attack misses.")
+            PlayMusic("PlayerMiss")
         ElseIf MobileClumsiness(MapLevel, Mobnum) > 0 And TestDodge <= 50 Then
             SupressDueToCriticalStrike = True
             SND(MobileNameString + "'s attack misses.")
+            PlayMusic("PlayerMiss")
         End If
         If MobileClumsiness(MapLevel, Mobnum) > 0 Then MobileClumsiness(MapLevel, Mobnum) -= 1
         If SupressDueToCriticalStrike = False Then
@@ -650,6 +557,7 @@ Public Class MainForm
                 PlayerCurHitpoints -= DamageAmount
                 SND(MobileNameString + " hits you for " + LTrim(Str(DamageAmount)) + ".")
             End If
+            PlayMusic("ReceiveHit")
         End If
         HealthBar.Caption = LTrim(Str(PlayerCurHitpoints)) + " / " + LTrim(Str(PlayerHitpoints)) + " HP"
         HealthBar.Value = PlayerCurHitpoints
@@ -1086,7 +994,10 @@ Public Class MainForm
             Me.Width = PossibleWidth
             Me.Height = PossibleHeight
             Me.CenterToScreen() 'center to the screen
-            displayfont = New Font("Arial", -4 + (TheRoomHeight + TheRoomWidth / 2) / 2)
+            Panel1.Left = Me.Width / 2 - Panel1.Width / 2
+            HUDisplay.Top = 50
+            HUDisplay.Left = Me.Width / 2 - HUDisplay.Width / 2
+            displayfont = New Font("Arial", -3 + (TheRoomHeight + TheRoomWidth / 2) / 2)
         End If
     End Sub
     Private Sub InitScreensaver()
@@ -1136,6 +1047,9 @@ Public Class MainForm
         Array.Clear(Map, 0, Map.Length)
         BuildNewMap()
     End Sub
+    Private Sub InitSound()
+        PlayMusic("Ambience")
+    End Sub
     Public Sub Initialize(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
         'resize windows
         InitWindowSize()
@@ -1145,6 +1059,7 @@ Public Class MainForm
         InitCharacter()
         InitHighScores()
         InitMaps()
+        InitSound()
         Initialized = True
         Me.Focus()
     End Sub
@@ -1155,6 +1070,7 @@ Public Class MainForm
         Dim GenerateRiverChance As Short = RandomNumber.Next(0, 101)
         CANVAS.FillRectangle(Brushes.Black, 1, 1, 1200, 1200)
         'refresh line of sight for new map
+        Array.Clear(LOSMap, 0, LOSMap.Length)
         Array.Clear(MapShown, 0, MapShown.Length) 'clear all shown sectors
         'check to see if the new map was one visited already
         If MapCreated(MapLevel) = False Then 'entering a new map, need to generate
@@ -2552,33 +2468,7 @@ Public Class MainForm
                 'after mobile moves, check to see if its on water and then reduce its health as it drowns, no mobile can swim
                 Try
                     If Map(MapLevel, MobilePosX(MapLevel, ProcessMobilePathNumber), MobilePosY(MapLevel, ProcessMobilePathNumber)) = Water Then
-                        If MobileType(MapLevel, ProcessMobilePathNumber) = 1 Then
-                            MobileNameString = "A rat"
-                        ElseIf MobileType(MapLevel, ProcessMobilePathNumber) = 2 Then
-                            MobileNameString = "A bat"
-                        ElseIf MobileType(MapLevel, ProcessMobilePathNumber) = 3 Then
-                            MobileNameString = "An imp"
-                        ElseIf MobileType(MapLevel, ProcessMobilePathNumber) = 4 Then
-                            MobileNameString = "A goblin"
-                        ElseIf MobileType(MapLevel, ProcessMobilePathNumber) = 5 Then
-                            MobileNameString = "A troll"
-                        ElseIf MobileType(MapLevel, ProcessMobilePathNumber) = 6 Then
-                            MobileNameString = "An ogre"
-                        ElseIf MobileType(MapLevel, ProcessMobilePathNumber) = 7 Then
-                            MobileNameString = "A catoblepas"
-                        ElseIf MobileType(MapLevel, ProcessMobilePathNumber) = 8 Then
-                            MobileNameString = "A parandrus"
-                        ElseIf MobileType(MapLevel, ProcessMobilePathNumber) = 9 Then
-                            MobileNameString = "A clurichuan"
-                        ElseIf MobileType(MapLevel, ProcessMobilePathNumber) = 10 Then
-                            MobileNameString = "A dullahan"
-                        ElseIf MobileType(MapLevel, ProcessMobilePathNumber) = 11 Then
-                            MobileNameString = "A golem"
-                        ElseIf MobileType(MapLevel, ProcessMobilePathNumber) = 12 Then
-                            MobileNameString = "A sceadugengan"
-                        ElseIf MobileType(MapLevel, ProcessMobilePathNumber) = 13 Then
-                            MobileNameString = "A schilla"
-                        End If
+                        MobileNameString = AssignMobileString(MobileType(MapLevel, ProcessMobilePathNumber))
                         If RiverType = Water Then
                             MobileHealth(MapLevel, ProcessMobilePathNumber) -= 1
                             SND(MobileNameString + " is drowning.")
@@ -3019,45 +2909,7 @@ Public Class MainForm
     End Sub
 #Region "Menu Click"
     Private Sub NewGameClick(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles NewGameToolStripMenuItem.Click, NewGameToolStripMenuItem1.Click
-        'enable the toggle strip on the file menu
-        StatStrip.Enabled = True
-        ToggleStrip.Enabled = True
-        LogStrip.Enabled = True
-        'disable screensaver variables
-        Screensaver = False
-        Timer.Enabled = False
-        ScreensaverFound = False
-        Screensaver = False
-        'setup character variables
-        PlayerExperience = 0
-        PlayerGold = 0
-        PlayerTurns = 0
-        PlayerLevel = 0
-        PlayerLevelPoints = 0
-        PlayerDead = False
-        MapLevel = 1
-        'setup window
-        Initialize(0, EventArgs.Empty)
-        Array.Clear(LOSMap, 0, LOSMap.Length) 'set all to hidden
-        Array.Clear(MapCreated, 0, MapCreated.Length)
-        'inventory shizzy
-        For tmp0 = 0 To 19 Step 1
-            ItemInventoryName(tmp0) = ""
-            ItemInventoryQuality(tmp0) = 0
-            ItemInventoryType(tmp0) = 0
-            PlayerEquipArms = 0
-            PlayerEquipChest = 0
-            PlayerEquipFeet = 0
-            PlayerEquipHands = 0
-            PlayerEquipHead = 0
-            PlayerEquipLegs = 0
-            PlayerEquipNArms = ""
-            PlayerEquipNChest = ""
-            PlayerEquipNFeet = ""
-            PlayerEquipNHands = ""
-            PlayerEquipNHead = ""
-            PLayerEquipNLegs = ""
-        Next
+        Panel1.Visible = True
     End Sub
     Private Sub ExitGameClick(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ExitGameToolStripMenuItem.Click, ExitGameToolStripMenuItem1.Click
         Me.Close()
@@ -3126,10 +2978,13 @@ Public Class MainForm
     '    End Sub
 
     Private Sub ScreensaverActivate(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Timer.Tick
-        SND(0, True) 'mobile moves each tick, go ahead and clear snd logs if visible
         If Screensaver = True Then 'move character, it's the screensaver
             If PlayerPosX = ExitPosX And PlayerPosY = ExitPosY Then
                 MapLevel += 1
+                If MapLevel = MaxDepthLevel Then 'ensure that the screensaver restarts once it reaches the max depth level
+                    Array.Clear(MapCreated, 0, MapCreated.Length) 'ensures the map is re-generated now that it's visited a prviously made map
+                    MapLevel = 1
+                End If
                 BuildNewMap(False)
                 ScreensaverFound = False
             Else
@@ -3150,4 +3005,226 @@ Public Class MainForm
             ReDraw()
         End If
     End Sub
+    Public Sub PlayMusic(ByVal Type As String)
+        'allow just the ambience during the screensaver
+        If MusicOn = True And Screensaver = False Or Type = "Ambience" Then
+            'play the ambience and repeat it
+            If Type = "Ambience" And MusicBaseName(0) = "" Then
+                MusicBaseName(0) = "Ambience"
+                Array.Clear(MusicDecrease, 0, MusicDecrease.Length)
+                Array.Clear(MusicIncrease, 0, MusicDecrease.Length)
+                Music_FileToPlay = (Chr(34) + ("Ambience.mp3") + Chr(34))
+                mciSendString("open " & Music_FileToPlay & " alias " + MusicBaseName(0), Nothing, 0, 0)
+                mciSendString("play " + MusicBaseName(0) + " repeat", Nothing, 0, 0)
+                'if the player hit file isn't load it, then load it and play it
+            ElseIf Type = "PlayerHit" And MusicBaseName(1) = "" Then
+                MusicBaseName(1) = "PlayerHit"
+                Music_FileToPlay = (Chr(34) + ("PlayerHit.mp3") + Chr(34))
+                mciSendString("open " & Music_FileToPlay & " alias " + MusicBaseName(1), Nothing, 0, 0)
+                mciSendString("play " + MusicBaseName(1), Nothing, 0, 0)
+                'if the player hit file IS loaded then close it and open it and play it
+            ElseIf Type = "PlayerHit" And MusicBaseName(1) <> "" Then
+                mciSendString("close " + MusicBaseName(1), Nothing, 0, 0)
+                Music_FileToPlay = (Chr(34) + ("PlayerHit.mp3") + Chr(34))
+                mciSendString("open " & Music_FileToPlay & " alias " + MusicBaseName(1), Nothing, 0, 0)
+                mciSendString("play " + MusicBaseName(1), Nothing, 0, 0)
+            ElseIf Type = "PlayerShoot" And MusicBaseName(2) = "" Then
+                MusicBaseName(2) = "PlayerShoot"
+                Music_FileToPlay = (Chr(34) + ("PlayerShoot.mp3") + Chr(34))
+                mciSendString("open " & Music_FileToPlay & " alias " + MusicBaseName(2), Nothing, 0, 0)
+                mciSendString("play " + MusicBaseName(2), Nothing, 0, 0)
+                'if the player hit file IS loaded then close it and open it and play it
+            ElseIf Type = "PlayerShoot" And MusicBaseName(2) <> "" Then
+                mciSendString("close " + MusicBaseName(2), Nothing, 0, 0)
+                Music_FileToPlay = (Chr(34) + ("PlayerShoot.mp3") + Chr(34))
+                mciSendString("open " & Music_FileToPlay & " alias " + MusicBaseName(2), Nothing, 0, 0)
+                mciSendString("play " + MusicBaseName(2), Nothing, 0, 0)
+            ElseIf Type = "PlayerMiss" And MusicBaseName(3) = "" Then
+                MusicBaseName(3) = "PlayerMiss"
+                Music_FileToPlay = (Chr(34) + ("PlayerMiss.mp3") + Chr(34))
+                mciSendString("open " & Music_FileToPlay & " alias " + MusicBaseName(3), Nothing, 0, 0)
+                mciSendString("play " + MusicBaseName(3), Nothing, 0, 0)
+            ElseIf Type = "PlayerMiss" And MusicBaseName(3) <> "" Then
+                mciSendString("close " + MusicBaseName(3), Nothing, 0, 0)
+                Music_FileToPlay = (Chr(34) + ("PlayerMiss.mp3") + Chr(34))
+                mciSendString("open " & Music_FileToPlay & " alias " + MusicBaseName(3), Nothing, 0, 0)
+                mciSendString("play " + MusicBaseName(3), Nothing, 0, 0)
+            ElseIf Type = "ReceiveHit" And MusicBaseName(4) = "" Then
+                MusicBaseName(4) = "ReceiveHit"
+                Music_FileToPlay = (Chr(34) + ("ReceiveHit.mp3") + Chr(34))
+                mciSendString("open " & Music_FileToPlay & " alias " + MusicBaseName(4), Nothing, 0, 0)
+                mciSendString("play " + MusicBaseName(4), Nothing, 0, 0)
+            ElseIf Type = "ReceiveHit" And MusicBaseName(4) <> "" Then
+                mciSendString("close " + MusicBaseName(4), Nothing, 0, 0)
+                Music_FileToPlay = (Chr(34) + ("ReceiveHit.mp3") + Chr(34))
+                mciSendString("open " & Music_FileToPlay & " alias " + MusicBaseName(4), Nothing, 0, 0)
+                mciSendString("play " + MusicBaseName(4), Nothing, 0, 0)
+            Else
+                'MusicIncrease(2) = 1000
+                'MusicIncreaseTar(2) = 300 '30% volume
+                'MusicIncreaseRatio(2) = 2
+                'MusicIncreaseName(2) = MusicBaseName(2)
+                'here is the natural music location where one would assess the environment and play the correct music file
+                'associated with that environment.
+                'MusicDecrease(2) = 300
+                'MusicDecreaseName(2) = "LoginCrowd"
+                'MusicIncrease(2) = 1000
+                'MusicIncrease(3) = 1000
+                'MusicIncreaseTar(3) = 400 '30% volume
+                'MusicIncreaseRatio(3) = 2
+                'MusicIncreaseName(3) = MusicBaseName(3)
+            End If
+        End If
+    End Sub
+#Region "Class Creation Screen"
+    Private Sub ScoutClicked(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Panel2.Click, Label13.Click
+        ClassIntroStatsBox.Text = "+Dodge"
+        ClassIntroStatsBox.Text += Chr(13) + "+Feint"
+        ClassIntroStatsBox.Text += Chr(13) + "+Range"
+        ClassIntroStatsBox.Text += Chr(13)
+        ClassIntroStatsBox.Text += Chr(13) + "8 Strength"
+        ClassIntroStatsBox.Text += Chr(13) + "14 Dexterity"
+        ClassIntroStatsBox.Text += Chr(13) + "10 Constitution"
+        ClassIntroStatsBox.Text += Chr(13) + "9 Intelligence"
+        ClassIntroStatsBox.Text += Chr(13) + "8 Wisdom"
+        ClassIntroStatsBox.Text += Chr(13) + "11 Charisma"
+        ClassIntroStatsBox.Text += Chr(13) + "10 Luck"
+        PlayerSTR = 8
+        PlayerDEX = 14
+        PlayerCON = 10
+        PlayerINT = 9
+        PlayerWIS = 8
+        PlayerCHA = 11
+        PlayerLUC = 10
+        Panel2.BackColor = Color.DarkGray
+        Panel3.BackColor = Color.Gray
+        Panel4.BackColor = Color.Gray
+    End Sub
+    Private Sub SoldierClicked(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Panel3.Click, Label14.Click
+        ClassIntroStatsBox.Text = "+Counter"
+        ClassIntroStatsBox.Text = "+Fear"
+        ClassIntroStatsBox.Text += Chr(13)
+        ClassIntroStatsBox.Text += Chr(13) + "14 Strength"
+        ClassIntroStatsBox.Text += Chr(13) + "12 Dexterity"
+        ClassIntroStatsBox.Text += Chr(13) + "14 Constitution"
+        ClassIntroStatsBox.Text += Chr(13) + "8 Intelligence"
+        ClassIntroStatsBox.Text += Chr(13) + "8 Wisdom"
+        ClassIntroStatsBox.Text += Chr(13) + "16 Charisma"
+        ClassIntroStatsBox.Text += Chr(13) + "10 Luck"
+        PlayerSTR = 14
+        PlayerDEX = 12
+        PlayerCON = 14
+        PlayerINT = 8
+        PlayerWIS = 8
+        PlayerCHA = 16
+        PlayerLUC = 10
+        Panel2.BackColor = Color.Gray
+        Panel3.BackColor = Color.DarkGray
+        Panel4.BackColor = Color.Gray
+    End Sub
+    Private Sub ScientistClicked(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Panel4.Click, Label15.Click
+        ClassIntroStatsBox.Text = "+Energy"
+        ClassIntroStatsBox.Text += Chr(13) + "+Resistance"
+        ClassIntroStatsBox.Text += Chr(13)
+        ClassIntroStatsBox.Text += Chr(13) + "10 Strength"
+        ClassIntroStatsBox.Text += Chr(13) + "10 Dexterity"
+        ClassIntroStatsBox.Text += Chr(13) + "10 Constitution"
+        ClassIntroStatsBox.Text += Chr(13) + "14 Intelligence"
+        ClassIntroStatsBox.Text += Chr(13) + "14 Wisdom"
+        ClassIntroStatsBox.Text += Chr(13) + "12 Charisma"
+        ClassIntroStatsBox.Text += Chr(13) + "18 Luck"
+        PlayerSTR = 10
+        PlayerDEX = 10
+        PlayerCON = 10
+        PlayerINT = 14
+        PlayerWIS = 14
+        PlayerCHA = 12
+        PlayerLUC = 18
+        Panel2.BackColor = Color.Gray
+        Panel3.BackColor = Color.Gray
+        Panel4.BackColor = Color.DarkGray
+    End Sub
+    Private Sub HoverScout(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Panel2.MouseEnter, Label13.MouseEnter
+        Panel2.BackColor = Color.MediumSeaGreen
+    End Sub
+    Private Sub HoverSoldier(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Panel3.MouseEnter, Label14.MouseEnter
+        Panel3.BackColor = Color.MediumSeaGreen
+    End Sub
+    Private Sub HoverScientist(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Panel4.MouseEnter, Label15.MouseEnter
+        Panel4.BackColor = Color.MediumSeaGreen
+    End Sub
+    Private Sub ReturnButtons(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Panel4.MouseLeave, Panel2.MouseLeave, Label15.MouseLeave, Label14.MouseLeave, Label13.MouseLeave, Label16.MouseLeave, Panel3.MouseLeave, Panel5.MouseLeave
+        If Panel2.BackColor = Color.DarkGray Then 'scout selected, return to right colors
+            Panel2.BackColor = Color.DarkGray
+            Panel3.BackColor = Color.Gray
+            Panel4.BackColor = Color.Gray
+        ElseIf Panel3.BackColor = Color.DarkGray Then 'soldier selected, return to right colors
+            Panel2.BackColor = Color.Gray
+            Panel3.BackColor = Color.DarkGray
+            Panel4.BackColor = Color.Gray
+        ElseIf Panel4.BackColor = Color.DarkGray Then 'scientist selected, return to right colors
+            Panel2.BackColor = Color.Gray
+            Panel3.BackColor = Color.Gray
+            Panel4.BackColor = Color.DarkGray
+        ElseIf Panel2.BackColor = Color.MediumSeaGreen Then 'scout selected, return to right colors
+            Panel2.BackColor = Color.DarkGray
+            Panel3.BackColor = Color.Gray
+            Panel4.BackColor = Color.Gray
+        ElseIf Panel3.BackColor = Color.MediumSeaGreen Then 'soldier selected, return to right colors
+            Panel2.BackColor = Color.Gray
+            Panel3.BackColor = Color.DarkGray
+            Panel4.BackColor = Color.Gray
+        ElseIf Panel4.BackColor = Color.MediumSeaGreen Then 'scientist selected, return to right colors
+            Panel2.BackColor = Color.Gray
+            Panel3.BackColor = Color.Gray
+            Panel4.BackColor = Color.DarkGray
+        End If
+        Panel5.BackColor = Color.Gray
+    End Sub
+    Private Sub AcceptHover(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Label16.MouseEnter, Panel5.MouseEnter
+        Panel5.BackColor = Color.MediumSeaGreen
+    End Sub
+    Private Sub AcceptClick(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Label16.Click, Panel5.Click
+        'Hide New Character Panel
+        Panel1.Visible = False
+        'enable the toggle strip on the file menu
+        StatStrip.Enabled = True
+        ToggleStrip.Enabled = True
+        LogStrip.Enabled = True
+        'disable screensaver variables
+        Screensaver = False
+        Timer.Enabled = False
+        ScreensaverFound = False
+        Screensaver = False
+        'setup character variables
+        PlayerExperience = 0
+        PlayerGold = 0
+        PlayerTurns = 0
+        PlayerLevel = 0
+        PlayerLevelPoints = 0
+        PlayerDead = False
+        MapLevel = 1
+        'setup window
+        Initialize(0, EventArgs.Empty)
+        Array.Clear(MapCreated, 0, MapCreated.Length)
+        'inventory shizzy
+        For tmp0 = 0 To 19 Step 1
+            ItemInventoryName(tmp0) = ""
+            ItemInventoryQuality(tmp0) = 0
+            ItemInventoryType(tmp0) = 0
+            PlayerEquipArms = 0
+            PlayerEquipChest = 0
+            PlayerEquipFeet = 0
+            PlayerEquipHands = 0
+            PlayerEquipHead = 0
+            PlayerEquipLegs = 0
+            PlayerEquipNArms = ""
+            PlayerEquipNChest = ""
+            PlayerEquipNFeet = ""
+            PlayerEquipNHands = ""
+            PlayerEquipNHead = ""
+            PLayerEquipNLegs = ""
+        Next
+    End Sub
+#End Region
 End Class

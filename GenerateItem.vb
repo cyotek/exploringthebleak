@@ -24,7 +24,7 @@
         For ensure = 1 To seed Step 1
             RandomType = RandomItem.Next(1, 101)
         Next
-        If RandomType > 90 Then
+        If RandomType > 85 Then
             For Ensure = 1 To seed Step 1
                 Randomnum = RandomItem.Next(0, 68)
             Next
@@ -149,7 +149,7 @@
             ElseIf Randomnum = 67 Then : NameType = "Whip"
                 ItemType = Weapon : ShowType = "w"
             End If
-        ElseIf RandomType > 80 Then
+        ElseIf RandomType > 60 Then
             For Ensure = 1 To seed Step 1
                 Randomnum = RandomItem.Next(0, 140)
             Next

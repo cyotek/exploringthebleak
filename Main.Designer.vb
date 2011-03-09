@@ -94,6 +94,17 @@ Partial Class MainForm
         Me.HelpToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.Timer = New System.Windows.Forms.Timer(Me.components)
         Me.HUDisplay = New System.Windows.Forms.Label()
+        Me.ClassIntroStatsBox = New System.Windows.Forms.Label()
+        Me.Panel5 = New System.Windows.Forms.Panel()
+        Me.Label16 = New System.Windows.Forms.Label()
+        Me.Panel4 = New System.Windows.Forms.Panel()
+        Me.Label15 = New System.Windows.Forms.Label()
+        Me.Panel3 = New System.Windows.Forms.Panel()
+        Me.Label14 = New System.Windows.Forms.Label()
+        Me.Panel2 = New System.Windows.Forms.Panel()
+        Me.Label13 = New System.Windows.Forms.Label()
+        Me.Panel1 = New System.Windows.Forms.Panel()
+        Me.PlayerNameInput = New System.Windows.Forms.TextBox()
         Me.HealthBar = New Exploring_The_Bleak.MyProgBar()
         Me.AmmunitionBar = New Exploring_The_Bleak.MyProgBar()
         Me.LevelUpPanel.SuspendLayout()
@@ -102,6 +113,11 @@ Partial Class MainForm
         Me.SkillInfoBox.SuspendLayout()
         Me.GroupBox1.SuspendLayout()
         Me.MenuStrip1.SuspendLayout()
+        Me.Panel5.SuspendLayout()
+        Me.Panel4.SuspendLayout()
+        Me.Panel3.SuspendLayout()
+        Me.Panel2.SuspendLayout()
+        Me.Panel1.SuspendLayout()
         Me.SuspendLayout()
         '
         'HelpInfo
@@ -112,7 +128,7 @@ Partial Class MainForm
         Me.HelpInfo.ForeColor = System.Drawing.Color.FromArgb(CType(CType(224, Byte), Integer), CType(CType(224, Byte), Integer), CType(CType(224, Byte), Integer))
         Me.HelpInfo.Location = New System.Drawing.Point(6, 16)
         Me.HelpInfo.Name = "HelpInfo"
-        Me.HelpInfo.Size = New System.Drawing.Size(448, 434)
+        Me.HelpInfo.Size = New System.Drawing.Size(448, 336)
         Me.HelpInfo.TabIndex = 93
         Me.HelpInfo.Text = resources.GetString("HelpInfo.Text")
         Me.HelpInfo.Visible = False
@@ -576,7 +592,7 @@ Partial Class MainForm
         Me.SkillInfoBox.BackColor = System.Drawing.Color.FromArgb(CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer))
         Me.SkillInfoBox.Controls.Add(Me.SkillInfo)
         Me.SkillInfoBox.ForeColor = System.Drawing.Color.White
-        Me.SkillInfoBox.Location = New System.Drawing.Point(854, 156)
+        Me.SkillInfoBox.Location = New System.Drawing.Point(797, 31)
         Me.SkillInfoBox.Name = "SkillInfoBox"
         Me.SkillInfoBox.Size = New System.Drawing.Size(240, 172)
         Me.SkillInfoBox.TabIndex = 97
@@ -606,7 +622,7 @@ Partial Class MainForm
         Me.GroupBox1.ForeColor = System.Drawing.Color.White
         Me.GroupBox1.Location = New System.Drawing.Point(3, 27)
         Me.GroupBox1.Name = "GroupBox1"
-        Me.GroupBox1.Size = New System.Drawing.Size(466, 462)
+        Me.GroupBox1.Size = New System.Drawing.Size(466, 363)
         Me.GroupBox1.TabIndex = 97
         Me.GroupBox1.TabStop = False
         Me.GroupBox1.Text = "Help / Commands"
@@ -617,7 +633,7 @@ Partial Class MainForm
         Me.MenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.FileToolStripMenuItem1, Me.HelpToolStripMenuItem1})
         Me.MenuStrip1.Location = New System.Drawing.Point(0, 0)
         Me.MenuStrip1.Name = "MenuStrip1"
-        Me.MenuStrip1.Size = New System.Drawing.Size(1111, 24)
+        Me.MenuStrip1.Size = New System.Drawing.Size(1305, 24)
         Me.MenuStrip1.TabIndex = 98
         Me.MenuStrip1.Text = "MenuStrip1"
         '
@@ -657,11 +673,13 @@ Partial Class MainForm
         '
         'LogStrip
         '
+        Me.LogStrip.Checked = True
+        Me.LogStrip.CheckState = System.Windows.Forms.CheckState.Checked
         Me.LogStrip.Enabled = False
         Me.LogStrip.Name = "LogStrip"
         Me.LogStrip.ShortcutKeys = System.Windows.Forms.Keys.F2
         Me.LogStrip.Size = New System.Drawing.Size(172, 22)
-        Me.LogStrip.Text = "&Character Log"
+        Me.LogStrip.Text = "&Character HUD"
         '
         'StatStrip
         '
@@ -761,11 +779,128 @@ Partial Class MainForm
         Me.HUDisplay.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
         Me.HUDisplay.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.HUDisplay.ForeColor = System.Drawing.Color.Black
-        Me.HUDisplay.Location = New System.Drawing.Point(797, 476)
+        Me.HUDisplay.Location = New System.Drawing.Point(334, 657)
         Me.HUDisplay.Name = "HUDisplay"
-        Me.HUDisplay.Size = New System.Drawing.Size(2, 22)
+        Me.HUDisplay.Size = New System.Drawing.Size(559, 22)
         Me.HUDisplay.TabIndex = 99
-        Me.HUDisplay.Visible = False
+        Me.HUDisplay.Text = "Currently In Screensaver Mode. Type 'F4' to start a game and '?' or 'h' for help." & _
+            ""
+        '
+        'ClassIntroStatsBox
+        '
+        Me.ClassIntroStatsBox.AutoSize = True
+        Me.ClassIntroStatsBox.BackColor = System.Drawing.Color.FromArgb(CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer))
+        Me.ClassIntroStatsBox.Font = New System.Drawing.Font("Microsoft Sans Serif", 11.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.ClassIntroStatsBox.ForeColor = System.Drawing.Color.White
+        Me.ClassIntroStatsBox.Location = New System.Drawing.Point(15, 10)
+        Me.ClassIntroStatsBox.Name = "ClassIntroStatsBox"
+        Me.ClassIntroStatsBox.Size = New System.Drawing.Size(107, 198)
+        Me.ClassIntroStatsBox.TabIndex = 105
+        Me.ClassIntroStatsBox.Text = "+Dodge" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "+Feint" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "+Range" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "8 Strength" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "14 Dexterity" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "10 Constitution" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "9 Intelligen" & _
+            "ce" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "8 Wisdom" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "11 Charisma" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "10 Luck"
+        '
+        'Panel5
+        '
+        Me.Panel5.BackColor = System.Drawing.Color.Gray
+        Me.Panel5.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
+        Me.Panel5.Controls.Add(Me.Label16)
+        Me.Panel5.Location = New System.Drawing.Point(17, 302)
+        Me.Panel5.Name = "Panel5"
+        Me.Panel5.Size = New System.Drawing.Size(344, 39)
+        Me.Panel5.TabIndex = 104
+        '
+        'Label16
+        '
+        Me.Label16.AutoSize = True
+        Me.Label16.Font = New System.Drawing.Font("Microsoft Sans Serif", 20.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label16.Location = New System.Drawing.Point(126, 1)
+        Me.Label16.Name = "Label16"
+        Me.Label16.Size = New System.Drawing.Size(98, 31)
+        Me.Label16.TabIndex = 0
+        Me.Label16.Text = "Accept"
+        '
+        'Panel4
+        '
+        Me.Panel4.BackColor = System.Drawing.Color.Gray
+        Me.Panel4.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
+        Me.Panel4.Controls.Add(Me.Label15)
+        Me.Panel4.Location = New System.Drawing.Point(234, 226)
+        Me.Panel4.Name = "Panel4"
+        Me.Panel4.Size = New System.Drawing.Size(127, 39)
+        Me.Panel4.TabIndex = 103
+        '
+        'Label15
+        '
+        Me.Label15.AutoSize = True
+        Me.Label15.Font = New System.Drawing.Font("Microsoft Sans Serif", 20.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label15.Location = New System.Drawing.Point(4, 2)
+        Me.Label15.Name = "Label15"
+        Me.Label15.Size = New System.Drawing.Size(118, 31)
+        Me.Label15.TabIndex = 0
+        Me.Label15.Text = "Scientist"
+        '
+        'Panel3
+        '
+        Me.Panel3.BackColor = System.Drawing.Color.Gray
+        Me.Panel3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
+        Me.Panel3.Controls.Add(Me.Label14)
+        Me.Panel3.Location = New System.Drawing.Point(121, 226)
+        Me.Panel3.Name = "Panel3"
+        Me.Panel3.Size = New System.Drawing.Size(107, 39)
+        Me.Panel3.TabIndex = 102
+        '
+        'Label14
+        '
+        Me.Label14.AutoSize = True
+        Me.Label14.Font = New System.Drawing.Font("Microsoft Sans Serif", 20.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label14.Location = New System.Drawing.Point(4, 2)
+        Me.Label14.Name = "Label14"
+        Me.Label14.Size = New System.Drawing.Size(98, 31)
+        Me.Label14.TabIndex = 0
+        Me.Label14.Text = "Soldier"
+        '
+        'Panel2
+        '
+        Me.Panel2.BackColor = System.Drawing.Color.DarkGray
+        Me.Panel2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
+        Me.Panel2.Controls.Add(Me.Label13)
+        Me.Panel2.Location = New System.Drawing.Point(18, 226)
+        Me.Panel2.Name = "Panel2"
+        Me.Panel2.Size = New System.Drawing.Size(97, 39)
+        Me.Panel2.TabIndex = 101
+        '
+        'Label13
+        '
+        Me.Label13.AutoSize = True
+        Me.Label13.Font = New System.Drawing.Font("Microsoft Sans Serif", 20.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label13.Location = New System.Drawing.Point(4, 2)
+        Me.Label13.Name = "Label13"
+        Me.Label13.Size = New System.Drawing.Size(84, 31)
+        Me.Label13.TabIndex = 0
+        Me.Label13.Text = "Scout"
+        '
+        'Panel1
+        '
+        Me.Panel1.BackColor = System.Drawing.Color.FromArgb(CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer))
+        Me.Panel1.Controls.Add(Me.PlayerNameInput)
+        Me.Panel1.Controls.Add(Me.ClassIntroStatsBox)
+        Me.Panel1.Controls.Add(Me.Panel5)
+        Me.Panel1.Controls.Add(Me.Panel2)
+        Me.Panel1.Controls.Add(Me.Panel4)
+        Me.Panel1.Controls.Add(Me.Panel3)
+        Me.Panel1.Location = New System.Drawing.Point(818, 293)
+        Me.Panel1.Name = "Panel1"
+        Me.Panel1.Size = New System.Drawing.Size(382, 344)
+        Me.Panel1.TabIndex = 106
+        Me.Panel1.Visible = False
+        '
+        'PlayerNameInput
+        '
+        Me.PlayerNameInput.Location = New System.Drawing.Point(17, 274)
+        Me.PlayerNameInput.Name = "PlayerNameInput"
+        Me.PlayerNameInput.Size = New System.Drawing.Size(344, 20)
+        Me.PlayerNameInput.TabIndex = 106
+        Me.PlayerNameInput.Text = "Captain Gregory Hawthorne"
         '
         'HealthBar
         '
@@ -802,7 +937,7 @@ Partial Class MainForm
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.Color.Black
-        Me.ClientSize = New System.Drawing.Size(1111, 852)
+        Me.ClientSize = New System.Drawing.Size(1305, 852)
         Me.Controls.Add(Me.HUDisplay)
         Me.Controls.Add(Me.GroupBox1)
         Me.Controls.Add(Me.SkillInfoBox)
@@ -812,6 +947,7 @@ Partial Class MainForm
         Me.Controls.Add(Me.HealthBar)
         Me.Controls.Add(Me.AmmunitionBar)
         Me.Controls.Add(Me.MenuStrip1)
+        Me.Controls.Add(Me.Panel1)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D
         Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
         Me.KeyPreview = True
@@ -830,6 +966,16 @@ Partial Class MainForm
         Me.GroupBox1.PerformLayout()
         Me.MenuStrip1.ResumeLayout(False)
         Me.MenuStrip1.PerformLayout()
+        Me.Panel5.ResumeLayout(False)
+        Me.Panel5.PerformLayout()
+        Me.Panel4.ResumeLayout(False)
+        Me.Panel4.PerformLayout()
+        Me.Panel3.ResumeLayout(False)
+        Me.Panel3.PerformLayout()
+        Me.Panel2.ResumeLayout(False)
+        Me.Panel2.PerformLayout()
+        Me.Panel1.ResumeLayout(False)
+        Me.Panel1.PerformLayout()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -906,5 +1052,16 @@ Partial Class MainForm
     Friend WithEvents HelpToolStripMenuItem1 As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents ToolStripMenuItem3 As System.Windows.Forms.ToolStripSeparator
     Friend WithEvents HUDisplay As System.Windows.Forms.Label
+    Friend WithEvents ClassIntroStatsBox As System.Windows.Forms.Label
+    Friend WithEvents Panel5 As System.Windows.Forms.Panel
+    Friend WithEvents Label16 As System.Windows.Forms.Label
+    Friend WithEvents Panel4 As System.Windows.Forms.Panel
+    Friend WithEvents Label15 As System.Windows.Forms.Label
+    Friend WithEvents Panel3 As System.Windows.Forms.Panel
+    Friend WithEvents Label14 As System.Windows.Forms.Label
+    Friend WithEvents Panel2 As System.Windows.Forms.Panel
+    Friend WithEvents Label13 As System.Windows.Forms.Label
+    Friend WithEvents Panel1 As System.Windows.Forms.Panel
+    Friend WithEvents PlayerNameInput As System.Windows.Forms.TextBox
 
 End Class
