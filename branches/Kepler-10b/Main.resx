@@ -133,20 +133,13 @@ Charisma increases the chance to cause enemies to flee.
 'p' or 't' picks up items.
 'i' shows your inventory. 
 '?' or 'h' shows and hides this help.
-'5' on the num pad waits a turn and allows you to heal 1HP/1WP.
-'1' is your primary skill
-'2' is your secondary skill
-'3' is your support skill
+'5' on the num pad waits a turn and allows you to heal 1HP/1EN.
 '&lt;' goes up stairs.
 '&gt;' goes down stairs.
 'f1' shows the high scores.
 'f2' shows your character stats.
-'f3' shows or hides the activity log.
+'f3' shows or hides the activity hud.
 'f4' exits game and restarts character creation.
-'f5' enables graphical mode.
-'f6' enables ascii mode.
-'f7' turns on image filtering.
-'f8' turns off image filtering.
 
 &lt;Press '?' or 'h' to hide this help&gt;</value>
   </data>
@@ -157,10 +150,10 @@ Jarvis              Gnome         Gravedigger      4       45           6       
 </value>
   </data>
   <metadata name="MenuStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
+    <value>99, 17</value>
   </metadata>
   <metadata name="Timer.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>132, 17</value>
+    <value>17, 17</value>
   </metadata>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">

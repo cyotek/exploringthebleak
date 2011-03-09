@@ -51,7 +51,7 @@
     Const MobNumber = 3
 #End Region
 #Region "Dimensions and Declarations"
-    Public displayfont As New Font("Lucida Sans Unicode", 24)
+    Public displayfont As New Font("Times New Roman", 24)
     Public displayfont2 As New Font("Lucida Sans Unicode", 12)
     Public ChangedMode As Boolean = False
     Public LOSMap(MainForm.MapSize, MainForm.MapSize) As Short
@@ -258,7 +258,7 @@
         ElseIf MainForm.EnvironmentType = 9 Then
             BGColor = Brushes.DeepPink
         Else
-            BGColor = Brushes.DarkSlateGray
+            BGColor = New SolidBrush(Color.FromArgb(35, 0, 0))
         End If
         If MainForm.Map(MainForm.MapLevel, x, y) = Wall Then
             MainForm.CANVAS.FillRectangle(Brushes.DarkGray, xish, yish, TheRoomWidth, TheRoomHeight)
@@ -281,14 +281,14 @@
             MainForm.CANVAS.DrawString(">", displayfont, Brushes.DarkGray, xish, yish)
         ElseIf MainForm.Map(MainForm.MapLevel, x, y) = Water Then
             If MainForm.RiverType = Water Then
-                MainForm.CANVAS.FillRectangle(New SolidBrush(Color.FromArgb(0, 0, 77)), xish, yish, TheRoomWidth, TheRoomHeight)
-                MainForm.CANVAS.DrawString("~", displayfont, Brushes.Blue, xish, yish)
+                MainForm.CANVAS.FillRectangle(New SolidBrush(Color.FromArgb(55, 0, 77)), xish, yish, TheRoomWidth, TheRoomHeight)
+                MainForm.CANVAS.DrawString("~", displayfont, Brushes.Red, xish, yish)
             ElseIf MainForm.RiverType = Lava Then
-                MainForm.CANVAS.FillRectangle(New SolidBrush(Color.FromArgb(77, 0, 0)), xish, yish, TheRoomWidth, TheRoomHeight)
+                MainForm.CANVAS.FillRectangle(New SolidBrush(Color.FromArgb(110, 0, 0)), xish, yish, TheRoomWidth, TheRoomHeight)
                 MainForm.CANVAS.DrawString("~", displayfont, Brushes.Red, xish, yish)
             ElseIf MainForm.RiverType = Ice Then
-                MainForm.CANVAS.FillRectangle(New SolidBrush(Color.FromArgb(0, 0, 77)), xish, yish, TheRoomWidth, TheRoomHeight)
-                MainForm.CANVAS.DrawString("~", displayfont, Brushes.Cyan, xish, yish)
+                MainForm.CANVAS.FillRectangle(New SolidBrush(Color.FromArgb(175, 0, 77)), xish, yish, TheRoomWidth, TheRoomHeight)
+                MainForm.CANVAS.DrawString("~", displayfont, Brushes.Black, xish, yish)
             End If
         End If
     End Sub

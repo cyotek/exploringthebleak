@@ -9,3 +9,4 @@ D:\Station\Projects\Kepler-10b\obj\x86\Debug\GenerateResource.write.1.tlog
 D:\Station\Projects\Kepler-10b\obj\x86\Debug\Kepler-10b.exe
 D:\Station\Projects\Kepler-10b\obj\x86\Debug\Kepler-10b.xml
 D:\Station\Projects\Kepler-10b\obj\x86\Debug\Kepler-10b.pdb
+D:\Station\Projects\Kepler-10b\obj\x86\Debug\Exploring_The_Bleak.MyProgBar.resources

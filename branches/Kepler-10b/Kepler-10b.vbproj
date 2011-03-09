@@ -117,6 +117,9 @@
       <CustomToolNamespace>My.Resources</CustomToolNamespace>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="MyProgressBar.resx">
+      <DependentUpon>MyProgressBar.vb</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <None Include="My Project\Application.myapp">
@@ -130,84 +133,11 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\StairsUp.jpg" />
-    <None Include="Resources\StairsDown.jpg" />
-    <None Include="Resources\BrickWall.jpg" />
-    <None Include="Resources\IceWall.jpg" />
-    <None Include="Resources\Lava.jpg" />
-    <None Include="Resources\MetalFloor.jpg" />
-    <None Include="Resources\RockWall.jpg" />
-    <None Include="Resources\Splash.jpg" />
-    <None Include="Resources\1.jpg" />
-    <None Include="Resources\1floor.jpg" />
-    <None Include="Resources\2.jpg" />
-    <None Include="Resources\2floor.jpg" />
-    <None Include="Resources\3.jpg" />
-    <None Include="Resources\3floor.jpg" />
-    <None Include="Resources\4.jpg" />
-    <None Include="Resources\4floor.jpg" />
-    <None Include="Resources\5.jpg" />
-    <None Include="Resources\5floor.jpg" />
-    <None Include="Resources\6.jpg" />
-    <None Include="Resources\6floor.jpg" />
-    <None Include="Resources\7.jpg" />
-    <None Include="Resources\7floor.jpg" />
-    <None Include="Resources\8.jpg" />
-    <None Include="Resources\8floor.jpg" />
-    <None Include="Resources\9.jpg" />
-    <None Include="Resources\9floor.jpg" />
-    <None Include="Resources\10.jpg" />
-    <None Include="Resources\10floor.jpg" />
-    <None Include="Resources\Water1.jpg" />
-    <None Include="Resources\Water2.jpg" />
-    <None Include="Resources\Water3.jpg" />
-    <None Include="Resources\Water4.jpg" />
-    <None Include="Resources\CommentBox1-01.jpg" />
-    <None Include="Resources\CommentBox2-01.jpg" />
-    <None Include="Resources\CommentBox3-01.jpg" />
-    <None Include="Resources\CommentBox4-01.jpg" />
-    <None Include="Resources\CommentBox5-01.jpg" />
-    <None Include="Resources\CommentBox6-01.jpg" />
-    <None Include="Resources\CommentBox7-01.jpg" />
-    <None Include="Resources\CommentBox8-01.jpg" />
-    <None Include="Resources\CommentBox9-01.jpg" />
-    <None Include="Resources\CommentBox10-01.jpg" />
-    <None Include="Resources\Backstab.jpg" />
-    <None Include="Resources\Block.jpg" />
-    <None Include="Resources\BoneShield.jpg" />
-    <None Include="Resources\Clumsiness.jpg" />
-    <None Include="Resources\Counter.jpg" />
-    <None Include="Resources\DoubleSlice.jpg" />
-    <None Include="Resources\Empower.jpg" />
-    <None Include="Resources\FireArrow.jpg" />
-    <None Include="Resources\Fireball.jpg" />
-    <None Include="Resources\FireShield.jpg" />
-    <None Include="Resources\Fury.jpg" />
-    <None Include="Resources\Heal.jpg" />
-    <None Include="Resources\Hide.jpg" />
-    <None Include="Resources\Hit.jpg" />
-    <None Include="Resources\HolyBolt.jpg" />
-    <None Include="Resources\Immolate.jpg" />
-    <None Include="Resources\Kick.jpg" />
-    <None Include="Resources\Leech.jpg" />
-    <None Include="Resources\MagicShield.jpg" />
-    <None Include="Resources\Punch.jpg" />
-    <None Include="Resources\Runestrike.jpg" />
-    <None Include="Resources\Sacrifice.jpg" />
-    <None Include="Resources\Shoot.jpg" />
-    <None Include="Resources\Silence.jpg" />
-    <None Include="Resources\Slice.jpg" />
-    <None Include="Resources\Stab.jpg" />
-    <None Include="Resources\Strike.jpg" />
-    <None Include="Resources\Stun.jpg" />
-    <None Include="Resources\Trip.jpg" />
-    <None Include="Resources\TripleSlice.jpg" />
-    <None Include="Resources\Whisper.jpg" />
-    <None Include="Resources\Wound.jpg" />
-    <None Include="Resources\BloodSplatter.jpg" />
-    <None Include="Resources\Inventory.jpg" />
     <Content Include="11.11.10.ico" />
     <Content Include="Untitled-2.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Resources\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
