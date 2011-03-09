@@ -72,6 +72,30 @@
         Return bmp
     End Function
 #Region "Player FoV / LoS"
+    Function IsDiagonal(ByVal x As Short, ByVal y As Short, ByVal playerposx As Short, ByVal playerposy As Short) As Boolean
+        'if this happens, that means that diagonally from bottom left to top right is where the sector is.
+        'example:
+        '23456
+        '34567
+        '45678 <-- middle 6 is player
+        '56789
+        '67890
+        If playerposx + playerposy = x + y Then
+            Return True
+        End If
+        'if this happens, that means that diagonally from bottom right to top left is where the sector is.
+        'example:
+        '65432
+        '76543
+        '87654 <-- middle 6 is player
+        '98765
+        '09876
+        If playerposx + playerposy = MainForm.MapSize + 1 - x + y Then
+            Return True
+        End If
+        'it wasn't successfully read as diagonal
+        Return False
+    End Function
     Function IsVisible(ByVal x As Short, ByVal y As Short, ByVal playerposx As Short, ByVal playerposy As Short) As Short
         Dim TestVarX As Short = playerposx
         Dim TestVarY As Short = playerposy
@@ -168,7 +192,7 @@
                 'draws a circle around player 4 wide on each side for visibility, remember that x and y are passed starting -5 to 5 of characters current position.
                 If ((Math.Pow(PlayerPosX - x, 2) + Math.Pow(PlayerposY - y, 2)) < (Math.Pow(4, 2))) Or MainForm.AdminVisible = True Then 'admin visible shows all
                     'within range of player, only process isvisible routines if it's within 4 of character so it doesn't process unnecessary squares too far from player
-                    If IsVisible(x, y, PlayerPosX, PlayerposY) <= 1 Or IsVisible2(x, y, PlayerPosX, PlayerposY) <= 1 Or MainForm.AdminVisible = True Or ChangedMode = True And MainForm.MapShown(MainForm.MapLevel, x, y) = True Then
+                    If IsVisible(x, y, PlayerPosX, PlayerposY) <= 1 Or IsVisible2(x, y, PlayerPosX, PlayerposY) <= 1 Or MainForm.AdminVisible = True Or ChangedMode = True And MainForm.MapShown(MainForm.MapLevel, x, y) = True Or IsDiagonal(x, y, PlayerPosX, PlayerposY) = True Then
                         'within range of player and is visible
                         If LOSMap(x, y) <> Visible Then 'should be visible, tile not currently visible, change then set map as visible
                             LOSMap(x, y) = Visible
@@ -281,13 +305,13 @@
             MainForm.CANVAS.DrawString(">", displayfont, Brushes.DarkGray, xish, yish)
         ElseIf MainForm.Map(MainForm.MapLevel, x, y) = Water Then
             If MainForm.RiverType = Water Then
-                MainForm.CANVAS.FillRectangle(New SolidBrush(Color.FromArgb(55, 0, 77)), xish, yish, TheRoomWidth, TheRoomHeight)
+                MainForm.CANVAS.FillRectangle(New SolidBrush(Color.FromArgb(150, 0, 0)), xish, yish, TheRoomWidth, TheRoomHeight)
                 MainForm.CANVAS.DrawString("~", displayfont, Brushes.Red, xish, yish)
             ElseIf MainForm.RiverType = Lava Then
-                MainForm.CANVAS.FillRectangle(New SolidBrush(Color.FromArgb(110, 0, 0)), xish, yish, TheRoomWidth, TheRoomHeight)
-                MainForm.CANVAS.DrawString("~", displayfont, Brushes.Red, xish, yish)
+                MainForm.CANVAS.FillRectangle(New SolidBrush(Color.FromArgb(175, 0, 0)), xish, yish, TheRoomWidth, TheRoomHeight)
+                MainForm.CANVAS.DrawString("~", displayfont, Brushes.Yellow, xish, yish)
             ElseIf MainForm.RiverType = Ice Then
-                MainForm.CANVAS.FillRectangle(New SolidBrush(Color.FromArgb(175, 0, 77)), xish, yish, TheRoomWidth, TheRoomHeight)
+                MainForm.CANVAS.FillRectangle(New SolidBrush(Color.FromArgb(175, 0, 0)), xish, yish, TheRoomWidth, TheRoomHeight)
                 MainForm.CANVAS.DrawString("~", displayfont, Brushes.Black, xish, yish)
             End If
         End If
