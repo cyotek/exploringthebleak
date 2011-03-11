@@ -14,15 +14,15 @@ Public Class MainForm
     Const West As Short = 4
 
     'mobiles can't walk on anything above 3
-    Const Wall As Short = 0
-    Const Floor As Short = 1
-    Const SpecialFloor As Integer = 2
-    Const StairsDown As Short = 3
-    Const Item As Short = 4
-    Const StairsUp As Short = 5
-    Const Water As Short = 6
-    Const Lava As Short = 7
-    Const Ice As Short = 8
+    Public Const Wall As Short = 0
+    Public Const Floor As Short = 1
+    Public Const SpecialFloor As Integer = 2
+    Public Const StairsDown As Short = 3
+    Public Const Item As Short = 4
+    Public Const StairsUp As Short = 5
+    Public Const Water As Short = 6
+    Public Const Lava As Short = 7
+    Public Const Ice As Short = 8
 
     Const Head As Short = 1
     Const Chest As Short = 2

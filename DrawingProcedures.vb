@@ -73,6 +73,7 @@
     End Function
 #Region "Player FoV / LoS"
     Function IsDiagonal(ByVal x As Short, ByVal y As Short, ByVal playerposx As Short, ByVal playerposy As Short) As Boolean
+        Dim IsDiagonalTest As Boolean
         'if this happens, that means that diagonally from bottom left to top right is where the sector is.
         'example:
         '23456
@@ -81,7 +82,7 @@
         '56789
         '67890
         If playerposx + playerposy = x + y Then
-            Return True
+            IsDiagonalTest = True
         End If
         'if this happens, that means that diagonally from bottom right to top left is where the sector is.
         'example:
@@ -90,11 +91,19 @@
         '87654 <-- middle 6 is player
         '98765
         '09876
-        If playerposx + playerposy = MainForm.MapSize + 1 - x + y Then
-            Return True
+        If playerposx + playerposy = 2 * playerposx - x + y Then
+            IsDiagonalTest = True
         End If
         'it wasn't successfully read as diagonal
-        Return False
+        If IsDiagonalTest = False Then
+            Return False
+        Else
+            If LineOfSight.Bresenham(x, y, playerposx, playerposy, New PlotFunction(AddressOf plot)) < 1 And MainForm.Map(MainForm.MapLevel, x, y) <> Wall Then
+                Return True
+            Else
+                Return False
+            End If
+        End If
     End Function
     Function IsVisible(ByVal x As Short, ByVal y As Short, ByVal playerposx As Short, ByVal playerposy As Short) As Short
         Dim TestVarX As Short = playerposx
