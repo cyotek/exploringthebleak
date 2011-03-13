@@ -55,6 +55,7 @@
     Public displayfont2 As New Font("Lucida Sans Unicode", 12)
     Public ChangedMode As Boolean = False
     Public LOSMap(MainForm.MapSize, MainForm.MapSize) As Short
+    Public PrevPlayerPosX(3), PrevPlayerPosY(3) As Integer
     Private CurrentlyDisplayedMobile As Byte
     Private FloorGraphic(3) As Image
     Private WallGraphic As Image
@@ -278,6 +279,22 @@
                         ElseIf x = PlayerPosX And y = PlayerposY And MainForm.Screensaver = True Then
                             LOSMap(x, y) = Redraw
                             MainForm.CANVAS.DrawString("@", displayfont, Brushes.Red, xish, yish)
+                        ElseIf x = PrevPlayerPosX(0) And y = PrevPlayerPosY(0) And MainForm.Screensaver = False Then
+                            LOSMap(x, y) = Redraw
+                            MainForm.CANVAS.DrawString("@", New Font("Arial", displayfont.Size / 3 * 2.2), Brushes.Yellow, xish, yish)
+                            MainForm.CANVAS.DrawString("T", New Font("Arial", displayfont.Size / 3), Brushes.White, xish + TheRoomWidth / 3 * 2, yish + TheRoomHeight / 3 * 2)
+                        ElseIf x = PrevPlayerPosX(1) And y = PrevPlayerPosY(1) And MainForm.Screensaver = False Then
+                            LOSMap(x, y) = Redraw
+                            MainForm.CANVAS.DrawString("@", New Font("Arial", displayfont.Size / 3 * 2.2), Brushes.Yellow, xish, yish)
+                            MainForm.CANVAS.DrawString("S", New Font("Arial", displayfont.Size / 3), Brushes.White, xish + TheRoomWidth / 3 * 2, yish + TheRoomHeight / 3 * 2)
+                        ElseIf x = PrevPlayerPosX(2) And y = PrevPlayerPosY(2) And MainForm.Screensaver = False Then
+                            LOSMap(x, y) = Redraw
+                            MainForm.CANVAS.DrawString("@", New Font("Arial", displayfont.Size / 3 * 2.2), Brushes.Yellow, xish, yish)
+                            MainForm.CANVAS.DrawString("B", New Font("Arial", displayfont.Size / 3), Brushes.White, xish + TheRoomWidth / 3 * 2, yish + TheRoomHeight / 3 * 2)
+                        ElseIf x = PrevPlayerPosX(3) And y = PrevPlayerPosY(3) And MainForm.Screensaver = False Then
+                            LOSMap(x, y) = Redraw
+                            MainForm.CANVAS.DrawString("@", New Font("Arial", displayfont.Size / 3 * 2.2), Brushes.Yellow, xish, yish)
+                            MainForm.CANVAS.DrawString("M", New Font("Arial", displayfont.Size / 3), Brushes.White, xish + TheRoomWidth / 3 * 2, yish + TheRoomHeight / 3 * 2)
                         End If
                         MainForm.MapShown(MainForm.MapLevel, x, y) = True
                     ElseIf MainForm.MapShown(MainForm.MapLevel, x, y) = True Then

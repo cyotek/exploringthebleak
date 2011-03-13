@@ -1417,8 +1417,8 @@ Public Class MainForm
                     MapEntrances(MapLevel, 1, 0) = RandomPosX
                     MapEntrances(MapLevel, 1, 1) = RandomPosY
                 End If
-                PlayerPosX = RandomPosX
-                PlayerPosY = RandomPosY
+                PlayerPosX = RandomPosX : DrawingProcedures.PrevPlayerPosX(0) = PlayerPosX : DrawingProcedures.PrevPlayerPosX(2) = PlayerPosX : DrawingProcedures.PrevPlayerPosX(2) = PlayerPosX : DrawingProcedures.PrevPlayerPosX(3) = PlayerPosX
+                PlayerPosY = RandomPosY : DrawingProcedures.PrevPlayerPosY(0) = PlayerPosY : DrawingProcedures.PrevPlayerPosY(2) = PlayerPosY : DrawingProcedures.PrevPlayerPosY(2) = PlayerPosY : DrawingProcedures.PrevPlayerPosY(3) = PlayerPosY
                 RandomPosX = RandomNum.Next(1, MapSize - 1) 'not necessary if stairs up is allowed, prevents stairs down from spawning on player
                 RandomPosY = RandomNum.Next(1, MapSize - 1) 'not necessary if stairs up is allowed, prevents stairs down from spawning on player
             Else
@@ -2839,6 +2839,7 @@ Public Class MainForm
             If e.KeyCode = Keys.Up And PlayerPosY > 0 And PlayerTargeting = False Or e.KeyCode = Keys.NumPad8 And PlayerPosY > 0 And PlayerTargeting = False Then
                 If Map(MapLevel, PlayerPosX, PlayerPosY - 1) > 0 And MapOccupied(MapLevel, PlayerPosX, PlayerPosY - 1) = 0 Then
                     PlayerLastPosX = PlayerPosX : PlayerLastPosY = PlayerPosY
+                    PositionNPCS()
                     PlayerPosY -= 1
                     ReDraw()
                 ElseIf Map(MapLevel, PlayerPosX, PlayerPosY - 1) > 0 And MapOccupied(MapLevel, PlayerPosX, PlayerPosY - 1) <> 0 Then
@@ -2848,6 +2849,7 @@ Public Class MainForm
             ElseIf e.KeyCode = Keys.Down And PlayerPosY < MapSize And PlayerTargeting = False Or e.KeyCode = Keys.NumPad2 And PlayerPosY < MapSize And PlayerTargeting = False Then
                 If Map(MapLevel, PlayerPosX, PlayerPosY + 1) > 0 And MapOccupied(MapLevel, PlayerPosX, PlayerPosY + 1) = 0 Then
                     PlayerLastPosX = PlayerPosX : PlayerLastPosY = PlayerPosY
+                    PositionNPCS()
                     PlayerPosY += 1
                     ReDraw()
                 ElseIf Map(MapLevel, PlayerPosX, PlayerPosY + 1) > 0 And MapOccupied(MapLevel, PlayerPosX, PlayerPosY + 1) <> 0 Then
@@ -2857,6 +2859,7 @@ Public Class MainForm
             ElseIf e.KeyCode = Keys.Right And PlayerPosX < MapSize And PlayerTargeting = False Or e.KeyCode = Keys.NumPad6 And PlayerPosX < MapSize And PlayerTargeting = False Then
                 If Map(MapLevel, PlayerPosX + 1, PlayerPosY) > 0 And MapOccupied(MapLevel, PlayerPosX + 1, PlayerPosY) = 0 Then
                     PlayerLastPosX = PlayerPosX : PlayerLastPosY = PlayerPosY
+                    PositionNPCS()
                     PlayerPosX += 1
                     ReDraw()
                 ElseIf Map(MapLevel, PlayerPosX + 1, PlayerPosY) > 0 And MapOccupied(MapLevel, PlayerPosX + 1, PlayerPosY) <> 0 Then
@@ -2866,6 +2869,7 @@ Public Class MainForm
             ElseIf e.KeyCode = Keys.Left And PlayerPosX > 0 And PlayerTargeting = False Or e.KeyCode = Keys.NumPad4 And PlayerPosX > 0 And PlayerTargeting = False Then
                 If Map(MapLevel, PlayerPosX - 1, PlayerPosY) > 0 And MapOccupied(MapLevel, PlayerPosX - 1, PlayerPosY) = 0 Then
                     PlayerLastPosX = PlayerPosX : PlayerLastPosY = PlayerPosY
+                    PositionNPCS()
                     PlayerPosX -= 1
                     ReDraw()
                 ElseIf Map(MapLevel, PlayerPosX - 1, PlayerPosY) > 0 And MapOccupied(MapLevel, PlayerPosX - 1, PlayerPosY) <> 0 Then
@@ -2875,6 +2879,7 @@ Public Class MainForm
             ElseIf e.KeyCode = Keys.NumPad7 And PlayerPosX > 0 And PlayerPosY > 0 And PlayerTargeting = False Then
                 If Map(MapLevel, PlayerPosX - 1, PlayerPosY - 1) > 0 And MapOccupied(MapLevel, PlayerPosX - 1, PlayerPosY - 1) = 0 Then
                     PlayerLastPosX = PlayerPosX : PlayerLastPosY = PlayerPosY
+                    PositionNPCS()
                     PlayerPosX -= 1 : PlayerPosY -= 1
                     ReDraw()
                 ElseIf Map(MapLevel, PlayerPosX - 1, PlayerPosY - 1) > 0 And MapOccupied(MapLevel, PlayerPosX - 1, PlayerPosY - 1) <> 0 Then
@@ -2884,6 +2889,7 @@ Public Class MainForm
             ElseIf e.KeyCode = Keys.NumPad9 And PlayerPosX < MapSize And PlayerPosY > 0 And PlayerTargeting = False Then
                 If Map(MapLevel, PlayerPosX + 1, PlayerPosY - 1) > 0 And MapOccupied(MapLevel, PlayerPosX + 1, PlayerPosY - 1) = 0 Then
                     PlayerLastPosX = PlayerPosX : PlayerLastPosY = PlayerPosY
+                    PositionNPCS()
                     PlayerPosX += 1 : PlayerPosY -= 1
                     ReDraw()
                 ElseIf Map(MapLevel, PlayerPosX + 1, PlayerPosY - 1) > 0 And MapOccupied(MapLevel, PlayerPosX + 1, PlayerPosY - 1) <> 0 Then
@@ -2893,6 +2899,7 @@ Public Class MainForm
             ElseIf e.KeyCode = Keys.NumPad3 And PlayerPosX < MapSize And PlayerPosY < MapSize And PlayerTargeting = False Then
                 If Map(MapLevel, PlayerPosX + 1, PlayerPosY + 1) > 0 And MapOccupied(MapLevel, PlayerPosX + 1, PlayerPosY + 1) = 0 Then
                     PlayerLastPosX = PlayerPosX : PlayerLastPosY = PlayerPosY
+                    PositionNPCS()
                     PlayerPosX += 1 : PlayerPosY += 1
                     ReDraw()
                 ElseIf Map(MapLevel, PlayerPosX + 1, PlayerPosY + 1) > 0 And MapOccupied(MapLevel, PlayerPosX + 1, PlayerPosY + 1) <> 0 Then
@@ -2902,6 +2909,7 @@ Public Class MainForm
             ElseIf e.KeyCode = Keys.NumPad1 And PlayerPosX > 0 And PlayerPosY < MapSize And PlayerTargeting = False Then
                 If Map(MapLevel, PlayerPosX - 1, PlayerPosY + 1) > 0 And MapOccupied(MapLevel, PlayerPosX - 1, PlayerPosY + 1) = 0 Then
                     PlayerLastPosX = PlayerPosX : PlayerLastPosY = PlayerPosY
+                    PositionNPCS()
                     PlayerPosX -= 1 : PlayerPosY += 1
                     ReDraw()
                 ElseIf Map(MapLevel, PlayerPosX - 1, PlayerPosY + 1) > 0 And MapOccupied(MapLevel, PlayerPosX - 1, PlayerPosY + 1) <> 0 Then
@@ -3017,6 +3025,12 @@ Public Class MainForm
             CharacterStatsRefresh()
         End If
         RefreshStats()
+    End Sub
+    Sub PositionNPCS()
+        PrevPlayerPosX(3) = PrevPlayerPosX(2) : PrevPlayerPosY(3) = PrevPlayerPosY(2)
+        PrevPlayerPosX(2) = PrevPlayerPosX(1) : PrevPlayerPosY(2) = PrevPlayerPosY(1)
+        PrevPlayerPosX(1) = PrevPlayerPosX(0) : PrevPlayerPosY(1) = PrevPlayerPosY(0)
+        PrevPlayerPosX(0) = PlayerPosX : PrevPlayerPosY(0) = PlayerPosY
     End Sub
     Public Sub SNDScores()
         Output.Text = HighScores + Chr(13) + AddSpace(PlayerName, 20) + AddSpace(PlayerRace, 14) + AddSpace(PlayerClass, 17) + AddSpace(LTrim(Str(PlayerLevel)), 8) + AddSpace(LTrim(Str(PlayerExperience)), 13) + AddSpace(LTrim(Str(MapLevel)), 13) + AddSpace(LTrim(Str(PlayerGold)), 10) + LTrim(Str(PlayerTurns))

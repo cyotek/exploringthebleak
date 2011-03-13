@@ -880,7 +880,7 @@ Partial Class MainForm
         Me.InventoryBox.ForeColor = System.Drawing.Color.White
         Me.InventoryBox.Location = New System.Drawing.Point(781, 29)
         Me.InventoryBox.Name = "InventoryBox"
-        Me.InventoryBox.Size = New System.Drawing.Size(542, 273)
+        Me.InventoryBox.Size = New System.Drawing.Size(512, 273)
         Me.InventoryBox.TabIndex = 97
         Me.InventoryBox.TabStop = False
         Me.InventoryBox.Text = "Inventory"
@@ -947,11 +947,11 @@ Partial Class MainForm
         Me.Equip10.BackColor = System.Drawing.Color.FromArgb(CType(CType(0, Byte), Integer), CType(CType(192, Byte), Integer), CType(CType(0, Byte), Integer))
         Me.Equip10.Enabled = False
         Me.Equip10.ForeColor = System.Drawing.Color.Black
-        Me.Equip10.Location = New System.Drawing.Point(251, 245)
+        Me.Equip10.Location = New System.Drawing.Point(252, 245)
         Me.Equip10.Name = "Equip10"
-        Me.Equip10.Size = New System.Drawing.Size(71, 23)
+        Me.Equip10.Size = New System.Drawing.Size(40, 23)
         Me.Equip10.TabIndex = 30
-        Me.Equip10.Text = "Equip"
+        Me.Equip10.Text = "Use"
         Me.Equip10.UseVisualStyleBackColor = False
         '
         'Drop9
@@ -971,11 +971,11 @@ Partial Class MainForm
         Me.Equip9.BackColor = System.Drawing.Color.FromArgb(CType(CType(0, Byte), Integer), CType(CType(192, Byte), Integer), CType(CType(0, Byte), Integer))
         Me.Equip9.Enabled = False
         Me.Equip9.ForeColor = System.Drawing.Color.Black
-        Me.Equip9.Location = New System.Drawing.Point(251, 219)
+        Me.Equip9.Location = New System.Drawing.Point(252, 219)
         Me.Equip9.Name = "Equip9"
-        Me.Equip9.Size = New System.Drawing.Size(71, 23)
+        Me.Equip9.Size = New System.Drawing.Size(40, 23)
         Me.Equip9.TabIndex = 28
-        Me.Equip9.Text = "Equip"
+        Me.Equip9.Text = "Use"
         Me.Equip9.UseVisualStyleBackColor = False
         '
         'Drop8
@@ -995,11 +995,11 @@ Partial Class MainForm
         Me.Equip8.BackColor = System.Drawing.Color.FromArgb(CType(CType(0, Byte), Integer), CType(CType(192, Byte), Integer), CType(CType(0, Byte), Integer))
         Me.Equip8.Enabled = False
         Me.Equip8.ForeColor = System.Drawing.Color.Black
-        Me.Equip8.Location = New System.Drawing.Point(251, 193)
+        Me.Equip8.Location = New System.Drawing.Point(252, 193)
         Me.Equip8.Name = "Equip8"
-        Me.Equip8.Size = New System.Drawing.Size(71, 23)
+        Me.Equip8.Size = New System.Drawing.Size(40, 23)
         Me.Equip8.TabIndex = 26
-        Me.Equip8.Text = "Equip"
+        Me.Equip8.Text = "Use"
         Me.Equip8.UseVisualStyleBackColor = False
         '
         'Drop7
@@ -1019,11 +1019,11 @@ Partial Class MainForm
         Me.Equip7.BackColor = System.Drawing.Color.FromArgb(CType(CType(0, Byte), Integer), CType(CType(192, Byte), Integer), CType(CType(0, Byte), Integer))
         Me.Equip7.Enabled = False
         Me.Equip7.ForeColor = System.Drawing.Color.Black
-        Me.Equip7.Location = New System.Drawing.Point(251, 167)
+        Me.Equip7.Location = New System.Drawing.Point(252, 167)
         Me.Equip7.Name = "Equip7"
-        Me.Equip7.Size = New System.Drawing.Size(71, 23)
+        Me.Equip7.Size = New System.Drawing.Size(40, 23)
         Me.Equip7.TabIndex = 24
-        Me.Equip7.Text = "Equip"
+        Me.Equip7.Text = "Use"
         Me.Equip7.UseVisualStyleBackColor = False
         '
         'Drop6
@@ -1043,11 +1043,11 @@ Partial Class MainForm
         Me.Equip6.BackColor = System.Drawing.Color.FromArgb(CType(CType(0, Byte), Integer), CType(CType(192, Byte), Integer), CType(CType(0, Byte), Integer))
         Me.Equip6.Enabled = False
         Me.Equip6.ForeColor = System.Drawing.Color.Black
-        Me.Equip6.Location = New System.Drawing.Point(251, 141)
+        Me.Equip6.Location = New System.Drawing.Point(252, 141)
         Me.Equip6.Name = "Equip6"
-        Me.Equip6.Size = New System.Drawing.Size(71, 23)
+        Me.Equip6.Size = New System.Drawing.Size(40, 23)
         Me.Equip6.TabIndex = 22
-        Me.Equip6.Text = "Equip"
+        Me.Equip6.Text = "Use"
         Me.Equip6.UseVisualStyleBackColor = False
         '
         'Drop5
@@ -1067,11 +1067,11 @@ Partial Class MainForm
         Me.Equip5.BackColor = System.Drawing.Color.FromArgb(CType(CType(0, Byte), Integer), CType(CType(192, Byte), Integer), CType(CType(0, Byte), Integer))
         Me.Equip5.Enabled = False
         Me.Equip5.ForeColor = System.Drawing.Color.Black
-        Me.Equip5.Location = New System.Drawing.Point(251, 115)
+        Me.Equip5.Location = New System.Drawing.Point(252, 115)
         Me.Equip5.Name = "Equip5"
-        Me.Equip5.Size = New System.Drawing.Size(71, 23)
+        Me.Equip5.Size = New System.Drawing.Size(40, 23)
         Me.Equip5.TabIndex = 20
-        Me.Equip5.Text = "Equip"
+        Me.Equip5.Text = "Use"
         Me.Equip5.UseVisualStyleBackColor = False
         '
         'Drop4
@@ -1091,11 +1091,11 @@ Partial Class MainForm
         Me.Equip4.BackColor = System.Drawing.Color.FromArgb(CType(CType(0, Byte), Integer), CType(CType(192, Byte), Integer), CType(CType(0, Byte), Integer))
         Me.Equip4.Enabled = False
         Me.Equip4.ForeColor = System.Drawing.Color.Black
-        Me.Equip4.Location = New System.Drawing.Point(251, 89)
+        Me.Equip4.Location = New System.Drawing.Point(252, 89)
         Me.Equip4.Name = "Equip4"
-        Me.Equip4.Size = New System.Drawing.Size(71, 23)
+        Me.Equip4.Size = New System.Drawing.Size(40, 23)
         Me.Equip4.TabIndex = 18
-        Me.Equip4.Text = "Equip"
+        Me.Equip4.Text = "Use"
         Me.Equip4.UseVisualStyleBackColor = False
         '
         'Drop3
@@ -1115,11 +1115,11 @@ Partial Class MainForm
         Me.Equip3.BackColor = System.Drawing.Color.FromArgb(CType(CType(0, Byte), Integer), CType(CType(192, Byte), Integer), CType(CType(0, Byte), Integer))
         Me.Equip3.Enabled = False
         Me.Equip3.ForeColor = System.Drawing.Color.Black
-        Me.Equip3.Location = New System.Drawing.Point(251, 63)
+        Me.Equip3.Location = New System.Drawing.Point(252, 63)
         Me.Equip3.Name = "Equip3"
-        Me.Equip3.Size = New System.Drawing.Size(71, 23)
+        Me.Equip3.Size = New System.Drawing.Size(40, 23)
         Me.Equip3.TabIndex = 16
-        Me.Equip3.Text = "Equip"
+        Me.Equip3.Text = "Use"
         Me.Equip3.UseVisualStyleBackColor = False
         '
         'Drop2
@@ -1137,11 +1137,11 @@ Partial Class MainForm
         '
         Me.Equip2.BackColor = System.Drawing.Color.FromArgb(CType(CType(0, Byte), Integer), CType(CType(192, Byte), Integer), CType(CType(0, Byte), Integer))
         Me.Equip2.ForeColor = System.Drawing.Color.Black
-        Me.Equip2.Location = New System.Drawing.Point(251, 37)
+        Me.Equip2.Location = New System.Drawing.Point(252, 37)
         Me.Equip2.Name = "Equip2"
-        Me.Equip2.Size = New System.Drawing.Size(71, 23)
+        Me.Equip2.Size = New System.Drawing.Size(40, 23)
         Me.Equip2.TabIndex = 14
-        Me.Equip2.Text = "Equip"
+        Me.Equip2.Text = "Use"
         Me.Equip2.UseVisualStyleBackColor = False
         '
         'Drop1
@@ -1159,17 +1159,17 @@ Partial Class MainForm
         '
         Me.Equip1.BackColor = System.Drawing.Color.FromArgb(CType(CType(0, Byte), Integer), CType(CType(192, Byte), Integer), CType(CType(0, Byte), Integer))
         Me.Equip1.ForeColor = System.Drawing.Color.Black
-        Me.Equip1.Location = New System.Drawing.Point(251, 11)
+        Me.Equip1.Location = New System.Drawing.Point(252, 11)
         Me.Equip1.Name = "Equip1"
-        Me.Equip1.Size = New System.Drawing.Size(71, 23)
+        Me.Equip1.Size = New System.Drawing.Size(40, 23)
         Me.Equip1.TabIndex = 12
-        Me.Equip1.Text = "Equip"
+        Me.Equip1.Text = "Use"
         Me.Equip1.UseVisualStyleBackColor = False
         '
         'Inv10
         '
         Me.Inv10.Enabled = False
-        Me.Inv10.Location = New System.Drawing.Point(326, 247)
+        Me.Inv10.Location = New System.Drawing.Point(296, 247)
         Me.Inv10.Name = "Inv10"
         Me.Inv10.ReadOnly = True
         Me.Inv10.Size = New System.Drawing.Size(210, 20)
@@ -1178,7 +1178,7 @@ Partial Class MainForm
         'Inv9
         '
         Me.Inv9.Enabled = False
-        Me.Inv9.Location = New System.Drawing.Point(326, 221)
+        Me.Inv9.Location = New System.Drawing.Point(296, 221)
         Me.Inv9.Name = "Inv9"
         Me.Inv9.ReadOnly = True
         Me.Inv9.Size = New System.Drawing.Size(210, 20)
@@ -1187,7 +1187,7 @@ Partial Class MainForm
         'Inv8
         '
         Me.Inv8.Enabled = False
-        Me.Inv8.Location = New System.Drawing.Point(326, 195)
+        Me.Inv8.Location = New System.Drawing.Point(296, 195)
         Me.Inv8.Name = "Inv8"
         Me.Inv8.ReadOnly = True
         Me.Inv8.Size = New System.Drawing.Size(210, 20)
@@ -1196,7 +1196,7 @@ Partial Class MainForm
         'Inv7
         '
         Me.Inv7.Enabled = False
-        Me.Inv7.Location = New System.Drawing.Point(326, 169)
+        Me.Inv7.Location = New System.Drawing.Point(296, 169)
         Me.Inv7.Name = "Inv7"
         Me.Inv7.ReadOnly = True
         Me.Inv7.Size = New System.Drawing.Size(210, 20)
@@ -1205,7 +1205,7 @@ Partial Class MainForm
         'Inv6
         '
         Me.Inv6.Enabled = False
-        Me.Inv6.Location = New System.Drawing.Point(326, 143)
+        Me.Inv6.Location = New System.Drawing.Point(296, 143)
         Me.Inv6.Name = "Inv6"
         Me.Inv6.ReadOnly = True
         Me.Inv6.Size = New System.Drawing.Size(210, 20)
@@ -1214,7 +1214,7 @@ Partial Class MainForm
         'Inv5
         '
         Me.Inv5.Enabled = False
-        Me.Inv5.Location = New System.Drawing.Point(326, 117)
+        Me.Inv5.Location = New System.Drawing.Point(296, 117)
         Me.Inv5.Name = "Inv5"
         Me.Inv5.ReadOnly = True
         Me.Inv5.Size = New System.Drawing.Size(210, 20)
@@ -1223,7 +1223,7 @@ Partial Class MainForm
         'Inv4
         '
         Me.Inv4.Enabled = False
-        Me.Inv4.Location = New System.Drawing.Point(326, 91)
+        Me.Inv4.Location = New System.Drawing.Point(296, 91)
         Me.Inv4.Name = "Inv4"
         Me.Inv4.ReadOnly = True
         Me.Inv4.Size = New System.Drawing.Size(210, 20)
@@ -1232,7 +1232,7 @@ Partial Class MainForm
         'Inv3
         '
         Me.Inv3.Enabled = False
-        Me.Inv3.Location = New System.Drawing.Point(326, 65)
+        Me.Inv3.Location = New System.Drawing.Point(296, 65)
         Me.Inv3.Name = "Inv3"
         Me.Inv3.ReadOnly = True
         Me.Inv3.Size = New System.Drawing.Size(210, 20)
@@ -1240,7 +1240,7 @@ Partial Class MainForm
         '
         'Inv2
         '
-        Me.Inv2.Location = New System.Drawing.Point(326, 39)
+        Me.Inv2.Location = New System.Drawing.Point(296, 39)
         Me.Inv2.Name = "Inv2"
         Me.Inv2.ReadOnly = True
         Me.Inv2.Size = New System.Drawing.Size(210, 20)
@@ -1248,7 +1248,7 @@ Partial Class MainForm
         '
         'Inv1
         '
-        Me.Inv1.Location = New System.Drawing.Point(326, 13)
+        Me.Inv1.Location = New System.Drawing.Point(296, 13)
         Me.Inv1.Name = "Inv1"
         Me.Inv1.ReadOnly = True
         Me.Inv1.Size = New System.Drawing.Size(210, 20)
