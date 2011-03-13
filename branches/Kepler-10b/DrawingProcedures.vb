@@ -98,11 +98,57 @@
         If IsDiagonalTest = False Then
             Return False
         Else
-            If LineOfSight.Bresenham(x, y, playerposx, playerposy, New PlotFunction(AddressOf plot)) < 1 And MainForm.Map(MainForm.MapLevel, x, y) <> Wall Then
-                Return True
+            Dim CurX, CurStep As Integer
+            If x > playerposx Then
+                If y > playerposy Then 'bottom right
+                    For CurX = playerposx + 1 To x Step 1
+                        CurStep += 1
+                        If MainForm.Map(MainForm.MapLevel, CurX, playerposy + CurStep) = Wall Then
+                            If CurX = x And playerposy + CurStep = y Then
+                                Return True
+                            Else
+                                Return False
+                            End If
+                        End If
+                    Next
+                Else 'top right
+                    For CurX = playerposx + 1 To x Step 1
+                        CurStep -= 1
+                        If MainForm.Map(MainForm.MapLevel, CurX, playerposy + CurStep) = Wall Then
+                            If CurX = x And playerposy + CurStep = y Then
+                                Return True
+                            Else
+                                Return False
+                            End If
+                        End If
+                    Next
+                End If
             Else
-                Return False
+                If y > playerposy Then 'bottom left
+                    For CurX = playerposx - 1 To x Step -1
+                        CurStep += 1
+                        If MainForm.Map(MainForm.MapLevel, CurX, playerposy + CurStep) = Wall Then
+                            If CurX = x And playerposy + CurStep = y Then
+                                Return True
+                            Else
+                                Return False
+                            End If
+                        End If
+                    Next
+                Else 'top left
+                    For CurX = playerposx - 1 To x Step -1
+                        CurStep -= 1
+                        If MainForm.Map(MainForm.MapLevel, CurX, playerposy + CurStep) = Wall Then
+                            If CurX = x And playerposy + CurStep = y Then
+                                Return True
+                            Else
+                                Return False
+                            End If
+                        End If
+                    Next
+                End If
             End If
+            Return True
         End If
     End Function
     Function IsVisible(ByVal x As Short, ByVal y As Short, ByVal playerposx As Short, ByVal playerposy As Short) As Short
@@ -181,10 +227,10 @@
         Dim FloorArt As Bitmap
         'define bounds, start x visible area -1 to x visible area +1, same with y, no need to check whole map, it's already written
         'just make sure you check where player is moving and where he could have moved to see if tiles need to be replaced.
-        Dim StartX As Short = PlayerPosX - 5 : If StartX < 0 Then StartX = 0
-        Dim StartY As Short = PlayerposY - 5 : If StartY < 0 Then StartY = 0
-        Dim FinishX As Short = PlayerPosX + 5 : If FinishX > Mapsize Then FinishX = Mapsize
-        Dim FinishY As Short = PlayerposY + 5 : If FinishY > Mapsize Then FinishY = Mapsize
+        Dim StartX As Short = PlayerPosX - 4 - MainForm.PlayersPlusRange : If StartX < 0 Then StartX = 0
+        Dim StartY As Short = PlayerposY - 4 - MainForm.PlayersPlusRange : If StartY < 0 Then StartY = 0
+        Dim FinishX As Short = PlayerPosX + 4 + MainForm.PlayersPlusRange : If FinishX > Mapsize Then FinishX = Mapsize
+        Dim FinishY As Short = PlayerposY + 4 + MainForm.PlayersPlusRange : If FinishY > Mapsize Then FinishY = Mapsize
         If ChangedMode = True Then 'required to redraw entire map, used when grahpical mode is changed
             StartX = 0 : StartY = 0 : FinishX = Mapsize : FinishY = Mapsize
         End If
@@ -199,8 +245,8 @@
                 yishPLUS = Val(TheRoomHeight) * y + Val(RowSpace) * y + 10 + Val(TheRoomHeight)
                 'MainForm.CANVAS.DrawRectangle(Pens.Pink, xish, yish, TheRoomWidth, TheRoomHeight) 'used to test canvas size
                 'draws a circle around player 4 wide on each side for visibility, remember that x and y are passed starting -5 to 5 of characters current position.
-                If ((Math.Pow(PlayerPosX - x, 2) + Math.Pow(PlayerposY - y, 2)) < (Math.Pow(4, 2))) Or MainForm.AdminVisible = True Then 'admin visible shows all
-                    'within range of player, only process isvisible routines if it's within 4 of character so it doesn't process unnecessary squares too far from player
+                If ((Math.Pow(PlayerPosX - x, 2) + Math.Pow(PlayerposY - y, 2)) < (Math.Pow(4 + MainForm.PlayersPlusRange, 2))) Or MainForm.AdminVisible = True Then 'admin visible shows all
+                    'within range of player, only process isvisible routines if it's within 4(+playersplusrange) of character so it doesn't process unnecessary squares too far from player
                     If IsVisible(x, y, PlayerPosX, PlayerposY) <= 1 Or IsVisible2(x, y, PlayerPosX, PlayerposY) <= 1 Or MainForm.AdminVisible = True Or ChangedMode = True And MainForm.MapShown(MainForm.MapLevel, x, y) = True Or IsDiagonal(x, y, PlayerPosX, PlayerposY) = True Then
                         'within range of player and is visible
                         If LOSMap(x, y) <> Visible Then 'should be visible, tile not currently visible, change then set map as visible
@@ -415,15 +461,15 @@
     End Sub
     Sub ShowItem(ByVal xish As Short, ByVal yish As Short, ByVal x As Short, ByVal y As Short)
         If MainForm.ItemType(MainForm.MapLevel, MainForm.ItemOccupied(MainForm.MapLevel, x, y)) = Gold Then
-            MainForm.CANVAS.DrawString("g", displayfont, Brushes.Yellow, xish, yish)
+            MainForm.CANVAS.DrawString(MainForm.ItemShowType(MainForm.MapLevel, x, y), displayfont, Brushes.Yellow, xish, yish)
         ElseIf MainForm.ItemType(MainForm.MapLevel, MainForm.ItemOccupied(MainForm.MapLevel, x, y)) = TheEverspark Then
             MainForm.CANVAS.DrawString("E", displayfont, Brushes.White, xish, yish)
         ElseIf MainForm.ItemType(MainForm.MapLevel, MainForm.ItemOccupied(MainForm.MapLevel, x, y)) = Weapon Then
             MainForm.CANVAS.DrawString(MainForm.ItemShowType(MainForm.MapLevel, x, y), displayfont, Brushes.DarkCyan, xish, yish)
         ElseIf MainForm.ItemType(MainForm.MapLevel, MainForm.ItemOccupied(MainForm.MapLevel, x, y)) = GenerateItem.Food Then
-            MainForm.CANVAS.DrawString("f", displayfont, Brushes.LightYellow, xish, yish)
+            MainForm.CANVAS.DrawString(MainForm.ItemShowType(MainForm.MapLevel, x, y), displayfont, Brushes.LightYellow, xish, yish)
         ElseIf MainForm.ItemType(MainForm.MapLevel, MainForm.ItemOccupied(MainForm.MapLevel, x, y)) = GenerateItem.Water Then
-            MainForm.CANVAS.DrawString("w", displayfont, Brushes.Aqua, xish, yish)
+            MainForm.CANVAS.DrawString(MainForm.ItemShowType(MainForm.MapLevel, x, y), displayfont, Brushes.Aqua, xish, yish)
         ElseIf MainForm.ItemType(MainForm.MapLevel, MainForm.ItemOccupied(MainForm.MapLevel, x, y)) = GenerateItem.Potion Then
             MainForm.CANVAS.DrawString(MainForm.ItemShowType(MainForm.MapLevel, x, y), displayfont, Brushes.Magenta, xish, yish)
         Else

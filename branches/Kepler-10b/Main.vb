@@ -24,12 +24,7 @@ Public Class MainForm
     Public Const Lava As Short = 7
     Public Const Ice As Short = 8
 
-    Const Head As Short = 1
-    Const Chest As Short = 2
-    Const Arms As Short = 3
-    Const Hands As Short = 4
-    Const Legs As Short = 5
-    Const Feet As Short = 6
+    Const Armor As Short = 6
     Const Weapon As Short = 7
     Const Gold As Short = 8
     Const TheEverspark As Short = 50
@@ -82,7 +77,7 @@ Public Class MainForm
     Public BoneShield, MagicShield, CounterAttack, Immolate, Fury, Block, Silence As Short
 
     Public PlayerPosX, PlayerPosY, PlayerLastPosX, PlayerLastPosY As Short
-    Public PlayerExperience As Integer = 0
+    Public PlayerExperience As Integer
     Public PlayerLevel As Byte = 1
     Public PlayerName As String
     Public PlayerHidden As Short
@@ -97,11 +92,17 @@ Public Class MainForm
     Public PlayerEquipNHead, PlayerEquipNChest, PlayerEquipNArms, PlayerEquipNHands, PLayerEquipNLegs, PlayerEquipNFeet As String
     Public PlayerHitpoints, PlayerEnergy As Short
     Public PlayerCurHitpoints, PlayerCurEnergy As Short
-    Public PlayerLevelPoints As Short
+    Public PlayerLevelPoints, PlayerLevelRanks, CaptainCurLevel, ScoutCurLevel, TankCurLevel, BenefactorCurLevel, MuleCurLevel As Short
+    Public PlayerRankModifier As Short = 1
     Public PlayerTurns As Long
     Public PlayerGold As Short
     Public PlayerDead As Boolean = False
     Public PlayerTargeting As Boolean = False
+    Public HealthRejuv, EnergyRejuv As Short
+    Public FearPerc As Short
+    Public Aggroperc As Short
+    Public PlayersPlusRange As UShort
+    Public Playermaxitems As Short = 2
 
     Public HighScores As String
 
@@ -115,10 +116,9 @@ Public Class MainForm
     Public MobilePresent As Boolean 'generic mobile is presently on screen to prevent erronerous targeting or skills w/o mobs present
 
     Public ItemNum(MaxDepthLevel, 39), ItemType(MaxDepthLevel, 39), ItemOccupied(MaxDepthLevel, MapSize, MapSize) As Short
-    Public ItemNameType(MaxDepthLevel, MapSize, MapSize), ItemShowType(MaxDepthLevel, MapSize, MapSize)
-    Public ItemInventoryType(19) As Short
-    Public ItemInventoryName(19) As String
-    Public ItemInventoryQuality(19) As Short
+    Public ItemBonusType(MaxDepthLevel, MapSize, MapSize) As Short
+    Public ItemNameType(MaxDepthLevel, MapSize, MapSize), ItemShowType(MaxDepthLevel, MapSize, MapSize) As String
+    Public InvType(9), InvStrength(9) As Short
 
     Public SNDLog(27) As String
     Public LogVisible As Boolean = True
@@ -330,6 +330,7 @@ Public Class MainForm
                         ItemType(MapLevel, ItemNumber) = GenerateItem.ItemType
                         ItemShowType(MapLevel, MobilePosX(MapLevel, Mobnum), MobilePosY(MapLevel, Mobnum)) = GenerateItem.ShowType
                         ItemNameType(MapLevel, MobilePosX(MapLevel, Mobnum), MobilePosY(MapLevel, Mobnum)) = GenerateItem.NameType
+                        ItemBonusType(MapLevel, MobilePosX(MapLevel, Mobnum), MobilePosY(MapLevel, Mobnum)) = GenerateItem.ItemStrength
                         If LTrim(GenerateItem.NameType) = "" Then 'this prevents stringless items which occur rarely.. remove when bug is found in generate item
                             Return 0
                         End If
@@ -441,7 +442,7 @@ Public Class MainForm
         If HideAttack = False Then
             If SkillType = "" Then CritStrike = TestCriticalStrike.Next(0, 101) Else CritStrike = TestCriticalStrike.Next(0, 101)
             If CritStrike <= PlayerSTR And SkillType = "" Then 'player critically striked. chance to critically strike is the players strength
-                MobileHealth(MapLevel, Mobnum) -= PlayerAttack * 2
+                MobileHealth(MapLevel, Mobnum) -= Val(WeaponBonus.Text) + PlayerAttack * 2
                 If Counter = False Then
                     SND("You CRIT " + MobileNameString + ".")
                 Else
@@ -451,7 +452,7 @@ Public Class MainForm
             ElseIf CritStrike <= PlayerINT * 2 And SkillType <> "" Then 'player critically striked with a skill.
                 If SkillType = "Shoot" Then
                     'these are the basic +1 skilltypes, and all do the same
-                    MobileHealth(MapLevel, Mobnum) -= PlayerAttack * 2 + 2
+                    MobileHealth(MapLevel, Mobnum) -= Val(WeaponBonus.Text) + PlayerAttack * 2 + 2
                     SND("Your shot CRITS " + MobileNameString + ".")
                     PlayMusic("PlayerShoot")
                 End If
@@ -473,9 +474,9 @@ Public Class MainForm
                     PlayMusic("PlayerMiss")
                 Else
                     If Fury > 0 Then 'fury increases regular attack strength by 1
-                        MobileHealth(MapLevel, Mobnum) -= PlayerAttack + 1
+                        MobileHealth(MapLevel, Mobnum) -= Val(WeaponBonus.Text) + PlayerAttack + 1
                     Else
-                        MobileHealth(MapLevel, Mobnum) -= PlayerAttack
+                        MobileHealth(MapLevel, Mobnum) -= Val(WeaponBonus.Text) + PlayerAttack
                     End If
                     If Counter = False Then
                         SND("You hit " + MobileNameString + ".")
@@ -486,7 +487,7 @@ Public Class MainForm
                 End If
             ElseIf SkillType <> "" Then 'basic skill
                 If SkillType = "Shoot" Then 'just a +1 attack
-                    MobileHealth(MapLevel, Mobnum) -= PlayerAttack + 1
+                    MobileHealth(MapLevel, Mobnum) -= Val(WeaponBonus.Text) + PlayerAttack + 1
                     SND("You shoot " + MobileNameString + ".")
                     PlayMusic("PlayerShoot")
                 End If
@@ -546,7 +547,7 @@ Public Class MainForm
         End If
         If MobileClumsiness(MapLevel, Mobnum) > 0 Then MobileClumsiness(MapLevel, Mobnum) -= 1
         If SupressDueToCriticalStrike = False Then
-            DamageAmount -= PlayerDefense
+            DamageAmount -= Val(ArmorBonus.Text) + PlayerDefense
             If Block > 0 Then 'block skill is active, reduce all damage by 2
                 DamageAmount -= 2
             End If
@@ -788,7 +789,7 @@ Public Class MainForm
                 'if the variable isn't passed into this if statement, it's because mobile tried moving onto another mobile or wall
                 If Map(MapLevel, MobilePosX(MapLevel, MobNum) + 1, MobilePosY(MapLevel, MobNum)) <> Wall Then
                     If MobilePosX(MapLevel, MobNum) + 1 = PlayerPosX And MobilePosY(MapLevel, MobNum) = PlayerPosY Then 'if mobile plans on moving east and character is to the east, hit character instead of move
-                        FleeResult = FleeinTerror.Next(0, 101)
+                        FleeResult = FleeinTerror.Next(0, 101) + FearPerc 'add tanks fear percent to mobile fear percent
                         If FleeResult <= PlayerCHA Then
                             FleeMob(MobNum)
                             Resolved = True
@@ -1026,7 +1027,14 @@ Public Class MainForm
     End Sub
     Private Sub InitCharacter()
         If Screensaver = False Then
-            PlayerSTR = 10 : PlayerDEX = 10 : PlayerCON = 10 : PlayerINT = 10 : PlayerWIS = 10 : PlayerCHA = 10 : PlayerLUC = 10
+            'Before player classes were implemented you would have to initiate the values
+            'of the stats, now this isn't necessary as stats are set with the choosing
+            'of a class at teh beginning of hte game
+            'PlayerSTR = 10 : PlayerDEX = 10 : PlayerCON = 10 : PlayerINT = 10 : PlayerWIS = 10 : PlayerCHA = 10 : PlayerLUC = 10
+            PlayerMaxSTR = PlayerSTR + 5 : PlayerMaxDEX = PlayerDEX + 5
+            PlayerMaxINT = PlayerINT + 5 : PlayerMaxWIS = PlayerWIS + 5
+            PlayerMaxCON = PlayerCON + 5 : PlayerMaxCHA = PlayerCHA + 5
+            PlayerMaxLuc = PlayerLUC + 5
             PlayerDefense = Math.Round(PlayerCON / 5, 0)
             PlayerAttack = Math.Round(PlayerSTR / 5, 0)
             PreviousDefense = PlayerDefense
@@ -1506,6 +1514,7 @@ Public Class MainForm
                     ItemType(MapLevel, ItemNumber) = GenerateItem.ItemType
                     ItemShowType(MapLevel, RandomPosX, RandomPosY) = GenerateItem.ShowType
                     ItemNameType(MapLevel, RandomPosX, RandomPosY) = GenerateItem.NameType
+                    ItemBonusType(MapLevel, RandomPosX, RandomPosY) = GenerateItem.ItemStrength
                     If MapLevel = MaxDepthLevel And ItemNumber = MaxItems Then 'the reason we show it on item nine is because i allowed items to spawn over each other, this is
                         ItemType(MapLevel, ItemNumber) = TheEverspark 'an easy way to ensure that there's not always 10 items.
                     End If
@@ -2397,40 +2406,18 @@ Public Class MainForm
         'check to see if the player is in water and reduce their Energy
         If Map(MapLevel, PlayerPosX, PlayerPosY) = Water Then
             Dim Ignorewater = False
-            If RiverType = Water And WaterImmune = 0 Then
-                PlayerCurEnergy -= 10
-            ElseIf RiverType = Ice And IceImmune = 0 Then
-                PlayerCurEnergy -= 20
-            ElseIf RiverType = Lava And LavaImmune = 0 Then
+            If LavaImmune = 0 Then
                 PlayerCurEnergy -= 30
             Else
                 Ignorewater = True
             End If
             If PlayerCurEnergy <= 0 Then
                 PlayerCurHitpoints += PlayerCurEnergy
-                SND("You use up all your WP.")
-                If RiverType = Water And PlayerCurEnergy <> 0 Then
-                    SND("You drown for " + LTrim(Str(Math.Abs(PlayerCurEnergy))) + "HP.")
-                ElseIf RiverType = Ice And PlayerCurEnergy <> 0 Then
-                    SND("You freeze for " + LTrim(Str(Math.Abs(PlayerCurEnergy))) + "HP.")
-                ElseIf RiverType = Lava And PlayerCurEnergy <> 0 Then
-                    SND("You burn for " + LTrim(Str(Math.Abs(PlayerCurEnergy))) + "HP.")
-                End If
+                SND("Your shield depletes your energy.")
+                SND("You burn for " + LTrim(Str(Math.Abs(PlayerCurEnergy))) + "HP.")
                 PlayerCurEnergy = 0
             ElseIf Ignorewater = True Then
                 SND("You remain immune.")
-                If WaterImmune > 0 Then
-                    WaterImmune -= 1
-                    If WaterImmune = 0 Then
-                        SND("Drown immunity wears off.")
-                    End If
-                End If
-                If IceImmune > 0 Then
-                    IceImmune -= 1
-                    If IceImmune = 0 Then
-                        SND("Freeze immunity wears off.")
-                    End If
-                End If
                 If LavaImmune > 0 Then
                     LavaImmune -= 1
                     If LavaImmune = 0 Then
@@ -2438,13 +2425,7 @@ Public Class MainForm
                     End If
                 End If
             Else
-                If RiverType = Water Then
-                    SND("You swim reducing WP by 10.")
-                ElseIf RiverType = Ice Then
-                    SND("You freeze reducing WP by 20.")
-                ElseIf RiverType = Lava Then
-                    SND("You burn reducing WP by 30.")
-                End If
+                SND("You burn reducing energy levels by 30.")
             End If
             RefreshStats() 'updates Energy and health bar statistics
         End If
@@ -2510,7 +2491,9 @@ Public Class MainForm
 #Region "Level Up"
     Private Sub LevelUp()
         PlayerExperience -= 100
-        If PlayerLevel < 100 Then PlayerLevel += 1
+        If PlayerLevel < 100 Then
+            PlayerLevel += 1
+        End If
         strcur.Text = LTrim(Str(PlayerSTR)) : strmax.Text = LTrim(Str(PlayerMaxSTR)) : If PlayerSTR < PlayerMaxSTR Then stradd.Enabled = True
         dexcur.Text = LTrim(Str(PlayerDEX)) : dexmax.Text = LTrim(Str(PlayerMaxDEX)) : If PlayerDEX < PlayerMaxDEX Then dexadd.Enabled = True
         intcur.Text = LTrim(Str(PlayerINT)) : intmax.Text = LTrim(Str(PlayerMaxINT)) : If PlayerINT < PlayerMaxINT Then intadd.Enabled = True
@@ -2521,9 +2504,23 @@ Public Class MainForm
         hpcur.Text = LTrim(Str(PlayerHitpoints)) : hpadd.Enabled = True
         wpcur.Text = LTrim(Str(PlayerEnergy)) : wpadd.Enabled = True
         PlayerLevelPoints += Math.Round(PlayerWIS / 4, 0)
+        PlayerLevelRanks += PlayerRankModifier
+        CurRanks.Text = LTrim(Str(PlayerLevelRanks))
         CurPoints.Text = LTrim(Str(PlayerLevelPoints))
+        If CaptainCurLevel < 5 Then AddCaptain.Enabled = True
+        If MuleCurLevel < 5 Then AddMule.Enabled = True
+        If ScoutCurLevel < 5 Then AddScout.Enabled = True
+        If BenefactorCurLevel < 5 Then AddBenefactor.Enabled = True
+        If TankCurLevel < 5 Then AddTank.Enabled = True
         HelpInfo.Visible = False
         LevelUpPanel.Visible = True
+    End Sub
+    Private Sub ShowLevelUpStrip(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles LevelStrip.Click
+        If LevelUpPanel.Visible = False Then
+            LevelUpPanel.Visible = True
+        Else
+            LevelUpPanel.Visible = False
+        End If
     End Sub
     Private Sub stradd_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles stradd.Click
         If Val(strcur.Text) < Val(strmax.Text) And Val(CurPoints.Text) > 0 Then
@@ -2633,7 +2630,160 @@ Public Class MainForm
             wpadd.Enabled = False
         End If
     End Sub
+    Private Sub captainadd_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles AddCaptain.Click
+        If Val(CurRanks.Text) > 0 And CaptainCurLevel < 5 Then
+            PlayerLevelRanks -= 1
+            CaptainCurLevel += 1
+            PlayerRankModifier += 1 'captains beneficiary
+            CurCaptain.Text = LTrim(Str(CaptainCurLevel))
+            ResetRankNextDescriptions()
+            CurRanks.Text = LTrim(Str(Val(CurRanks.Text) - 1))
+            If Val(CurRanks.Text) = 0 Then DisableRankAdds()
+        Else
+            AddCaptain.Enabled = False
+        End If
+    End Sub
+    Private Sub muleadd_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles AddMule.Click
+        If Val(CurRanks.Text) > 0 And MuleCurLevel < 5 Then
+            PlayerLevelRanks -= 1
+            MuleCurLevel += 1
+            Playermaxitems = MuleCurLevel * 2 'mules beneficiary
+            CurMule.Text = LTrim(Str(MuleCurLevel))
+            ResetRankNextDescriptions()
+            CurRanks.Text = LTrim(Str(Val(CurRanks.Text) - 1))
+            If Val(CurRanks.Text) = 0 Then DisableRankAdds()
+        Else
+            AddMule.Enabled = False
+        End If
+    End Sub
+    Private Sub scoutadd_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles AddScout.Click
+        If Val(CurRanks.Text) > 0 And ScoutCurLevel < 5 Then
+            PlayerLevelRanks -= 1
+            ScoutCurLevel += 1
+            PlayersPlusRange = ScoutCurLevel - 1 'Scouts Beneficiary
+            CurScout.Text = LTrim(Str(ScoutCurLevel))
+            ResetRankNextDescriptions()
+            CurRanks.Text = LTrim(Str(Val(CurRanks.Text) - 1))
+            If Val(CurRanks.Text) = 0 Then DisableRankAdds()
+        Else
+            AddScout.Enabled = False
+        End If
+    End Sub
+    Private Sub tankadd_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles AddTank.Click
+        If Val(CurRanks.Text) > 0 And TankCurLevel < 5 Then
+            PlayerLevelRanks -= 1
+            TankCurLevel += 1
+            'tanks beneficiary
+            If TankCurLevel = 1 Then
+                Aggroperc = 25
+            ElseIf TankCurLevel = 2 Then
+                Aggroperc = 50
+            ElseIf TankCurLevel = 3 Then
+                Aggroperc = 75
+            ElseIf TankCurLevel = 4 Then
+                Aggroperc = 100
+            ElseIf TankCurLevel = 5 Then
+                FearPerc = 25
+            End If
+            CurTank.Text = LTrim(Str(TankCurLevel))
+            ResetRankNextDescriptions()
+            CurRanks.Text = LTrim(Str(Val(CurRanks.Text) - 1))
+            If Val(CurRanks.Text) = 0 Then DisableRankAdds()
+        Else
+            AddTank.Enabled = False
+        End If
+    End Sub
+    Private Sub benefactoradd_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles AddBenefactor.Click
+        If Val(CurRanks.Text) > 0 And BenefactorCurLevel < 5 Then
+            PlayerLevelRanks -= 1
+            BenefactorCurLevel += 1
+            If BenefactorCurLevel = 1 Then
+                EnergyRejuv = 0
+            ElseIf BenefactorCurLevel = 2 Then
+                EnergyRejuv = 1
+            ElseIf BenefactorCurLevel = 3 Then
+                EnergyRejuv = 3
+            ElseIf BenefactorCurLevel = 4 Then
+                EnergyRejuv = 1
+            ElseIf BenefactorCurLevel = 5 Then
+                HealthRejuv = 3
+            End If
+            CurBenefactor.Text = LTrim(Str(BenefactorCurLevel))
+            ResetRankNextDescriptions()
+            CurRanks.Text = LTrim(Str(Val(CurRanks.Text) - 1))
+            If Val(CurRanks.Text) = 0 Then DisableRankAdds()
+        Else
+            AddBenefactor.Enabled = False
+        End If
+    End Sub
+    Private Sub ResetRankNextDescriptions()
+        If CaptainCurLevel = 1 Then
+            CaptainNextBenefit.Text = "2 Ranks"
+        ElseIf CaptainCurLevel = 2 Then
+            CaptainNextBenefit.Text = "3 Ranks"
+        ElseIf CaptainCurLevel = 3 Then
+            CaptainNextBenefit.Text = "4 Ranks"
+        ElseIf CaptainCurLevel = 4 Then
+            CaptainNextBenefit.Text = "5 Ranks"
+        ElseIf CaptainCurLevel = 5 Then
+            CaptainNextBenefit.Text = "Max Rank Acquired"
+        End If
+        If MuleCurLevel = 1 Then
+            MuleNextBenefit.Text = "4 Items"
+        ElseIf MuleCurLevel = 2 Then
+            MuleNextBenefit.Text = "6 Items"
+        ElseIf MuleCurLevel = 3 Then
+            MuleNextBenefit.Text = "8 Items"
+        ElseIf MuleCurLevel = 4 Then
+            MuleNextBenefit.Text = "10 Items"
+        ElseIf MuleCurLevel = 5 Then
+            MuleNextBenefit.Text = "Max Rank Acquired"
+        End If
+        If ScoutCurLevel = 1 Then
+            ScoutNextBenefit.Text = "+1 Range"
+        ElseIf ScoutCurLevel = 2 Then
+            ScoutNextBenefit.Text = "+2 Range"
+        ElseIf ScoutCurLevel = 3 Then
+            ScoutNextBenefit.Text = "+3 Range"
+        ElseIf ScoutCurLevel = 4 Then
+            ScoutNextBenefit.Text = "+4 Range"
+        ElseIf ScoutCurLevel = 5 Then
+            ScoutNextBenefit.Text = "Max Rank Acquired"
+        End If
+        If TankCurLevel = 1 Then
+            TankNextBenefit.Text = "50% Aggro"
+        ElseIf TankCurLevel = 2 Then
+            TankNextBenefit.Text = "75% Aggro"
+        ElseIf TankCurLevel = 3 Then
+            TankNextBenefit.Text = "100% Aggro"
+        ElseIf TankCurLevel = 4 Then
+            TankNextBenefit.Text = "25% Fear"
+        ElseIf TankCurLevel = 5 Then
+            TankNextBenefit.Text = "Max Rank Acquired"
+        End If
+        If BenefactorCurLevel = 1 Then
+            BenefactorNextBenefit.Text = "+1 Energy per round"
+        ElseIf BenefactorCurLevel = 2 Then
+            BenefactorNextBenefit.Text = "+3 Energy per round"
+        ElseIf BenefactorCurLevel = 3 Then
+            BenefactorNextBenefit.Text = "+1 Health per round"
+        ElseIf BenefactorCurLevel = 4 Then
+            BenefactorNextBenefit.Text = "+3 Health per round"
+        ElseIf BenefactorCurLevel = 5 Then
+            BenefactorNextBenefit.Text = "Max Rank Acquired"
+        End If
+    End Sub
+    Private Sub DisableRankAdds()
+        AddCaptain.Enabled = False
+        AddMule.Enabled = False
+        AddScout.Enabled = False
+        AddTank.Enabled = False
+        AddBenefactor.Enabled = False
+    End Sub
     Private Sub DoneBttn_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles DoneBttn.Click
+        'if you don't disable the buttons then it will ding as they will be selected even though the form isn't visible
+        disableadds()
+        DisableRankAdds()
         Dim PrevCon As Short = PlayerCON
         Dim PrevStr As Short = PlayerSTR
         PlayerSTR = Val(strcur.Text)
@@ -2659,68 +2809,13 @@ Public Class MainForm
         EnergyBar.Max = PlayerEnergy
     End Sub
 #End Region
-#Region "Image Filters"
-    Private Sub FilterBevel(ByVal TheObject As System.Object)
-        Dim i, j, rr, gg, bb, a As Integer
-        Dim c, cc As System.Drawing.Color
-        Dim pic1 As System.Drawing.Bitmap
-        Dim r1, r2, b1, b2, g1, g2 As Integer
-        pic1 = TheObject.Image
-        For j = 0 To TheObject.Image.Height - 2
-            For i = 0 To TheObject.Image.Width - 2
-                c = pic1.GetPixel(i, j)
-                r1 = c.R
-                g1 = c.G
-                b1 = c.B
-                cc = pic1.GetPixel(i + 1, j + 1)
-                r2 = cc.R
-                g2 = cc.G
-                b2 = cc.B
-                rr = r2 - r1 + 128
-                gg = g2 - g1 + 128
-                bb = b2 - b1 + 128
-                If rr < 0 Then rr = 0
-                If rr > 255 Then rr = 255
-                If gg < 0 Then gg = 0
-                If gg > 255 Then gg = 255
-                If bb < 0 Then bb = 0
-                If bb > 255 Then bb = 255
-                c = Color.FromArgb(a, rr, gg, bb)
-                pic1.SetPixel(i, j, c)
-            Next
-            TheObject.Refresh()
-        Next
-    End Sub
-    Private Sub FilterRed(ByVal TheObject As System.Object)
-        Dim i, j, a As Integer
-        Dim c As System.Drawing.Color
-        Dim pic1 As System.Drawing.Bitmap
-        Dim r1, b1, g1 As Integer
-        pic1 = TheObject.Image
-        For j = 0 To TheObject.Image.Height - 2
-            For i = 0 To TheObject.Image.Width - 2
-                c = pic1.GetPixel(i, j)
-                r1 = c.R + 75
-                g1 = c.G - 25
-                b1 = c.B - 25
-                If r1 < 0 Then r1 = 0
-                If r1 > 255 Then r1 = 255
-                If g1 < 0 Then g1 = 0
-                If b1 < 0 Then b1 = 0
-                c = Color.FromArgb(a, r1, g1, b1)
-                pic1.SetPixel(i, j, c)
-            Next
-            TheObject.Refresh()
-        Next
-    End Sub
-#End Region
     Public Sub SND(ByVal Text As String, Optional ByVal Clear As Boolean = False) 'this displays the display text
         Dim pxish As Short = TheRoomWidth * PlayerPosX + ColumnsSpace * PlayerPosX 'current player sector x position
         Dim pyish As Short = TheRoomHeight * PlayerPosY + ColumnsSpace * PlayerPosY + 25 'current player sector y position
         If Clear = True Then
             HUDisplay.Text = ""
             HUDisplay.Visible = False
-        ElseIf Screensaver = False Then
+        ElseIf Screensaver = False And LogVisible = True Then
             If HUDisplay.Text <> "" Then HUDisplay.Text = HUDisplay.Text + Chr(13) + Text Else HUDisplay.Text = Text
             HUDisplay.Left = pxish + TheRoomWidth
             'make sure the display is still on screen and fix it if it isn't
@@ -2878,6 +2973,14 @@ Public Class MainForm
                 ReDraw()
             ElseIf e.KeyCode = Keys.H Or e.KeyCode = Keys.OemQuestion And e.Shift = True Then
                 HelpClick(0, EventArgs.Empty)
+            ElseIf e.KeyCode = Keys.I Then
+                InventoryClicked(0, EventArgs.Empty)
+            ElseIf e.KeyCode = Keys.P Or e.KeyCode = Keys.T Then
+                If ItemOccupied(MapLevel, PlayerPosX, PlayerPosY) > 0 Then
+                    AddToInventory(ItemOccupied(MapLevel, PlayerPosX, PlayerPosY))
+                Else
+                    SND("Nothing is here to pickup.")
+                End If
             ElseIf e.KeyCode = Keys.OemPeriod And e.Shift = True Then 'go down
                 If Map(MapLevel, PlayerPosX, PlayerPosY) = StairsDown Then 'exit
                     MapLevel += 1
@@ -2900,10 +3003,20 @@ Public Class MainForm
                 SND("Game Over.")
             End If
         End If
+        'check rejuvination stats
+        If EnergyRejuv > 0 Then
+            PlayerCurEnergy += EnergyRejuv
+            If PlayerCurEnergy > PlayerEnergy Then PlayerCurEnergy = PlayerEnergy
+        End If
+        If HealthRejuv > 0 Then
+            PlayerCurHitpoints += HealthRejuv
+            If PlayerCurHitpoints > PlayerHitpoints Then PlayerCurHitpoints = PlayerHitpoints
+        End If
         'if the character stats panel is visble then recheck the stats and draw them after each round
         If CharStats.Visible = True Then
             CharacterStatsRefresh()
         End If
+        RefreshStats()
     End Sub
     Public Sub SNDScores()
         Output.Text = HighScores + Chr(13) + AddSpace(PlayerName, 20) + AddSpace(PlayerRace, 14) + AddSpace(PlayerClass, 17) + AddSpace(LTrim(Str(PlayerLevel)), 8) + AddSpace(LTrim(Str(PlayerExperience)), 13) + AddSpace(LTrim(Str(MapLevel)), 13) + AddSpace(LTrim(Str(PlayerGold)), 10) + LTrim(Str(PlayerTurns))
@@ -2945,7 +3058,7 @@ Public Class MainForm
     Private Sub CharacterStatsRefresh()
         StatBox.Text = "[Character Stats]" + Chr(13) + "Depth     : " + LTrim(Str(MapLevel)) + Chr(13) + "Level     : " + LTrim(Str(PlayerLevel)) + Chr(13) _
 + "Experience: " + LTrim(Str(PlayerExperience)) + Chr(13) _
-+ "Gold      : " + LTrim(Str(PlayerGold)) + Chr(13) _
++ "Minerals  : " + LTrim(Str(PlayerGold)) + Chr(13) _
 + "Turns     : " + LTrim(Str(PlayerTurns)) + Chr(13) + Chr(13) _
 + "Strength    : " + LTrim(Str(PlayerSTR)) + Chr(13) _
 + "Dexterity   : " + LTrim(Str(PlayerDEX)) + Chr(13) _
@@ -2960,8 +3073,10 @@ Public Class MainForm
     End Sub
     Private Sub ToggleActivityLogClick(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ShowHideActivityLogToolStripMenuItem.Click, LogStrip.Click
         If LogVisible = True Then
+            LogStrip.Checked = False
             LogVisible = False
         ElseIf LogVisible = False Then
+            LogStrip.Checked = True
             LogVisible = True
         End If
     End Sub
@@ -3101,6 +3216,14 @@ Public Class MainForm
         Panel2.BackColor = Color.DarkGray
         Panel3.BackColor = Color.Gray
         Panel4.BackColor = Color.Gray
+        SquadDescription.Text = "Stealth squad focuses on ranged attacks and" + Chr(13)
+        SquadDescription.Text += "dealing damage before enemies can react." + Chr(13)
+        SquadDescription.Text += "When forced into melee combat the stealth" + Chr(13)
+        SquadDescription.Text += "squad can react quickly, dexterously, and dodge" + Chr(13)
+        SquadDescription.Text += "attacks and run to ranged formations to deal" + Chr(13)
+        SquadDescription.Text += "damage once again. They are deadly and feared" + Chr(13)
+        SquadDescription.Text += "in later levels, their charismatic formation" + Chr(13)
+        SquadDescription.Text += "causes enemies to flee."
     End Sub
     Private Sub SoldierClicked(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Panel3.Click, Label14.Click
         ClassIntroStatsBox.Text = "+Counter"
@@ -3123,6 +3246,15 @@ Public Class MainForm
         Panel2.BackColor = Color.Gray
         Panel3.BackColor = Color.DarkGray
         Panel4.BackColor = Color.Gray
+        SquadDescription.Text = "Munitions squad is a full-force combat squad" + Chr(13)
+        SquadDescription.Text += "directed to be the first contact of" + Chr(13)
+        SquadDescription.Text += "extraterrestrial resistance. Munitions squad" + Chr(13)
+        SquadDescription.Text += "employs direct damage in both melee and ranged" + Chr(13)
+        SquadDescription.Text += "scenarios and are equiped with more vitality" + Chr(13)
+        SquadDescription.Text += "than other squads, allowing a higher percentage" + Chr(13)
+        SquadDescription.Text += "of survival in stressed situations. Though they" + Chr(13)
+        SquadDescription.Text += "are not versatile, they do enstill intense fear" + Chr(13)
+        SquadDescription.Text += "in opposition.. rightfully so."
     End Sub
     Private Sub ScientistClicked(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Panel4.Click, Label15.Click
         ClassIntroStatsBox.Text = "+Energy"
@@ -3145,6 +3277,15 @@ Public Class MainForm
         Panel2.BackColor = Color.Gray
         Panel3.BackColor = Color.Gray
         Panel4.BackColor = Color.DarkGray
+        SquadDescription.Text = "Research squad is aimed to be primarily" + Chr(13)
+        SquadDescription.Text += "focused on item retrieval and are incredibly" + Chr(13)
+        SquadDescription.Text += "versatile in learning, progressing both in" + Chr(13)
+        SquadDescription.Text += "damage or defense faster than any other squad" + Chr(13)
+        SquadDescription.Text += "if it is their objective while gaining experience" + Chr(13)
+        SquadDescription.Text += "during exploration. Research squad employs the" + Chr(13)
+        SquadDescription.Text += "greatest ranged damage due to their precise strikes." + Chr(13)
+        SquadDescription.Text += "This efficiency and the naturally higher energy" + Chr(13)
+        SquadDescription.Text += "output of the group marks them quite useful."
     End Sub
     Private Sub HoverScout(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Panel2.MouseEnter, Label13.MouseEnter
         Panel2.BackColor = Color.MediumSeaGreen
@@ -3193,6 +3334,8 @@ Public Class MainForm
         StatStrip.Enabled = True
         ToggleStrip.Enabled = True
         LogStrip.Enabled = True
+        LevelStrip.Enabled = True
+        InvStrip.Enabled = True
         'disable screensaver variables
         Screensaver = False
         Timer.Enabled = False
@@ -3206,14 +3349,20 @@ Public Class MainForm
         PlayerLevelPoints = 0
         PlayerDead = False
         MapLevel = 1
+        'set squad stats
+        CaptainCurLevel = 1
+        ScoutCurLevel = 1
+        TankCurLevel = 1
+        BenefactorCurLevel = 1
+        MuleCurLevel = 1
         'setup window
         Initialize(0, EventArgs.Empty)
         Array.Clear(MapCreated, 0, MapCreated.Length)
         'inventory shizzy
         For tmp0 = 0 To 19 Step 1
-            ItemInventoryName(tmp0) = ""
-            ItemInventoryQuality(tmp0) = 0
-            ItemInventoryType(tmp0) = 0
+            Inv1.Text = "" : Inv2.Text = "" : Inv3.Text = "" : Inv4.Text = "" : Inv5.Text = "" : Inv6.Text = "" : Inv7.Text = "" : Inv8.Text = "" : Inv9.Text = "" : Inv10.Text = ""
+            WeaponName.Text = "Nothing Equiped" : ArmorName.Text = "Nothing Equiped"
+            WeaponBonus.Text = "No Bonuses" : ArmorBonus.Text = "No Bonuses"
             PlayerEquipArms = 0
             PlayerEquipChest = 0
             PlayerEquipFeet = 0
@@ -3227,6 +3376,642 @@ Public Class MainForm
             PlayerEquipNHead = ""
             PLayerEquipNLegs = ""
         Next
+    End Sub
+#End Region
+#Region "Inventory"
+    Private Sub InventoryClicked(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles InvStrip.Click
+        If InventoryBox.Visible = False Then
+            Inv1.Enabled = False : Inv2.Enabled = False : Inv3.Enabled = False : Inv4.Enabled = False : Inv5.Enabled = False : Inv6.Enabled = False : Inv7.Enabled = False : Inv8.Enabled = False : Inv9.Enabled = False : Inv10.Enabled = False
+            Drop1.Enabled = False : Drop2.Enabled = False : Drop3.Enabled = False : Drop4.Enabled = False : Drop5.Enabled = False : Drop6.Enabled = False : Drop7.Enabled = False : Drop8.Enabled = False : Drop9.Enabled = False : Drop10.Enabled = False
+            Equip1.Enabled = False : Equip2.Enabled = False : Equip3.Enabled = False : Equip4.Enabled = False : Equip5.Enabled = False : Equip6.Enabled = False : Equip7.Enabled = False : Equip8.Enabled = False : Equip9.Enabled = False : Equip10.Enabled = False
+            If Playermaxitems = 2 Then
+                Inv1.Enabled = True : Inv2.Enabled = True
+                Drop1.Enabled = True : Drop2.Enabled = True
+                Equip1.Enabled = True : Equip2.Enabled = True
+            ElseIf Playermaxitems = 4 Then
+                Inv1.Enabled = True : Inv2.Enabled = True : Inv3.Enabled = True : Inv4.Enabled = True
+                Drop1.Enabled = True : Drop2.Enabled = True : Drop3.Enabled = True : Drop4.Enabled = True
+                Equip1.Enabled = True : Equip2.Enabled = True : Equip3.Enabled = True : Equip4.Enabled = True
+            ElseIf Playermaxitems = 6 Then
+                Inv1.Enabled = True : Inv2.Enabled = True : Inv3.Enabled = True : Inv4.Enabled = True : Inv5.Enabled = True : Inv6.Enabled = True
+                Drop1.Enabled = True : Drop2.Enabled = True : Drop3.Enabled = True : Drop4.Enabled = True : Drop5.Enabled = True : Drop6.Enabled = True
+                Equip1.Enabled = True : Equip2.Enabled = True : Equip3.Enabled = True : Equip4.Enabled = True : Equip5.Enabled = True : Equip6.Enabled = True
+            ElseIf Playermaxitems = 8 Then
+                Inv1.Enabled = True : Inv2.Enabled = True : Inv3.Enabled = True : Inv4.Enabled = True : Inv5.Enabled = True : Inv6.Enabled = True : Inv7.Enabled = True : Inv8.Enabled = True
+                Drop1.Enabled = True : Drop2.Enabled = True : Drop3.Enabled = True : Drop4.Enabled = True : Drop5.Enabled = True : Drop6.Enabled = True : Drop7.Enabled = True : Drop8.Enabled = True
+                Equip1.Enabled = True : Equip2.Enabled = True : Equip3.Enabled = True : Equip4.Enabled = True : Equip5.Enabled = True : Equip6.Enabled = True : Equip7.Enabled = True : Equip8.Enabled = True
+            ElseIf Playermaxitems = 9 Then
+                Inv1.Enabled = True : Inv2.Enabled = True : Inv3.Enabled = True : Inv4.Enabled = True : Inv5.Enabled = True : Inv6.Enabled = True : Inv7.Enabled = True : Inv8.Enabled = True : Inv9.Enabled = True : Inv10.Enabled = True
+                Drop1.Enabled = True : Drop2.Enabled = True : Drop3.Enabled = True : Drop4.Enabled = True : Drop5.Enabled = True : Drop6.Enabled = True : Drop7.Enabled = True : Drop8.Enabled = True : Drop9.Enabled = True : Drop10.Enabled = True
+                Equip1.Enabled = True : Equip2.Enabled = True : Equip3.Enabled = True : Equip4.Enabled = True : Equip5.Enabled = True : Equip6.Enabled = True : Equip7.Enabled = True : Equip8.Enabled = True : Equip9.Enabled = True : Equip10.Enabled = True
+            End If
+            InventoryBox.Top = 0
+            InventoryBox.Left = 0
+            InventoryBox.Visible = True
+        Else
+            Inv1.Enabled = False : Inv2.Enabled = False : Inv3.Enabled = False : Inv4.Enabled = False : Inv5.Enabled = False : Inv6.Enabled = False : Inv7.Enabled = False : Inv8.Enabled = False : Inv9.Enabled = False : Inv10.Enabled = False
+            Drop1.Enabled = False : Drop2.Enabled = False : Drop3.Enabled = False : Drop4.Enabled = False : Drop5.Enabled = False : Drop6.Enabled = False : Drop7.Enabled = False : Drop8.Enabled = False : Drop9.Enabled = False : Drop10.Enabled = False
+            Equip1.Enabled = False : Equip2.Enabled = False : Equip3.Enabled = False : Equip4.Enabled = False : Equip5.Enabled = False : Equip6.Enabled = False : Equip7.Enabled = False : Equip8.Enabled = False : Equip9.Enabled = False : Equip10.Enabled = False
+            Me.Focus()
+            InventoryBox.Visible = False
+        End If
+    End Sub
+    Sub AddToInventory(ByVal VNUM As Short)
+        Dim TestRoom As Short = 0
+        Dim FoundRoom As Boolean = False
+        If ItemType(MapLevel, VNUM) = TheEverspark Then 'player picked up the everspark, thus ending the game
+            SND("You win.")
+            SND("Game over")
+            PlayerDead = True
+            FoundRoom = True
+        ElseIf ItemType(MapLevel, VNUM) = Gold Then 'set foundroom to true so gold isn't added the inventory instead of the total
+            Dim GoldAmount As New Random
+            Dim GoldAmt As Integer = GoldAmount.Next(1, 9)
+            FoundRoom = True
+            PlayerGold += GoldAmt * MapLevel
+            ItemNameType(MapLevel, PlayerPosX, PlayerPosY) = LTrim(Str(GoldAmt * MapLevel)) + " precious minerals"
+        End If
+        If FoundRoom = False Then
+            If Inv1.Text = "" And Playermaxitems > 1 Then
+                FoundRoom = True
+                Inv1.Text = ItemNameType(MapLevel, PlayerPosX, PlayerPosY)
+                InvType(0) = ItemType(MapLevel, ItemOccupied(MapLevel, PlayerPosX, PlayerPosY))
+                InvStrength(0) = ItemBonusType(MapLevel, PlayerPosX, PlayerPosY)
+            ElseIf Inv2.Text = "" And Playermaxitems >= 2 Then
+                FoundRoom = True
+                Inv2.Text = ItemNameType(MapLevel, PlayerPosX, PlayerPosY)
+                InvType(1) = ItemType(MapLevel, ItemOccupied(MapLevel, PlayerPosX, PlayerPosY))
+                InvStrength(1) = ItemBonusType(MapLevel, PlayerPosX, PlayerPosY)
+            ElseIf Inv3.Text = "" And Playermaxitems >= 3 Then
+                FoundRoom = True
+                Inv3.Text = ItemNameType(MapLevel, PlayerPosX, PlayerPosY)
+                InvType(2) = ItemType(MapLevel, ItemOccupied(MapLevel, PlayerPosX, PlayerPosY))
+                InvStrength(2) = ItemBonusType(MapLevel, PlayerPosX, PlayerPosY)
+            ElseIf Inv4.Text = "" And Playermaxitems >= 4 Then
+                FoundRoom = True
+                Inv4.Text = ItemNameType(MapLevel, PlayerPosX, PlayerPosY)
+                InvType(3) = ItemType(MapLevel, ItemOccupied(MapLevel, PlayerPosX, PlayerPosY))
+                InvStrength(3) = ItemBonusType(MapLevel, PlayerPosX, PlayerPosY)
+            ElseIf Inv5.Text = "" And Playermaxitems >= 5 Then
+                FoundRoom = True
+                Inv5.Text = ItemNameType(MapLevel, PlayerPosX, PlayerPosY)
+                InvType(4) = ItemType(MapLevel, ItemOccupied(MapLevel, PlayerPosX, PlayerPosY))
+                InvStrength(4) = ItemBonusType(MapLevel, PlayerPosX, PlayerPosY)
+            ElseIf Inv6.Text = "" And Playermaxitems >= 6 Then
+                FoundRoom = True
+                Inv6.Text = ItemNameType(MapLevel, PlayerPosX, PlayerPosY)
+                InvType(5) = ItemType(MapLevel, ItemOccupied(MapLevel, PlayerPosX, PlayerPosY))
+                InvStrength(5) = ItemBonusType(MapLevel, PlayerPosX, PlayerPosY)
+            ElseIf Inv7.Text = "" And Playermaxitems >= 7 Then
+                FoundRoom = True
+                Inv7.Text = ItemNameType(MapLevel, PlayerPosX, PlayerPosY)
+                InvType(6) = ItemType(MapLevel, ItemOccupied(MapLevel, PlayerPosX, PlayerPosY))
+                InvStrength(6) = ItemBonusType(MapLevel, PlayerPosX, PlayerPosY)
+            ElseIf Inv8.Text = "" And Playermaxitems >= 8 Then
+                FoundRoom = True
+                Inv8.Text = ItemNameType(MapLevel, PlayerPosX, PlayerPosY)
+                InvType(7) = ItemType(MapLevel, ItemOccupied(MapLevel, PlayerPosX, PlayerPosY))
+                InvStrength(7) = ItemBonusType(MapLevel, PlayerPosX, PlayerPosY)
+            ElseIf Inv9.Text = "" And Playermaxitems >= 9 Then
+                FoundRoom = True
+                Inv9.Text = ItemNameType(MapLevel, PlayerPosX, PlayerPosY)
+                InvType(8) = ItemType(MapLevel, ItemOccupied(MapLevel, PlayerPosX, PlayerPosY))
+                InvStrength(8) = ItemBonusType(MapLevel, PlayerPosX, PlayerPosY)
+            ElseIf Inv10.Text = "" And Playermaxitems >= 10 Then
+                FoundRoom = True
+                Inv10.Text = ItemNameType(MapLevel, PlayerPosX, PlayerPosY)
+                InvType(9) = ItemType(MapLevel, ItemOccupied(MapLevel, PlayerPosX, PlayerPosY))
+                InvStrength(9) = ItemBonusType(MapLevel, PlayerPosX, PlayerPosY)
+            End If
+        End If
+        If FoundRoom = False Then
+            SND("You don't have enough room.")
+        Else
+            SND("You pick up " + ItemNameType(MapLevel, PlayerPosX, PlayerPosY) + ".")
+            ItemType(MapLevel, ItemOccupied(MapLevel, PlayerPosX, PlayerPosY)) = 0
+            ItemOccupied(MapLevel, PlayerPosX, PlayerPosY) = 0
+            ReDraw()
+        End If
+    End Sub
+    Private Sub Drop1_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Drop1.Click
+        Inv1.Text = ""
+    End Sub
+    Private Sub Drop2_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Drop2.Click
+        Inv2.Text = ""
+    End Sub
+    Private Sub Drop3_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Drop3.Click
+        Inv3.Text = ""
+    End Sub
+    Private Sub Drop4_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Drop4.Click
+        Inv4.Text = ""
+    End Sub
+    Private Sub Drop5_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Drop5.Click
+        Inv5.Text = ""
+    End Sub
+    Private Sub Drop6_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Drop6.Click
+        Inv6.Text = ""
+    End Sub
+    Private Sub Drop7_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Drop7.Click
+        Inv7.Text = ""
+    End Sub
+    Private Sub Drop8_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Drop8.Click
+        Inv8.Text = ""
+    End Sub
+    Private Sub Drop9_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Drop9.Click
+        Inv9.Text = ""
+    End Sub
+    Private Sub Drop10_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Drop10.Click
+        Inv10.Text = ""
+    End Sub
+    Private Sub Equip1_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Equip1.Click
+        Dim TempName As String
+        Dim TempStrength As String
+        If InvType(0) = Armor Then
+            TempName = ArmorName.Text
+            TempStrength = ArmorBonus.Text
+            ArmorName.Text = Inv1.Text
+            ArmorBonus.Text = LTrim(Str(InvStrength(0)))
+            If TempName <> "Nothing Equiped" Then
+                Inv1.Text = TempName
+                InvStrength(0) = TempStrength
+                InvType(0) = Armor
+            Else
+                Inv1.Text = ""
+            End If
+        ElseIf InvType(0) = Weapon Then
+            TempName = WeaponName.Text
+            TempStrength = WeaponBonus.Text
+            WeaponName.Text = Inv1.Text
+            WeaponBonus.Text = LTrim(Str(InvStrength(0)))
+            If TempName <> "Nothing Equiped" Then
+                Inv1.Text = TempName
+                InvStrength(0) = TempStrength
+                InvType(0) = Weapon
+            Else
+                Inv1.Text = ""
+            End If
+        ElseIf InvType(0) = Food Then
+            PlayerCurHitpoints += 25
+            Inv1.Text = ""
+            RefreshStats()
+        ElseIf InvType(0) = Water Then
+            PlayerCurEnergy += 25
+            Inv1.Text = ""
+            RefreshStats()
+        ElseIf InvType(0) = Potion Then
+            If Inv5.Text = "Fire Shield Type 1" Then
+                LavaImmune = 2
+                SND("Fire immunity for " + LTrim(Str(LavaImmune)) + " rounds.")
+            ElseIf Inv5.Text = "Fire Shield Type 2" Then
+                LavaImmune = 4
+                SND("Fire immunity for " + LTrim(Str(LavaImmune)) + " rounds.")
+            ElseIf Inv5.Text = "Fire Shield Type 3" Then
+                LavaImmune = 6
+                SND("Fire immunity for " + LTrim(Str(LavaImmune)) + " rounds.")
+            End If
+            Inv1.Text = ""
+        End If
+    End Sub
+    Private Sub Equip2_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Equip2.Click
+        Dim TempName As String
+        Dim TempStrength As String
+        If InvType(1) = Armor Then
+            TempName = ArmorName.Text
+            TempStrength = ArmorBonus.Text
+            ArmorName.Text = Inv2.Text
+            ArmorBonus.Text = LTrim(Str(InvStrength(1)))
+            If TempName <> "Nothing Equiped" Then
+                Inv2.Text = TempName
+                InvStrength(1) = TempStrength
+                InvType(1) = Armor
+            Else
+                Inv2.Text = ""
+            End If
+        ElseIf InvType(1) = Weapon Then
+            TempName = WeaponName.Text
+            TempStrength = WeaponBonus.Text
+            WeaponName.Text = Inv2.Text
+            WeaponBonus.Text = LTrim(Str(InvStrength(1)))
+            If TempName <> "Nothing Equiped" Then
+                Inv2.Text = TempName
+                InvStrength(1) = TempStrength
+                InvType(1) = Weapon
+            Else
+                Inv2.Text = ""
+            End If
+        ElseIf InvType(1) = Food Then
+            PlayerCurHitpoints += 25
+            Inv2.Text = ""
+            RefreshStats()
+        ElseIf InvType(1) = Water Then
+            PlayerCurEnergy += 25
+            Inv2.Text = ""
+            RefreshStats()
+        ElseIf InvType(1) = Potion Then
+            If Inv5.Text = "Fire Shield Type 1" Then
+                LavaImmune = 2
+                SND("Fire immunity for " + LTrim(Str(LavaImmune)) + " rounds.")
+            ElseIf Inv5.Text = "Fire Shield Type 2" Then
+                LavaImmune = 4
+                SND("Fire immunity for " + LTrim(Str(LavaImmune)) + " rounds.")
+            ElseIf Inv5.Text = "Fire Shield Type 3" Then
+                LavaImmune = 6
+                SND("Fire immunity for " + LTrim(Str(LavaImmune)) + " rounds.")
+            End If
+            Inv2.Text = ""
+        End If
+    End Sub
+    Private Sub Equip3_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Equip3.Click
+        Dim TempName As String
+        Dim TempStrength As String
+        If InvType(2) = Armor Then
+            TempName = ArmorName.Text
+            TempStrength = ArmorBonus.Text
+            ArmorName.Text = Inv3.Text
+            ArmorBonus.Text = LTrim(Str(InvStrength(2)))
+            If TempName <> "Nothing Equiped" Then
+                Inv3.Text = TempName
+                InvStrength(2) = TempStrength
+                InvType(2) = Armor
+            Else
+                Inv3.Text = ""
+            End If
+        ElseIf InvType(2) = Weapon Then
+            TempName = WeaponName.Text
+            TempStrength = WeaponBonus.Text
+            WeaponName.Text = Inv3.Text
+            WeaponBonus.Text = LTrim(Str(InvStrength(2)))
+            If TempName <> "Nothing Equiped" Then
+                Inv3.Text = TempName
+                InvStrength(2) = TempStrength
+                InvType(2) = Weapon
+            Else
+                Inv3.Text = ""
+            End If
+        ElseIf InvType(2) = Food Then
+            PlayerCurHitpoints += 25
+            Inv3.Text = ""
+            RefreshStats()
+        ElseIf InvType(2) = Water Then
+            PlayerCurEnergy += 25
+            Inv3.Text = ""
+            RefreshStats()
+        ElseIf InvType(2) = Potion Then
+            If Inv5.Text = "Fire Shield Type 1" Then
+                LavaImmune = 2
+                SND("Fire immunity for " + LTrim(Str(LavaImmune)) + " rounds.")
+            ElseIf Inv5.Text = "Fire Shield Type 2" Then
+                LavaImmune = 4
+                SND("Fire immunity for " + LTrim(Str(LavaImmune)) + " rounds.")
+            ElseIf Inv5.Text = "Fire Shield Type 3" Then
+                LavaImmune = 6
+                SND("Fire immunity for " + LTrim(Str(LavaImmune)) + " rounds.")
+            End If
+            Inv3.Text = ""
+        End If
+    End Sub
+    Private Sub Equip4_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Equip4.Click
+        Dim TempName As String
+        Dim TempStrength As String
+        If InvType(3) = Armor Then
+            TempName = ArmorName.Text
+            TempStrength = ArmorBonus.Text
+            ArmorName.Text = Inv4.Text
+            ArmorBonus.Text = LTrim(Str(InvStrength(3)))
+            If TempName <> "Nothing Equiped" Then
+                Inv4.Text = TempName
+                InvStrength(3) = TempStrength
+                InvType(3) = Armor
+            Else
+                Inv4.Text = ""
+            End If
+        ElseIf InvType(3) = Weapon Then
+            TempName = WeaponName.Text
+            TempStrength = WeaponBonus.Text
+            WeaponName.Text = Inv4.Text
+            WeaponBonus.Text = LTrim(Str(InvStrength(3)))
+            If TempName <> "Nothing Equiped" Then
+                Inv4.Text = TempName
+                InvStrength(3) = TempStrength
+                InvType(3) = Weapon
+            Else
+                Inv4.Text = ""
+            End If
+        ElseIf InvType(3) = Food Then
+            PlayerCurHitpoints += 25
+            Inv4.Text = ""
+            RefreshStats()
+        ElseIf InvType(3) = Water Then
+            PlayerCurEnergy += 25
+            Inv4.Text = ""
+            RefreshStats()
+        ElseIf InvType(3) = Potion Then
+            If Inv5.Text = "Fire Shield Type 1" Then
+                LavaImmune = 2
+                SND("Fire immunity for " + LTrim(Str(LavaImmune)) + " rounds.")
+            ElseIf Inv5.Text = "Fire Shield Type 2" Then
+                LavaImmune = 4
+                SND("Fire immunity for " + LTrim(Str(LavaImmune)) + " rounds.")
+            ElseIf Inv5.Text = "Fire Shield Type 3" Then
+                LavaImmune = 6
+                SND("Fire immunity for " + LTrim(Str(LavaImmune)) + " rounds.")
+            End If
+            Inv4.Text = ""
+        End If
+    End Sub
+    Private Sub Equip5_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Equip5.Click
+        Dim TempName As String
+        Dim TempStrength As String
+        If InvType(4) = Armor Then
+            TempName = ArmorName.Text
+            TempStrength = ArmorBonus.Text
+            ArmorName.Text = Inv5.Text
+            ArmorBonus.Text = LTrim(Str(InvStrength(4)))
+            If TempName <> "Nothing Equiped" Then
+                Inv5.Text = TempName
+                InvStrength(4) = TempStrength
+                InvType(4) = Armor
+            Else
+                Inv5.Text = ""
+            End If
+        ElseIf InvType(4) = Weapon Then
+            TempName = WeaponName.Text
+            TempStrength = WeaponBonus.Text
+            WeaponName.Text = Inv5.Text
+            WeaponBonus.Text = LTrim(Str(InvStrength(4)))
+            If TempName <> "Nothing Equiped" Then
+                Inv5.Text = TempName
+                InvStrength(4) = TempStrength
+                InvType(4) = Weapon
+            Else
+                Inv5.Text = ""
+            End If
+        ElseIf InvType(4) = Food Then
+            PlayerCurHitpoints += 25
+            Inv5.Text = ""
+            RefreshStats()
+        ElseIf InvType(4) = Water Then
+            PlayerCurEnergy += 25
+            Inv5.Text = ""
+            RefreshStats()
+        ElseIf InvType(4) = Potion Then
+            If Inv5.Text = "Fire Shield Type 1" Then
+                LavaImmune = 2
+                SND("Fire immunity for " + LTrim(Str(LavaImmune)) + " rounds.")
+            ElseIf Inv5.Text = "Fire Shield Type 2" Then
+                LavaImmune = 4
+                SND("Fire immunity for " + LTrim(Str(LavaImmune)) + " rounds.")
+            ElseIf Inv5.Text = "Fire Shield Type 3" Then
+                LavaImmune = 6
+                SND("Fire immunity for " + LTrim(Str(LavaImmune)) + " rounds.")
+            End If
+            Inv5.Text = ""
+        End If
+    End Sub
+    Private Sub Equip6_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Equip6.Click
+        Dim TempName As String
+        Dim TempStrength As String
+        If InvType(5) = Armor Then
+            TempName = ArmorName.Text
+            TempStrength = ArmorBonus.Text
+            ArmorName.Text = Inv6.Text
+            ArmorBonus.Text = LTrim(Str(InvStrength(5)))
+            If TempName <> "Nothing Equiped" Then 'Nothing Equiped
+                Inv6.Text = TempName
+                InvStrength(5) = TempStrength
+                InvType(5) = Armor
+            Else
+                Inv6.Text = ""
+            End If
+        ElseIf InvType(5) = Weapon Then
+            TempName = WeaponName.Text
+            TempStrength = WeaponBonus.Text
+            WeaponName.Text = Inv6.Text
+            WeaponBonus.Text = LTrim(Str(InvStrength(5)))
+            If TempName <> "Nothing Equiped" Then
+                Inv6.Text = TempName
+                InvStrength(5) = TempStrength
+                InvType(5) = Weapon
+            Else
+                Inv6.Text = ""
+            End If
+        ElseIf InvType(5) = Food Then
+            PlayerCurHitpoints += 25
+            Inv6.Text = ""
+            RefreshStats()
+        ElseIf InvType(5) = Water Then
+            PlayerCurEnergy += 25
+            Inv6.Text = ""
+            RefreshStats()
+        ElseIf InvType(5) = Potion Then
+            If Inv5.Text = "Fire Shield Type 1" Then
+                LavaImmune = 2
+                SND("Fire immunity for " + LTrim(Str(LavaImmune)) + " rounds.")
+            ElseIf Inv5.Text = "Fire Shield Type 2" Then
+                LavaImmune = 4
+                SND("Fire immunity for " + LTrim(Str(LavaImmune)) + " rounds.")
+            ElseIf Inv5.Text = "Fire Shield Type 3" Then
+                LavaImmune = 6
+                SND("Fire immunity for " + LTrim(Str(LavaImmune)) + " rounds.")
+            End If
+            Inv6.Text = ""
+        End If
+    End Sub
+    Private Sub Equip7_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Equip7.Click
+        Dim TempName As String
+        Dim TempStrength As String
+        If InvType(6) = Armor Then
+            TempName = ArmorName.Text
+            TempStrength = ArmorBonus.Text
+            ArmorName.Text = Inv7.Text
+            ArmorBonus.Text = LTrim(Str(InvStrength(6)))
+            If TempName <> "Nothing Equiped" Then
+                Inv7.Text = TempName
+                InvStrength(6) = TempStrength
+                InvType(6) = Armor
+            Else
+                Inv7.Text = ""
+            End If
+        ElseIf InvType(6) = Weapon Then
+            TempName = WeaponName.Text
+            TempStrength = WeaponBonus.Text
+            WeaponName.Text = Inv7.Text
+            WeaponBonus.Text = LTrim(Str(InvStrength(6)))
+            If TempName <> "Nothing Equiped" Then
+                Inv7.Text = TempName
+                InvStrength(6) = TempStrength
+                InvType(6) = Weapon
+            Else
+                Inv7.Text = ""
+            End If
+        ElseIf InvType(6) = Food Then
+            PlayerCurHitpoints += 25
+            Inv7.Text = ""
+            RefreshStats()
+        ElseIf InvType(6) = Water Then
+            PlayerCurEnergy += 25
+            Inv7.Text = ""
+            RefreshStats()
+        ElseIf InvType(6) = Potion Then
+            If Inv5.Text = "Fire Shield Type 1" Then
+                LavaImmune = 2
+                SND("Fire immunity for " + LTrim(Str(LavaImmune)) + " rounds.")
+            ElseIf Inv5.Text = "Fire Shield Type 2" Then
+                LavaImmune = 4
+                SND("Fire immunity for " + LTrim(Str(LavaImmune)) + " rounds.")
+            ElseIf Inv5.Text = "Fire Shield Type 3" Then
+                LavaImmune = 6
+                SND("Fire immunity for " + LTrim(Str(LavaImmune)) + " rounds.")
+            End If
+            Inv7.Text = ""
+        End If
+    End Sub
+    Private Sub Equip8_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Equip8.Click
+        Dim TempName As String
+        Dim TempStrength As String
+        If InvType(7) = Armor Then
+            TempName = ArmorName.Text
+            TempStrength = ArmorBonus.Text
+            ArmorName.Text = Inv8.Text
+            ArmorBonus.Text = LTrim(Str(InvStrength(7)))
+            If TempName <> "Nothing Equiped" Then
+                Inv8.Text = TempName
+                InvStrength(7) = TempStrength
+                InvType(7) = Armor
+            Else
+                Inv8.Text = ""
+            End If
+        ElseIf InvType(7) = Weapon Then
+            TempName = WeaponName.Text
+            TempStrength = WeaponBonus.Text
+            WeaponName.Text = Inv8.Text
+            WeaponBonus.Text = LTrim(Str(InvStrength(7)))
+            If TempName <> "Nothing Equiped" Then
+                Inv8.Text = TempName
+                InvStrength(7) = TempStrength
+                InvType(7) = Weapon
+            Else
+                Inv8.Text = ""
+            End If
+        ElseIf InvType(7) = Food Then
+            PlayerCurHitpoints += 25
+            Inv8.Text = ""
+            RefreshStats()
+        ElseIf InvType(7) = Water Then
+            PlayerCurEnergy += 25
+            Inv8.Text = ""
+            RefreshStats()
+        ElseIf InvType(7) = Potion Then
+            If Inv5.Text = "Fire Shield Type 1" Then
+                LavaImmune = 2
+                SND("Fire immunity for " + LTrim(Str(LavaImmune)) + " rounds.")
+            ElseIf Inv5.Text = "Fire Shield Type 2" Then
+                LavaImmune = 4
+                SND("Fire immunity for " + LTrim(Str(LavaImmune)) + " rounds.")
+            ElseIf Inv5.Text = "Fire Shield Type 3" Then
+                LavaImmune = 6
+                SND("Fire immunity for " + LTrim(Str(LavaImmune)) + " rounds.")
+            End If
+            Inv8.Text = ""
+        End If
+    End Sub
+    Private Sub Equip9_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Equip9.Click
+        Dim TempName As String
+        Dim TempStrength As String
+        If InvType(8) = Armor Then
+            TempName = ArmorName.Text
+            TempStrength = ArmorBonus.Text
+            ArmorName.Text = Inv9.Text
+            ArmorBonus.Text = LTrim(Str(InvStrength(8)))
+            If TempName <> "Nothing Equiped" Then
+                Inv9.Text = TempName
+                InvStrength(8) = TempStrength
+                InvType(8) = Armor
+            Else
+                Inv9.Text = ""
+            End If
+        ElseIf InvType(8) = Weapon Then
+            TempName = WeaponName.Text
+            TempStrength = WeaponBonus.Text
+            WeaponName.Text = Inv9.Text
+            WeaponBonus.Text = LTrim(Str(InvStrength(8)))
+            If TempName <> "Nothing Equiped" Then
+                Inv9.Text = TempName
+                InvStrength(8) = TempStrength
+                InvType(8) = Weapon
+            Else
+                Inv9.Text = ""
+            End If
+        ElseIf InvType(8) = Food Then
+            PlayerCurHitpoints += 25
+            Inv9.Text = ""
+            RefreshStats()
+        ElseIf InvType(8) = Water Then
+            PlayerCurEnergy += 25
+            Inv9.Text = ""
+            RefreshStats()
+        ElseIf InvType(8) = Potion Then
+            If Inv5.Text = "Fire Shield Type 1" Then
+                LavaImmune = 2
+                SND("Fire immunity for " + LTrim(Str(LavaImmune)) + " rounds.")
+            ElseIf Inv5.Text = "Fire Shield Type 2" Then
+                LavaImmune = 4
+                SND("Fire immunity for " + LTrim(Str(LavaImmune)) + " rounds.")
+            ElseIf Inv5.Text = "Fire Shield Type 3" Then
+                LavaImmune = 6
+                SND("Fire immunity for " + LTrim(Str(LavaImmune)) + " rounds.")
+            End If
+            Inv9.Text = ""
+        End If
+    End Sub
+    Private Sub Equip10_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Equip10.Click
+        Dim TempName As String
+        Dim TempStrength As String
+        If InvType(9) = Armor Then
+            TempName = ArmorName.Text
+            TempStrength = ArmorBonus.Text
+            ArmorName.Text = Inv10.Text
+            ArmorBonus.Text = LTrim(Str(InvStrength(9)))
+            If TempName <> "Nothing Equiped" Then
+                Inv10.Text = TempName
+                InvStrength(9) = TempStrength
+                InvType(9) = Armor
+            Else
+                Inv10.Text = ""
+            End If
+        ElseIf InvType(9) = Weapon Then
+            TempName = WeaponName.Text
+            TempStrength = WeaponBonus.Text
+            WeaponName.Text = Inv10.Text
+            WeaponBonus.Text = LTrim(Str(InvStrength(9)))
+            If TempName <> "Nothing Equiped" Then
+                Inv10.Text = TempName
+                InvStrength(9) = TempStrength
+                InvType(9) = Weapon
+            Else
+                Inv10.Text = ""
+            End If
+        ElseIf InvType(9) = Food Then
+            PlayerCurHitpoints += 25
+            Inv10.Text = ""
+            RefreshStats()
+        ElseIf InvType(9) = Water Then
+            PlayerCurEnergy += 25
+            Inv10.Text = ""
+            RefreshStats()
+        ElseIf InvType(9) = Potion Then
+            If Inv5.Text = "Fire Shield Type 1" Then
+                LavaImmune = 2
+                SND("Fire immunity for " + LTrim(Str(LavaImmune)) + " rounds.")
+            ElseIf Inv5.Text = "Fire Shield Type 2" Then
+                LavaImmune = 4
+                SND("Fire immunity for " + LTrim(Str(LavaImmune)) + " rounds.")
+            ElseIf Inv5.Text = "Fire Shield Type 3" Then
+                LavaImmune = 6
+                SND("Fire immunity for " + LTrim(Str(LavaImmune)) + " rounds.")
+            End If
+            Inv10.Text = ""
+        End If
     End Sub
 #End Region
 End Class
