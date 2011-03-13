@@ -134,12 +134,14 @@ Charisma increases the chance to cause enemies to flee.
 'i' shows your inventory. 
 '?' or 'h' shows and hides this help.
 '5' on the num pad waits a turn and allows you to heal 1HP/1EN.
+'s' toggles shooting the enemy (targets) press spacebar to shoot.
 '&lt;' goes up stairs.
 '&gt;' goes down stairs.
 'f1' shows the high scores.
-'f2' shows your character stats.
-'f3' shows or hides the activity hud.
-'f4' exits game and restarts character creation.
+'f2' shows or hides the activity hud.
+'f3' shows your character stats.
+'f4' shows level up panel
+'f5' exits current game or screensaver and starts new game.
 
 &lt;Press '?' or 'h' to hide this help&gt;</value>
   </data>
@@ -154,6 +156,20 @@ Jarvis              Gnome         Gravedigger      4       45           6       
   </metadata>
   <metadata name="Timer.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
+  </metadata>
+  <data name="SquadDescription.Text" xml:space="preserve">
+    <value>Stealth squad focuses on ranged attacks and
+dealing damage before enemies can react.
+When forced into melee combat the stealth
+squad can react quickly, dexterously, and dodge
+attacks and run to ranged formations to deal
+damage once again. They are deadly and feared
+in later levels, their charismatic formation
+causes enemies to flee.
+</value>
+  </data>
+  <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>74</value>
   </metadata>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
