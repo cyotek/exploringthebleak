@@ -353,7 +353,7 @@ Partial Class MainForm
         Me.TankNextBenefit.Name = "TankNextBenefit"
         Me.TankNextBenefit.Size = New System.Drawing.Size(138, 20)
         Me.TankNextBenefit.TabIndex = 62
-        Me.TankNextBenefit.Text = "50% Aggro"
+        Me.TankNextBenefit.Text = "0% Chance to counter"
         '
         'ScoutNextBenefit
         '
@@ -1690,11 +1690,11 @@ Partial Class MainForm
         Me.Controls.Add(Me.EnergyBar)
         Me.Controls.Add(Me.MenuStrip1)
         Me.Controls.Add(Me.Panel1)
-        Me.Controls.Add(Me.CharStats)
-        Me.Controls.Add(Me.ScoresBox)
         Me.Controls.Add(Me.HUDisplay)
-        Me.Controls.Add(Me.GroupBox1)
         Me.Controls.Add(Me.LevelUpPanel)
+        Me.Controls.Add(Me.ScoresBox)
+        Me.Controls.Add(Me.GroupBox1)
+        Me.Controls.Add(Me.CharStats)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D
         Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
         Me.KeyPreview = True

@@ -562,8 +562,11 @@ Public Class MainForm
         End If
         HealthBar.Caption = LTrim(Str(PlayerCurHitpoints)) + " / " + LTrim(Str(PlayerHitpoints)) + " HP"
         HealthBar.Value = PlayerCurHitpoints
-        If CounterAttack > 0 Then
-            HitMob(Mobnum, True)
+        If Aggroperc > 0 Then 'counter percent chance
+            TestDodge = TestDodgeRandom.Next(0, 100)
+            If TestDodge <= Aggroperc Then 'counter is successful
+                HitMob(Mobnum, True)
+            End If
         End If
         If Immolate > 0 Then HitMob(Mobnum, False, True)
         Return 0
@@ -989,8 +992,13 @@ Public Class MainForm
         TheRoomWidth = Math.Round(PossibleWidth / (MapSize + 2), 0) - 4  'test the room width
         If TheRoomHeight > TheRoomWidth Then TheRoomHeight = TheRoomWidth 'ensures that the window is scaled to the smallest of the two
         If TheRoomWidth > TheRoomHeight Then TheRoomWidth = TheRoomHeight 'ensures that the window is scaled to the smallest of the two
-        PossibleWidth = TheRoomWidth * MapSize + MapSize + 20
-        PossibleHeight = TheRoomWidth * MapSize + MapSize + 60 + 25 'thelast 25 height is for the stat bars, remove that when they're unnecessary
+        PossibleWidth = TheRoomWidth * MapSize + MapSize + 11
+        If Screensaver = True Then
+            PossibleHeight = TheRoomWidth * MapSize + MapSize + 56  'thelast 25 height is for the stat bars, remove that when they're unnecessary
+        Else
+            PossibleHeight = TheRoomWidth * MapSize + MapSize + 81 'thelast 25 height is for the stat bars, remove that when they're unnecessary
+            HUDisplay.Text = "" : HUDisplay.Visible = False 'reset hud as singleplayer is initialized
+        End If
         If OldHeight <> PossibleHeight Or OldWidth <> PossibleWidth Then
             Me.Width = PossibleWidth
             Me.Height = PossibleHeight
@@ -1083,12 +1091,10 @@ Public Class MainForm
         'check to see if the new map was one visited already
         If MapCreated(MapLevel) = False Then 'entering a new map, need to generate
             GenerateMap(8)
-            GenerateBlur() 'walls blur
             DetermineEnvironment()
             If GenerateType <> Swamps And GenerateType <> Passage And GenerateType <> Catacombs Then 'don't generate a river in a swamp or catacombs
                 If GenerateRiverChance < 71 Then '70% chance to draw a river
                     GenerateRiver()
-                    GenerateBlur(True) 'water blur
                     RiverType = RandomNumber.Next(6, 9)
                     If EnvironmentType = 3 Then 'lava only
                         RiverType = Lava
@@ -1099,11 +1105,10 @@ Public Class MainForm
                     End If
                 End If
             Else 'it's a swamp must set water type to plain water
-                GenerateBlur(True)
                 RiverType = Water
             End If
             GenerateFog()
-            PopulateItems()
+            If AdminVisible = False Then PopulateItems() 'don't spawn items on admin visible, admin mode dictates debugging of map variables
             If GenerateType <> Passage And GenerateType <> Catacombs Then 'passage renders beginning and end locations, as does the maze/catacomb
                 PopulateEntrances()
             End If
@@ -1354,47 +1359,6 @@ Public Class MainForm
             End While
         End If
     End Sub
-    Sub GenerateBlur(Optional ByVal Type As Boolean = False)
-        If Type = False Then 'regular test for walls
-            For x = 0 To MapSize Step 1
-                For y = 0 To MapSize Step 1
-                    If Map(MapLevel, x, y) = Wall Then
-                        If x > 0 Then
-                            If Map(MapLevel, x - 1, y) <> Wall Then MapBlur(MapLevel, x, y, 3) = True Else MapBlur(MapLevel, x, y, 3) = False
-                        End If
-                        If x < MapSize Then
-                            If Map(MapLevel, x + 1, y) <> Wall Then MapBlur(MapLevel, x, y, 1) = True Else MapBlur(MapLevel, x, y, 1) = False
-                        End If
-                        If y > 0 Then
-                            If Map(MapLevel, x, y - 1) <> Wall Then MapBlur(MapLevel, x, y, 2) = True Else MapBlur(MapLevel, x, y, 2) = False
-                        End If
-                        If y < MapSize Then
-                            If Map(MapLevel, x, y + 1) <> Wall Then MapBlur(MapLevel, x, y, 0) = True Else MapBlur(MapLevel, x, y, 0) = False
-                        End If
-                    End If
-                Next
-            Next
-        Else 'test for water
-            For x = 0 To MapSize Step 1
-                For y = 0 To MapSize Step 1
-                    If Map(MapLevel, x, y) = Water Then
-                        If x > 0 Then
-                            If Map(MapLevel, x - 1, y) <> Water Then WaterBlur(MapLevel, x, y, 3) = True Else WaterBlur(MapLevel, x, y, 3) = False
-                        End If
-                        If x < MapSize Then
-                            If Map(MapLevel, x + 1, y) <> Water Then WaterBlur(MapLevel, x, y, 1) = True Else WaterBlur(MapLevel, x, y, 1) = False
-                        End If
-                        If y > 0 Then
-                            If Map(MapLevel, x, y - 1) <> Water Then WaterBlur(MapLevel, x, y, 2) = True Else WaterBlur(MapLevel, x, y, 2) = False
-                        End If
-                        If y < MapSize Then
-                            If Map(MapLevel, x, y + 1) <> Water Then WaterBlur(MapLevel, x, y, 0) = True Else WaterBlur(MapLevel, x, y, 0) = False
-                        End If
-                    End If
-                Next
-            Next
-        End If
-    End Sub
     Sub PopulateEntrances()
         Dim RandomNum As New Random
         Dim RandomPosX As Short = RandomNum.Next(1, MapSize - 1)
@@ -1605,147 +1569,10 @@ Public Class MainForm
         Dim RandomNumber As New Random
         Dim BuilderDirection As Short = 0
         Dim BuilderLastDirection As Short = 0
-        Dim BuilderGrowthAmount As Short 'this is the actual amount that will be grown, not the potential
         Dim BuilderPositionX As Short = RandomNumber.Next(2, MapSize)
         Dim BuilderPositionY As Short = RandomNumber.Next(2, MapSize)
-        Dim Turns As Short = 7
-        Dim Stops = 0
-        Dim StopWhile = 0
-        Dim PotentialGrowth As Short = 0 'this number is the potential size the room or corridor can be in that direction
-        Dim PotentialSides As Short = 0
-        'generate a random map type
-        GenerateType = RandomNumber.Next(0, 7) 'returns 0:Dungeon,1:Ruins,2:Tunnels(nesw-dir),3:TunnelsExpanded(nesw+ne,se,sw,nw-dir),4:Catacombs(mazes),5:Swamps,6:Passages
-        If MapLevel = MaxDepthLevel Then
-            GenerateType = Catacombs
-        ElseIf GenerateType = Catacombs Then
-            GenerateType = Ruins 'favors ruins when catacombs is picked and it's not the last level.
-        ElseIf GenerateType = Swamps Then
-            GenerateType = Dungeon 'favors dungeon when swamps is picked. swamps is only allowed on one dungeon, 22 (entrance to grassy area)
-        ElseIf MapLevel = 22 And GenerateType <> Swamps Then
-            GenerateType = Swamps
-        ElseIf Screensaver = True And GenerateType = Tunnels2 Then 'don't allow diagonal tunnels during screensaver because pathing doesn't support it
-            GenerateType = Tunnels
-        End If
-        If GenerateType = Dungeon Then
-            For RepeatToRecursion = 1 To Recursion Step 1
-                Map(MapLevel, BuilderPositionX, BuilderPositionY) = 1
-                While Turns > 0
-                    PotentialGrowth = 0
-                    '-------Pick Random Direction---------
-                    BuilderDirection = RandomNumber.Next(1, 5) 'There are 4 directions
-                    While BuilderDirection = BuilderLastDirection
-                        BuilderDirection = RandomNumber.Next(1, 5) 'Sorry can't pick the last direction you grew
-                        StopWhile += 1
-                        If StopWhile = 10 Then
-                            Stops += 1
-                            If Stops > 100 Then Exit While
-                            Exit While
-                        End If
-                    End While
-                    StopWhile = 0
-                    If BuilderDirection = North And BuilderPositionY > 2 Then 'Verifying there is room for growth in that direction, at least 2 spaces
-                        PotentialGrowth = BuilderPositionY - 1
-                        If Map(MapLevel, BuilderPositionX, BuilderPositionY - 1) = 1 Then 'already carved, no need to proceed
-                            PotentialGrowth = -1 : Stops += 1
-                        End If
-                    ElseIf BuilderDirection = East And BuilderPositionX < MapSize - 2 Then 'Veryifying there is room for growth in that direction, at least 2 spaces
-                        PotentialGrowth = MapSize - BuilderPositionX - 1
-                        If Map(MapLevel, BuilderPositionX + 1, BuilderPositionY) = 1 Then 'already carved, no need to proceed
-                            PotentialGrowth = -1 : Stops += 1
-                        End If
-                    ElseIf BuilderDirection = South And BuilderPositionY < MapSize - 2 Then 'Verifying there is room for growth in that direction, at least 2 spaces
-                        PotentialGrowth = MapSize - BuilderPositionY - 1
-                        If Map(MapLevel, BuilderPositionX, BuilderPositionY + 1) = 1 Then 'already carved, no need to proceed
-                            PotentialGrowth = -1 : Stops += 1
-                        End If
-                    ElseIf BuilderDirection = West And BuilderPositionX > 2 Then 'Verifying there is room for growth in that direction, at least 2 spaces
-                        PotentialGrowth = BuilderPositionX - 1
-                        If Map(MapLevel, BuilderPositionX - 1, BuilderPositionY) = 1 Then 'already carved, no need to proceed
-                            PotentialGrowth = -1 : Stops += 1
-                        End If
-                    End If
-                    If PotentialGrowth > 4 Then
-                        BuilderLastDirection = BuilderDirection
-                        BuilderGrowthAmount = RandomNumber.Next(1, PotentialGrowth) 'growth includes wall, can't draw to end of map so just use potential growth since it's exclusive instead of inclusive
-                        Map(MapLevel, BuilderPositionX + 1, BuilderPositionY) = Floor
-                        Map(MapLevel, BuilderPositionX - 1, BuilderPositionY) = Floor
-                        Map(MapLevel, BuilderPositionX, BuilderPositionY + 1) = Floor
-                        Map(MapLevel, BuilderPositionX, BuilderPositionY - 1) = Floor
-                        PotentialSides = RandomNumber.Next(1, 3)
-                        If PotentialSides = 1 Then
-                            Map(MapLevel, BuilderPositionX + 1, BuilderPositionY + 1) = Floor
-                        End If
-                        PotentialSides = RandomNumber.Next(1, 3)
-                        If PotentialSides = 1 Then
-                            Map(MapLevel, BuilderPositionX - 1, BuilderPositionY - 1) = Floor
-                        End If
-                        PotentialSides = RandomNumber.Next(1, 3)
-                        If PotentialSides = 1 Then
-                            Map(MapLevel, BuilderPositionX - 1, BuilderPositionY + 1) = Floor
-                        End If
-                        PotentialSides = RandomNumber.Next(1, 3)
-                        If PotentialSides = 1 Then
-                            Map(MapLevel, BuilderPositionX + 1, BuilderPositionY - 1) = Floor
-                        End If
-                        If BuilderDirection = North Then
-                            For BuilderPositionY = BuilderPositionY To BuilderPositionY - BuilderGrowthAmount Step -1
-                                Map(MapLevel, BuilderPositionX, BuilderPositionY) = Floor
-                                PotentialSides = RandomNumber.Next(1, 11)
-                                If PotentialSides = 1 Then 'random chance to draw a floor to the right 10%
-                                    Map(MapLevel, BuilderPositionX + 1, BuilderPositionY) = Floor
-                                ElseIf PotentialSides = 2 Then 'randomchance to draw a floor to the left 10%
-                                    Map(MapLevel, BuilderPositionX - 1, BuilderPositionY) = Floor
-                                End If
-                            Next
-                        ElseIf BuilderDirection = East Then
-                            For BuilderPositionX = BuilderPositionX To BuilderPositionX + BuilderGrowthAmount Step 1
-                                Map(MapLevel, BuilderPositionX, BuilderPositionY) = Floor
-                                PotentialSides = RandomNumber.Next(1, 11)
-                                If PotentialSides = 1 Then 'random chance to draw a floor to the north 10%
-                                    Map(MapLevel, BuilderPositionX, BuilderPositionY - 1) = Floor
-                                ElseIf PotentialSides = 2 Then 'randomchance to draw a floor to the south 10%
-                                    Map(MapLevel, BuilderPositionX, BuilderPositionY + 1) = Floor
-                                End If
-                            Next
-                        ElseIf BuilderDirection = South Then
-                            For BuilderPositionY = BuilderPositionY To BuilderPositionY + BuilderGrowthAmount Step 1
-                                Map(MapLevel, BuilderPositionX, BuilderPositionY) = Floor
-                                PotentialSides = RandomNumber.Next(1, 11)
-                                If PotentialSides = 1 Then 'random chance to draw a floor to the right 10%
-                                    Map(MapLevel, BuilderPositionX + 1, BuilderPositionY) = Floor
-                                ElseIf PotentialSides = 2 Then 'randomchance to draw a floor to the left 10%
-                                    Map(MapLevel, BuilderPositionX - 1, BuilderPositionY) = Floor
-                                End If
-                            Next
-                        ElseIf BuilderDirection = West Then
-                            For BuilderPositionX = BuilderPositionX To BuilderPositionX - BuilderGrowthAmount Step -1
-                                Map(MapLevel, BuilderPositionX, BuilderPositionY) = Floor
-                                PotentialSides = RandomNumber.Next(1, 11)
-                                If PotentialSides = 1 Then 'random chance to draw a floor to the north 10%
-                                    Map(MapLevel, BuilderPositionX, BuilderPositionY - 1) = Floor
-                                ElseIf PotentialSides = 2 Then 'randomchance to draw a floor to the south 10%
-                                    Map(MapLevel, BuilderPositionX, BuilderPositionY + 1) = Floor
-                                End If
-                            Next
-                        End If
-                        Turns -= 1
-                    Else
-                        Stops += 1
-                        If Stops > 100 Then
-                            Turns = 0
-                        End If
-                    End If
-                    If Stops > 100 Then
-                        Turns = 0
-                    End If
-                End While
-                Stops = 0
-                StopWhile = 0
-                BuilderDirection = 0
-                BuilderLastDirection = 0
-                Turns = 7
-            Next
-        ElseIf GenerateType = Ruins Then
+        GenerateType = Ruins
+        If GenerateType = Ruins Then
             Dim RandomRuin As New Random
             Dim RuinStrength As Short
             Dim MaximumRuins As Short = MapSize
@@ -1791,7 +1618,8 @@ Public Class MainForm
             Dim CurrentOccupied As Short = 1
             Dim StartPositionFound As Boolean = False
             Dim MapTrod(MapSize, MapSize) As Short
-            Dim MapGenLevel(MapSize, MapSize) As Short
+            Dim MapTrodAmount(9, MapSize, MapSize) As Short
+            Dim MapGenLevel(9, MapSize, MapSize) As Short
             Dim TrodLevel As Short = 1
             Dim TrodTry As Boolean 'used in while statement to test in a circle , then +1, +2, up to +5 then exits the occupied space and goes to next space
             Dim TrodHead As Boolean
@@ -1804,12 +1632,11 @@ Public Class MainForm
                             MapTrod(BuilderPositionX, BuilderPositionY) += 1
                             BuilderTestPosX = BuilderPositionX
                             BuilderTestPosY = BuilderPositionY
-                            MapGenLevel(BuilderTestPosX, BuilderTestPosY) = CurrentOccupied
-                            ItemOccupied(MapLevel, BuilderTestPosX, BuilderTestPosY) = 1
-                            ItemShowType(MapLevel, BuilderTestPosX, BuilderTestPosY) = CurrentOccupied
+                            MapGenLevel(CurrentOccupied, BuilderTestPosX, BuilderTestPosY) = CurrentOccupied
+                            'MapOccupied(MapLevel, BuilderTestPosX, BuilderTestPosY) = 1 'show the current state number, debug
+                            'ItemOccupied(MapLevel, BuilderTestPosX, BuilderTestPosY) = 1
+                            'ItemShowType(MapLevel, BuilderTestPosX, BuilderTestPosY) = CurrentOccupied
                         End If
-                    ElseIf CurrentOccupied = 20 Then
-                        Map(MapLevel, BuilderPositionX, BuilderPositionY) = Wall 'positions filled, no more searching, fill rest with walls
                     Else 'already searching a location
                         TrodHead = True
                         While TrodHead = True
@@ -1817,67 +1644,72 @@ Public Class MainForm
                             While TrodTry = False
                                 'test up
                                 If BuilderTestPosY > 0 Then 'ensure it's within bounds
-                                    If Map(MapLevel, BuilderTestPosX, BuilderTestPosY - 1) = Floor Or Map(MapLevel, BuilderTestPosX, BuilderTestPosY - 1) = StairsUp Then 'make sure it's a floor
+                                    If Map(MapLevel, BuilderTestPosX, BuilderTestPosY - 1) <> Wall Then 'make sure it's a floor
                                         If MapTrod(BuilderTestPosX, BuilderTestPosY - 1) = TrodLevel Then 'found next trod
                                             BuilderTestPosY -= 1
-                                            If MapTrod(BuilderTestPosX, BuilderTestPosY) <= 1 Then
+                                            If MapTrodAmount(CurrentOccupied, BuilderTestPosX, BuilderTestPosY) < 1 Then
                                                 OccupiedSquares(CurrentOccupied) += 1 'increase the total occupied squares of current occupied set to compare w/ others
+                                                MapTrodAmount(CurrentOccupied, BuilderTestPosX, BuilderTestPosY) += 1
                                             End If
                                             MapTrod(BuilderTestPosX, BuilderTestPosY) += 1
-                                            MapGenLevel(BuilderTestPosX, BuilderTestPosY) = CurrentOccupied
-                                            'ItemOccupied(BuilderTestPosX, BuilderTestPosY) = 1 'show the current state number, debug
-                                            'ItemShowType(BuilderTestPosX, BuilderTestPosY) = CurrentOccupied 'show the current state number, debug
+                                            MapGenLevel(CurrentOccupied, BuilderTestPosX, BuilderTestPosY) = CurrentOccupied
+                                            'MapOccupied(MapLevel, BuilderTestPosX, BuilderTestPosY) = 1 'show the current state number, debug
+                                            'ItemOccupied(MapLevel, BuilderTestPosX, BuilderTestPosY) = 1 'show the current state number, debug
+                                            'ItemShowType(MapLevel, BuilderTestPosX, BuilderTestPosY) = CurrentOccupied 'show the current state number, debug
                                             Exit While
                                         End If
                                     End If
                                 End If
                                 'test right
                                 If BuilderTestPosX < MapSize Then 'ensure it's within bounds
-                                    If Map(MapLevel, BuilderTestPosX + 1, BuilderTestPosY) = Floor Or Map(MapLevel, BuilderTestPosX + 1, BuilderTestPosY) = StairsUp Then 'make sure it's a floor
+                                    If Map(MapLevel, BuilderTestPosX + 1, BuilderTestPosY) <> Wall Then 'make sure it's a floor
                                         If MapTrod(BuilderTestPosX + 1, BuilderTestPosY) = TrodLevel Then 'found next trod
                                             BuilderTestPosX += 1
-                                            If MapTrod(BuilderTestPosX, BuilderTestPosY) <= 1 Then
+                                            If MapTrodAmount(CurrentOccupied, BuilderTestPosX, BuilderTestPosY) < 1 Then
                                                 OccupiedSquares(CurrentOccupied) += 1 'increase the total occupied squares of current occupied set to compare w/ others
+                                                MapTrodAmount(CurrentOccupied, BuilderTestPosX, BuilderTestPosY) += 1
                                             End If
                                             MapTrod(BuilderTestPosX, BuilderTestPosY) += 1
-                                            MapGenLevel(BuilderTestPosX, BuilderTestPosY) = CurrentOccupied
-                                            Map(MapLevel, BuilderTestPosX, BuilderTestPosY) = StairsUp
-                                            'ItemOccupied(BuilderTestPosX, BuilderTestPosY) = 1 'show the current state number, debug
-                                            'ItemShowType(BuilderTestPosX, BuilderTestPosY) = CurrentOccupied 'show the current state number, debug
+                                            MapGenLevel(CurrentOccupied, BuilderTestPosX, BuilderTestPosY) = CurrentOccupied
+                                            'MapOccupied(MapLevel, BuilderTestPosX, BuilderTestPosY) = 1 'show the current state number, debug
+                                            'ItemOccupied(MapLevel, BuilderTestPosX, BuilderTestPosY) = 1 'show the current state number, debug
+                                            'ItemShowType(MapLevel, BuilderTestPosX, BuilderTestPosY) = CurrentOccupied 'show the current state number, debug
                                             Exit While
                                         End If
                                     End If
                                 End If
                                 'test down
                                 If BuilderTestPosY < MapSize Then 'ensure it's within bounds
-                                    If Map(MapLevel, BuilderTestPosX, BuilderTestPosY + 1) = Floor Or Map(MapLevel, BuilderTestPosX, BuilderTestPosY + 1) = StairsUp Then 'make sure it's a floor
+                                    If Map(MapLevel, BuilderTestPosX, BuilderTestPosY + 1) <> Wall Then 'make sure it's a floor
                                         If MapTrod(BuilderTestPosX, BuilderTestPosY + 1) = TrodLevel Then 'found next trod
                                             BuilderTestPosY += 1
-                                            If MapTrod(BuilderTestPosX, BuilderTestPosY) <= 1 Then
+                                            If MapTrodAmount(CurrentOccupied, BuilderTestPosX, BuilderTestPosY) < 1 Then
                                                 OccupiedSquares(CurrentOccupied) += 1 'increase the total occupied squares of current occupied set to compare w/ others
+                                                MapTrodAmount(CurrentOccupied, BuilderTestPosX, BuilderTestPosY) += 1
                                             End If
                                             MapTrod(BuilderTestPosX, BuilderTestPosY) += 1
-                                            MapGenLevel(BuilderTestPosX, BuilderTestPosY) = CurrentOccupied
-                                            Map(MapLevel, BuilderTestPosX, BuilderTestPosY) = StairsUp
-                                            'ItemOccupied(BuilderTestPosX, BuilderTestPosY) = 1 'show the current state number, debug
-                                            'ItemShowType(BuilderTestPosX, BuilderTestPosY) = CurrentOccupied 'show the current state number, debug
+                                            MapGenLevel(CurrentOccupied, BuilderTestPosX, BuilderTestPosY) = CurrentOccupied
+                                            'MapOccupied(MapLevel, BuilderTestPosX, BuilderTestPosY) = 1 'show the current state number, debug
+                                            'ItemOccupied(MapLevel, BuilderTestPosX, BuilderTestPosY) = 1 'show the current state number, debug
+                                            'ItemShowType(MapLevel, BuilderTestPosX, BuilderTestPosY) = CurrentOccupied 'show the current state number, debug
                                             Exit While
                                         End If
                                     End If
                                 End If
                                 'test left
                                 If BuilderTestPosX > 0 Then 'ensure it's within bounds
-                                    If Map(MapLevel, BuilderTestPosX - 1, BuilderTestPosY) = Floor Or Map(MapLevel, BuilderTestPosX - 1, BuilderTestPosY) = StairsUp Then 'make sure it's a floor
+                                    If Map(MapLevel, BuilderTestPosX - 1, BuilderTestPosY) <> Wall Then 'make sure it's a floor
                                         If MapTrod(BuilderTestPosX - 1, BuilderTestPosY) = TrodLevel Then 'found next trod
                                             BuilderTestPosX -= 1
-                                            If MapTrod(BuilderTestPosX, BuilderTestPosY) <= 1 Then
+                                            If MapTrodAmount(CurrentOccupied, BuilderTestPosX, BuilderTestPosY) < 1 Then
                                                 OccupiedSquares(CurrentOccupied) += 1 'increase the total occupied squares of current occupied set to compare w/ others
+                                                MapTrodAmount(CurrentOccupied, BuilderTestPosX, BuilderTestPosY) += 1
                                             End If
                                             MapTrod(BuilderTestPosX, BuilderTestPosY) += 1
-                                            MapGenLevel(BuilderTestPosX, BuilderTestPosY) = CurrentOccupied
-                                            Map(MapLevel, BuilderTestPosX, BuilderTestPosY) = StairsUp
-                                            'ItemOccupied(BuilderTestPosX, BuilderTestPosY) = 1 'show the current state number, debug
-                                            'ItemShowType(BuilderTestPosX, BuilderTestPosY) = CurrentOccupied 'show the current state number, debug
+                                            MapGenLevel(CurrentOccupied, BuilderTestPosX, BuilderTestPosY) = CurrentOccupied
+                                            'MapOccupied(MapLevel, BuilderTestPosX, BuilderTestPosY) = 1 'show the current state number, debug
+                                            'ItemOccupied(MapLevel, BuilderTestPosX, BuilderTestPosY) = 1 'show the current state number, debug
+                                            'ItemShowType(MapLevel, BuilderTestPosX, BuilderTestPosY) = CurrentOccupied 'show the current state number, debug
                                             Exit While
                                         End If
                                     End If
@@ -1899,14 +1731,14 @@ Public Class MainForm
                 Next
             Next
             'now clear all states that aren't the largest and fill them with walls
-            Dim CurrentLargest = 0
+            Dim CurrentLargest = 1
             Dim Wallnumber As Short = 0
-            For CurInt = 1 To 9 Step 1
+            For CurInt = 0 To 9 Step 1
                 If OccupiedSquares(CurInt) > OccupiedSquares(CurrentLargest) Then CurrentLargest = CurInt
             Next
             For MapStepX = 0 To MapSize Step 1
                 For MapStepY = 0 To MapSize Step 1
-                    If MapGenLevel(MapStepX, MapStepY) = CurrentLargest Then
+                    If MapGenLevel(CurrentLargest, MapStepX, MapStepY) = CurrentLargest Then
                         Map(MapLevel, MapStepX, MapStepY) = Floor
                         Wallnumber += 1
                     Else
@@ -1914,386 +1746,6 @@ Public Class MainForm
                     End If
                 Next
             Next
-        ElseIf GenerateType = Passage Then
-            Dim CurX As Short = RandomNumber.Next(1, MapSize - 1)
-            Dim CurY As Short = RandomNumber.Next(1, MapSize - 1)
-            Dim CellsMade As Short = 1
-            Dim CurrentCell As Short = 1
-            Dim CellOrderX(1) As Short
-            Dim CellOrderY(1) As Short
-            Dim CellMade(MapSize, MapSize) As Boolean
-            Dim FoundDirection As Boolean = False
-            Dim TryDirection As Short
-            Dim TestDirection As Boolean = False
-            Dim TMapSize As Short = MapSize
-            'set start location as entrance or up stairs if maplevel is greater than 1
-            PlayerPosX = CurX
-            PlayerPosY = CurY
-            If MapLevel >= 2 Then
-                Map(MapLevel, CurX, CurY) = StairsUp
-            End If
-            While CellsMade < TMapSize * TMapSize
-                If Map(MapLevel, CurX, CurY) <> StairsUp Then Map(MapLevel, CurX, CurY) = Floor 'make sure you don't draw over the stairs up
-                CellMade(CurX, CurY) = True
-                TryDirection = RandomNumber.Next(1, 5)
-                TestDirection = False
-                If CurX + 2 <= MapSize Then 'check boundaries
-                    If Map(MapLevel, CurX + 2, CurY) = Wall Then TestDirection = True 'allowed to build to the right? if so then we can proceed
-                End If
-                If CurY + 2 <= MapSize Then 'check boundaries
-                    If Map(MapLevel, CurX, CurY + 2) = Wall Then TestDirection = True 'allowed to build to the south? if so then we can proceed
-                End If
-                If CurX - 2 >= 0 Then 'check boundaries
-                    If Map(MapLevel, CurX - 2, CurY) = Wall Then TestDirection = True 'allowed to build to the west? if so then we can proceed
-                End If
-                If CurY - 2 >= 0 Then 'check boundaries
-                    If Map(MapLevel, CurX, CurY - 2) = Wall Then TestDirection = True 'allowed to build to the north? if so then we can proceed
-                End If
-                If TestDirection = False Then 'there are no directions to build from this point, dead end
-                    If MapLevel < 28 Then
-                        ExitPosX = CurX
-                        ExitPosY = CurY
-                        Map(MapLevel, CurX, CurY) = StairsDown 'don't draw stairs down on last level
-                    End If
-                    Exit While
-                End If
-                If CellOrderX.Length < CurrentCell + 1 Then Array.Resize(CellOrderX, CurrentCell + 1) 'ensure the array is long enough
-                If CellOrderY.Length < CurrentCell + 1 Then Array.Resize(CellOrderY, CurrentCell + 1) 'ensure the array is long enough
-                If TryDirection = East Then
-                    'test right
-                    If CurX + 2 <= MapSize Then 'ensures the target is within boundaries
-                        If Map(MapLevel, CurX + 2, CurY) = Wall Then
-                            CellOrderX(CurrentCell) = CurX
-                            CellOrderY(CurrentCell) = CurY
-                            CurrentCell += 1
-                            Map(MapLevel, CurX + 1, CurY) = Floor 'build to the right
-                            CurX += 2
-                            CellsMade += 2
-                        End If
-                    End If
-                ElseIf TryDirection = South Then
-                    'test down
-                    If CurY + 2 <= MapSize Then 'ensures the target is within boundaries
-                        If Map(MapLevel, CurX, CurY + 2) = Wall Then
-                            CellOrderX(CurrentCell) = CurX
-                            CellOrderY(CurrentCell) = CurY
-                            CurrentCell += 1
-                            Map(MapLevel, CurX, CurY + 1) = Floor 'build to the south
-                            CurY += 2
-                            CellsMade += 2
-                        End If
-                    End If
-                ElseIf TryDirection = West Then
-                    'test left
-                    If CurX - 2 >= 0 Then 'ensures the target is within boundaries
-                        If Map(MapLevel, CurX - 2, CurY) = Wall Then
-                            CellOrderX(CurrentCell) = CurX
-                            CellOrderY(CurrentCell) = CurY
-                            CurrentCell += 1
-                            Map(MapLevel, CurX - 1, CurY) = Floor 'build to the left
-                            CurX -= 2
-                            CellsMade += 2
-                        End If
-                    End If
-                ElseIf TryDirection = North Then
-                    'test up
-                    If CurY - 2 >= 0 Then 'ensures the target is within boundaries
-                        If Map(MapLevel, CurX, CurY - 2) = Wall Then
-                            CellOrderX(CurrentCell) = CurX
-                            CellOrderY(CurrentCell) = CurY
-                            CurrentCell += 1
-                            Map(MapLevel, CurX, CurY - 1) = Floor 'build to the north
-                            CurY -= 2
-                            CellsMade += 2
-                        End If
-                    End If
-                End If
-            End While
-        ElseIf GenerateType = Catacombs Then
-            Dim CurX As Short = RandomNumber.Next(1, MapSize - 1)
-            Dim CurY As Short = RandomNumber.Next(1, MapSize - 1)
-            Dim CellsMade As Short = 1
-            Dim CurrentCell As Short = 1
-            Dim CellOrderX(1) As Short
-            Dim CellOrderY(1) As Short
-            Dim CellMade(MapSize, MapSize) As Boolean
-            Dim FoundDirection As Boolean = False
-            Dim TryDirection As Short
-            Dim TestDirection As Boolean = False
-            Dim TMapSize As Short = MapSize
-            'set start location as entrance or up stairs if maplevel is greater than 1
-            PlayerPosX = CurX
-            PlayerPosY = CurY
-            If MapLevel >= 2 Then
-                Map(MapLevel, CurX, CurY) = StairsUp
-            End If
-            While CellsMade < TMapSize * TMapSize
-                If Map(MapLevel, CurX, CurY) <> StairsUp Then Map(MapLevel, CurX, CurY) = Floor 'make sure you don't draw over the stairs up
-                CellMade(CurX, CurY) = True
-                TryDirection = RandomNumber.Next(1, 5)
-                TestDirection = False
-                If CurX + 2 <= MapSize Then 'check boundaries
-                    If Map(MapLevel, CurX + 2, CurY) = Wall Then TestDirection = True 'allowed to build to the right? if so then we can proceed
-                End If
-                If CurY + 2 <= MapSize Then 'check boundaries
-                    If Map(MapLevel, CurX, CurY + 2) = Wall Then TestDirection = True 'allowed to build to the south? if so then we can proceed
-                End If
-                If CurX - 2 >= 0 Then 'check boundaries
-                    If Map(MapLevel, CurX - 2, CurY) = Wall Then TestDirection = True 'allowed to build to the west? if so then we can proceed
-                End If
-                If CurY - 2 >= 0 Then 'check boundaries
-                    If Map(MapLevel, CurX, CurY - 2) = Wall Then TestDirection = True 'allowed to build to the north? if so then we can proceed
-                End If
-                If TestDirection = False Then 'there are no directions to build from this point, dead end
-                    CurrentCell -= 1
-                    CurX = CellOrderX(CurrentCell)
-                    CurY = CellOrderY(CurrentCell)
-                    If CurrentCell = 1 Then
-                        If MapLevel < 28 Then
-                            ExitPosX = CellOrderX(CellOrderX.Length - 1)
-                            ExitPosY = CellOrderY(CellOrderY.Length - 1)
-                            Map(MapLevel, CellOrderX(CellOrderX.Length - 1), CellOrderY(CellOrderY.Length - 1)) = StairsDown 'don't draw stairs down on last level
-                        End If
-                        Exit While
-                    End If
-                End If
-                If CellOrderX.Length < CurrentCell + 1 Then Array.Resize(CellOrderX, CurrentCell + 1) 'ensure the array is long enough
-                If CellOrderY.Length < CurrentCell + 1 Then Array.Resize(CellOrderY, CurrentCell + 1) 'ensure the array is long enough
-                If TryDirection = East Then
-                    'test right
-                    If CurX + 2 <= MapSize Then 'ensures the target is within boundaries
-                        If Map(MapLevel, CurX + 2, CurY) = Wall Then
-                            CellOrderX(CurrentCell) = CurX
-                            CellOrderY(CurrentCell) = CurY
-                            CurrentCell += 1
-                            Map(MapLevel, CurX + 1, CurY) = Floor 'build to the right
-                            CurX += 2
-                            CellsMade += 2
-                        End If
-                    End If
-                ElseIf TryDirection = South Then
-                    'test down
-                    If CurY + 2 <= MapSize Then 'ensures the target is within boundaries
-                        If Map(MapLevel, CurX, CurY + 2) = Wall Then
-                            CellOrderX(CurrentCell) = CurX
-                            CellOrderY(CurrentCell) = CurY
-                            CurrentCell += 1
-                            Map(MapLevel, CurX, CurY + 1) = Floor 'build to the south
-                            CurY += 2
-                            CellsMade += 2
-                        End If
-                    End If
-                ElseIf TryDirection = West Then
-                    'test left
-                    If CurX - 2 >= 0 Then 'ensures the target is within boundaries
-                        If Map(MapLevel, CurX - 2, CurY) = Wall Then
-                            CellOrderX(CurrentCell) = CurX
-                            CellOrderY(CurrentCell) = CurY
-                            CurrentCell += 1
-                            Map(MapLevel, CurX - 1, CurY) = Floor 'build to the left
-                            CurX -= 2
-                            CellsMade += 2
-                        End If
-                    End If
-                ElseIf TryDirection = North Then
-                    'test up
-                    If CurY - 2 >= 0 Then 'ensures the target is within boundaries
-                        If Map(MapLevel, CurX, CurY - 2) = Wall Then
-                            CellOrderX(CurrentCell) = CurX
-                            CellOrderY(CurrentCell) = CurY
-                            CurrentCell += 1
-                            Map(MapLevel, CurX, CurY - 1) = Floor 'build to the north
-                            CurY -= 2
-                            CellsMade += 2
-                        End If
-                    End If
-                End If
-            End While
-        ElseIf GenerateType = Swamps Then
-            Dim TMapSize As Short = MapSize 'can't multiply constants, so declaring a temp variable
-            Dim MapFilled As Short = 0
-            Dim BadPos As Boolean = False
-            Dim RetryPos As Boolean = True
-            Dim RoomWidthSize, RoomHeightSize As Short
-            Dim PosX, PosY, CurX, CurY As Integer
-            Dim FailedTimes As Short = 0
-            While MapFilled < (TMapSize * TMapSize) * 5 / 6
-                While RetryPos = True
-                    RoomWidthSize = RandomNumber.Next(1, 6) '2-5 roomsize
-                    RoomHeightSize = RandomNumber.Next(1, 6)
-                    PosX = RandomNumber.Next(0 - RoomWidthSize, MapSize + RoomWidthSize)
-                    PosY = RandomNumber.Next(0 - RoomHeightSize, MapSize + RoomHeightSize)
-                    For CurX = PosX To PosX + RoomWidthSize Step 1
-                        For CurY = PosY To PosY + RoomHeightSize Step 1
-                            If CurX >= 0 And CurX <= MapSize And CurY >= 0 And CurY <= MapSize Then
-                                If Map(MapLevel, CurX, CurY) = Floor Then
-                                    BadPos = True
-                                    Exit For
-                                End If
-                            End If
-                        Next
-                        If BadPos = True Then
-                            Exit For
-                        End If
-                    Next
-                    If BadPos = False Then 'draw floor and walls
-                        For CurX = PosX - 1 To PosX + RoomWidthSize + 1 Step 1
-                            For CurY = PosY - 1 To PosY + RoomHeightSize + 1 Step 1
-                                If CurX < PosX Or CurX > PosX + RoomWidthSize Or CurY < PosY Or CurY > PosY + RoomHeightSize Then 'walls
-                                    If CurX >= 0 And CurX <= MapSize And CurY >= 0 And CurY <= MapSize Then 'make sure it stays within the bound of the map
-                                        If Map(MapLevel, CurX, CurY) <> Water Then
-                                            Map(MapLevel, CurX, CurY) = Water : MapFilled += 1
-                                        End If
-                                    End If
-                                Else
-                                    If CurX >= 0 And CurX <= MapSize And CurY >= 0 And CurY <= MapSize Then  'make sure it stays within the bound of the map
-                                        If Map(MapLevel, CurX, CurY) <> Floor Then
-                                            Map(MapLevel, CurX, CurY) = Floor : MapFilled += 1
-                                        End If
-                                    End If
-                                End If
-                            Next
-                        Next
-                        RetryPos = False
-                    Else
-                        FailedTimes += 1
-                        If FailedTimes > 100 Then
-                            RetryPos = False
-                            MapFilled = TMapSize * TMapSize
-                        End If
-                        BadPos = False
-                    End If
-                End While
-                RetryPos = True
-            End While
-            'now set all walls to floor
-            For CurX = 0 To MapSize Step 1
-                For CurY = 0 To MapSize Step 1
-                    If Map(MapLevel, CurX, CurY) = Wall Then
-                        Map(MapLevel, CurX, CurY) = Floor
-                    End If
-                Next
-            Next
-        ElseIf GenerateType = Tunnels Or GenerateType = Tunnels2 Then
-            Dim AllocatedBlocks As Short = 0
-            Dim FailedBlocks As Short = 0
-            Dim RandomPosition As New Random
-            Dim BuilderSpawned As Boolean = False
-            Dim BuilderMoveDirection As Short = 0
-            Dim PawnLocationX As Short = Math.Floor(MapSize / 2)
-            Dim PawnLocationY As Short = Math.Floor(MapSize / 2)
-            While AllocatedBlocks < MapSize * (MapSize / 3) And FailedBlocks < 500
-                If BuilderSpawned = False Then
-                    'spawn at random position
-                    BuilderPositionX = RandomPosition.Next(1, MapSize)
-                    BuilderPositionY = RandomPosition.Next(1, MapSize)
-                    'see if spawn is within 1 block of pawn after spawn
-                    If Math.Abs(PawnLocationX - BuilderPositionX) <= 1 And Math.Abs(PawnLocationY - BuilderPositionY) <= 1 Then
-                        'builder was spawned too close to spawn, clear that floor and respawn
-                        If Map(MapLevel, BuilderPositionX, BuilderPositionY) <> Floor Then
-                            Map(MapLevel, BuilderPositionX, BuilderPositionY) = Floor
-                            AllocatedBlocks += 1
-                        Else
-                            FailedBlocks += 1
-                        End If
-                    ElseIf Map(MapLevel, BuilderPositionX, BuilderPositionY) = Floor Then
-                        FailedBlocks += 1
-                    Else
-                        BuilderSpawned = True
-                        BuilderMoveDirection = RandomPosition.Next(1, 9)
-                    End If
-                Else 'builderalready spawned and knows it's direction, move the builder
-                    'move the builder
-                    If BuilderMoveDirection = North And BuilderPositionY > 0 Then
-                        BuilderPositionY -= 1
-                    ElseIf BuilderMoveDirection = East And BuilderPositionX < MapSize Then
-                        BuilderPositionX += 1
-                    ElseIf BuilderMoveDirection = South And BuilderPositionY < MapSize Then
-                        BuilderPositionY += 1
-                    ElseIf BuilderMoveDirection = West And BuilderPositionX > 0 Then
-                        BuilderPositionX -= 1
-                    ElseIf BuilderMoveDirection = 5 And BuilderPositionX < MapSize And BuilderPositionY > 0 And GenerateType = Tunnels2 Then 'northeast
-                        BuilderPositionY -= 1
-                        BuilderPositionX += 1
-                    ElseIf BuilderMoveDirection = 6 And BuilderPositionX < MapSize And BuilderPositionY < MapSize And GenerateType = Tunnels2 Then 'southeast
-                        BuilderPositionY += 1
-                        BuilderPositionX += 1
-                    ElseIf BuilderMoveDirection = 7 And BuilderPositionX > 0 And BuilderPositionY < MapSize And GenerateType = Tunnels2 Then 'southwest
-                        BuilderPositionY += 1
-                        BuilderPositionX -= 1
-                    ElseIf BuilderMoveDirection = 8 And BuilderPositionX > 0 And BuilderPositionY > 0 And GenerateType = Tunnels2 Then
-                        BuilderPositionY -= 1
-                        BuilderPositionX -= 1
-                    Else
-                        'if it wasn't passed it must either be an error or near the side of the map
-                        'so go ahead and respawn
-                        BuilderSpawned = False
-                    End If
-                    'see whether the builder is near an existing spot
-                    'see whether the builder is near an exit
-                    If BuilderPositionX < MapSize And BuilderPositionY < MapSize And BuilderPositionX > 0 And BuilderPositionY > 0 Then
-                        If Map(MapLevel, BuilderPositionX + 1, BuilderPositionY) = Floor Then
-                            If Map(MapLevel, BuilderPositionX, BuilderPositionY) <> Floor Then
-                                Map(MapLevel, BuilderPositionX, BuilderPositionY) = Floor
-                                AllocatedBlocks += 1
-                            Else
-                                FailedBlocks += 1
-                            End If
-                        ElseIf Map(MapLevel, BuilderPositionX - 1, BuilderPositionY) = Floor Then
-                            If Map(MapLevel, BuilderPositionX, BuilderPositionY) <> Floor Then
-                                Map(MapLevel, BuilderPositionX, BuilderPositionY) = Floor
-                                AllocatedBlocks += 1
-                            Else
-                                FailedBlocks += 1
-                            End If
-                        ElseIf Map(MapLevel, BuilderPositionX, BuilderPositionY + 1) = Floor Then
-                            If Map(MapLevel, BuilderPositionX, BuilderPositionY) <> Floor Then
-                                Map(MapLevel, BuilderPositionX, BuilderPositionY) = Floor
-                                AllocatedBlocks += 1
-                            Else
-                                FailedBlocks += 1
-                            End If
-                        ElseIf Map(MapLevel, BuilderPositionX, BuilderPositionY - 1) = Floor Then
-                            If Map(MapLevel, BuilderPositionX, BuilderPositionY) <> Floor Then
-                                Map(MapLevel, BuilderPositionX, BuilderPositionY) = Floor
-                                AllocatedBlocks += 1
-                            Else
-                                FailedBlocks += 1
-                            End If
-                        ElseIf Map(MapLevel, BuilderPositionX + 1, BuilderPositionY + 1) = Floor Then
-                            If Map(MapLevel, BuilderPositionX, BuilderPositionY) <> Floor Then
-                                Map(MapLevel, BuilderPositionX, BuilderPositionY) = Floor
-                                AllocatedBlocks += 1
-                            Else
-                                FailedBlocks += 1
-                            End If
-                        ElseIf Map(MapLevel, BuilderPositionX + 1, BuilderPositionY - 1) = Floor Then
-                            If Map(MapLevel, BuilderPositionX, BuilderPositionY) <> Floor Then
-                                Map(MapLevel, BuilderPositionX, BuilderPositionY) = Floor
-                                AllocatedBlocks += 1
-                            Else
-                                FailedBlocks += 1
-                            End If
-                        ElseIf Map(MapLevel, BuilderPositionX - 1, BuilderPositionY - 1) = Floor Then
-                            If Map(MapLevel, BuilderPositionX, BuilderPositionY) <> Floor Then
-                                Map(MapLevel, BuilderPositionX, BuilderPositionY) = Floor
-                                AllocatedBlocks += 1
-                            Else
-                                FailedBlocks += 1
-                            End If
-                        ElseIf Map(MapLevel, BuilderPositionX - 1, BuilderPositionY + 1) = Floor Then
-                            If Map(MapLevel, BuilderPositionX, BuilderPositionY) <> Floor Then
-                                Map(MapLevel, BuilderPositionX, BuilderPositionY) = Floor
-                                AllocatedBlocks += 1
-                            Else
-                                FailedBlocks += 1
-                            End If
-                        End If
-                    Else
-                        BuilderSpawned = False
-                    End If
-                End If
-            End While
         End If
     End Sub
     Sub GenerateFog()
@@ -2675,15 +2127,15 @@ Public Class MainForm
             TankCurLevel += 1
             'tanks beneficiary
             If TankCurLevel = 1 Then
-                Aggroperc = 25
+                Aggroperc = 0
             ElseIf TankCurLevel = 2 Then
-                Aggroperc = 50
+                Aggroperc = 25
             ElseIf TankCurLevel = 3 Then
-                Aggroperc = 75
+                Aggroperc = 50
             ElseIf TankCurLevel = 4 Then
-                Aggroperc = 100
+                Aggroperc = 75
             ElseIf TankCurLevel = 5 Then
-                FearPerc = 25
+                FearPerc = 100
             End If
             CurTank.Text = LTrim(Str(TankCurLevel))
             ResetRankNextDescriptions()
@@ -2751,13 +2203,13 @@ Public Class MainForm
             ScoutNextBenefit.Text = "Max Rank Acquired"
         End If
         If TankCurLevel = 1 Then
-            TankNextBenefit.Text = "50% Aggro"
+            TankNextBenefit.Text = "25% Chance to counter"
         ElseIf TankCurLevel = 2 Then
-            TankNextBenefit.Text = "75% Aggro"
+            TankNextBenefit.Text = "50% Chance to counter"
         ElseIf TankCurLevel = 3 Then
-            TankNextBenefit.Text = "100% Aggro"
+            TankNextBenefit.Text = "75% Chance to counter"
         ElseIf TankCurLevel = 4 Then
-            TankNextBenefit.Text = "25% Fear"
+            TankNextBenefit.Text = "100% Chance to counter"
         ElseIf TankCurLevel = 5 Then
             TankNextBenefit.Text = "Max Rank Acquired"
         End If
@@ -2835,7 +2287,7 @@ Public Class MainForm
     End Sub
     Private Sub ProcessCommand(ByVal sender As System.Object, ByVal e As System.Windows.Forms.KeyEventArgs) Handles MyBase.KeyDown
         SND(0, True)
-        If PlayerDead = False Then
+        If PlayerDead = False And Screensaver = False Then
             If e.KeyCode = Keys.Up And PlayerPosY > 0 And PlayerTargeting = False Or e.KeyCode = Keys.NumPad8 And PlayerPosY > 0 And PlayerTargeting = False Then
                 If Map(MapLevel, PlayerPosX, PlayerPosY - 1) > 0 And MapOccupied(MapLevel, PlayerPosX, PlayerPosY - 1) = 0 Then
                     PlayerLastPosX = PlayerPosX : PlayerLastPosY = PlayerPosY
@@ -2992,6 +2444,14 @@ Public Class MainForm
             ElseIf e.KeyCode = Keys.OemPeriod And e.Shift = True Then 'go down
                 If Map(MapLevel, PlayerPosX, PlayerPosY) = StairsDown Then 'exit
                     MapLevel += 1
+                    BuildNewMap(True, "descend")
+                End If
+            ElseIf e.KeyCode = Keys.F6 And AdminVisible = True Then 'admin mode is enabled, allow force down exit no matter where player is
+                If MapLevel < MaxDepthLevel Then
+                    MapLevel += 1
+                    BuildNewMap(True, "descend")
+                Else
+                    MapLevel = 1
                     BuildNewMap(True, "descend")
                 End If
             ElseIf e.KeyCode = Keys.Q And e.Control = True Then 'quit
@@ -3568,7 +3028,7 @@ Public Class MainForm
             PlayerCurHitpoints += 25
             Inv1.Text = ""
             RefreshStats()
-        ElseIf InvType(0) = Water Then
+        ElseIf InvType(0) = generateitem.Water Then
             PlayerCurEnergy += 25
             Inv1.Text = ""
             RefreshStats()
@@ -3617,7 +3077,7 @@ Public Class MainForm
             PlayerCurHitpoints += 25
             Inv2.Text = ""
             RefreshStats()
-        ElseIf InvType(1) = Water Then
+        ElseIf InvType(1) = generateitem.Water Then
             PlayerCurEnergy += 25
             Inv2.Text = ""
             RefreshStats()
@@ -3666,7 +3126,7 @@ Public Class MainForm
             PlayerCurHitpoints += 25
             Inv3.Text = ""
             RefreshStats()
-        ElseIf InvType(2) = Water Then
+        ElseIf InvType(2) = generateitem.Water Then
             PlayerCurEnergy += 25
             Inv3.Text = ""
             RefreshStats()
@@ -3715,7 +3175,7 @@ Public Class MainForm
             PlayerCurHitpoints += 25
             Inv4.Text = ""
             RefreshStats()
-        ElseIf InvType(3) = Water Then
+        ElseIf InvType(3) = generateitem.Water Then
             PlayerCurEnergy += 25
             Inv4.Text = ""
             RefreshStats()
@@ -3764,7 +3224,7 @@ Public Class MainForm
             PlayerCurHitpoints += 25
             Inv5.Text = ""
             RefreshStats()
-        ElseIf InvType(4) = Water Then
+        ElseIf InvType(4) = generateitem.Water Then
             PlayerCurEnergy += 25
             Inv5.Text = ""
             RefreshStats()
@@ -3813,7 +3273,7 @@ Public Class MainForm
             PlayerCurHitpoints += 25
             Inv6.Text = ""
             RefreshStats()
-        ElseIf InvType(5) = Water Then
+        ElseIf InvType(5) = generateitem.Water Then
             PlayerCurEnergy += 25
             Inv6.Text = ""
             RefreshStats()
@@ -3862,7 +3322,7 @@ Public Class MainForm
             PlayerCurHitpoints += 25
             Inv7.Text = ""
             RefreshStats()
-        ElseIf InvType(6) = Water Then
+        ElseIf InvType(6) = generateitem.Water Then
             PlayerCurEnergy += 25
             Inv7.Text = ""
             RefreshStats()
@@ -3911,7 +3371,7 @@ Public Class MainForm
             PlayerCurHitpoints += 25
             Inv8.Text = ""
             RefreshStats()
-        ElseIf InvType(7) = Water Then
+        ElseIf InvType(7) = generateitem.Water Then
             PlayerCurEnergy += 25
             Inv8.Text = ""
             RefreshStats()
@@ -3960,7 +3420,7 @@ Public Class MainForm
             PlayerCurHitpoints += 25
             Inv9.Text = ""
             RefreshStats()
-        ElseIf InvType(8) = Water Then
+        ElseIf InvType(8) = generateitem.Water Then
             PlayerCurEnergy += 25
             Inv9.Text = ""
             RefreshStats()
@@ -4009,7 +3469,7 @@ Public Class MainForm
             PlayerCurHitpoints += 25
             Inv10.Text = ""
             RefreshStats()
-        ElseIf InvType(9) = Water Then
+        ElseIf InvType(9) = generateitem.Water Then
             PlayerCurEnergy += 25
             Inv10.Text = ""
             RefreshStats()
