@@ -278,23 +278,23 @@
                             MainForm.CANVAS.DrawString("@", displayfont, Brushes.LimeGreen, xish, yish)
                         ElseIf x = PlayerPosX And y = PlayerposY And MainForm.Screensaver = True Then
                             LOSMap(x, y) = Redraw
-                            MainForm.CANVAS.DrawString("@", displayfont, Brushes.Red, xish, yish)
-                        ElseIf x = PrevPlayerPosX(0) And y = PrevPlayerPosY(0) And MainForm.Screensaver = False Then
-                            LOSMap(x, y) = Redraw
-                            MainForm.CANVAS.DrawString("@", New Font("Arial", displayfont.Size / 3 * 2.2), Brushes.Yellow, xish, yish)
-                            MainForm.CANVAS.DrawString("T", New Font("Arial", displayfont.Size / 3), Brushes.White, xish + TheRoomWidth / 3 * 2, yish + TheRoomHeight / 3 * 2)
-                        ElseIf x = PrevPlayerPosX(1) And y = PrevPlayerPosY(1) And MainForm.Screensaver = False Then
-                            LOSMap(x, y) = Redraw
-                            MainForm.CANVAS.DrawString("@", New Font("Arial", displayfont.Size / 3 * 2.2), Brushes.Yellow, xish, yish)
-                            MainForm.CANVAS.DrawString("S", New Font("Arial", displayfont.Size / 3), Brushes.White, xish + TheRoomWidth / 3 * 2, yish + TheRoomHeight / 3 * 2)
-                        ElseIf x = PrevPlayerPosX(2) And y = PrevPlayerPosY(2) And MainForm.Screensaver = False Then
-                            LOSMap(x, y) = Redraw
-                            MainForm.CANVAS.DrawString("@", New Font("Arial", displayfont.Size / 3 * 2.2), Brushes.Yellow, xish, yish)
-                            MainForm.CANVAS.DrawString("B", New Font("Arial", displayfont.Size / 3), Brushes.White, xish + TheRoomWidth / 3 * 2, yish + TheRoomHeight / 3 * 2)
-                        ElseIf x = PrevPlayerPosX(3) And y = PrevPlayerPosY(3) And MainForm.Screensaver = False Then
-                            LOSMap(x, y) = Redraw
-                            MainForm.CANVAS.DrawString("@", New Font("Arial", displayfont.Size / 3 * 2.2), Brushes.Yellow, xish, yish)
-                            MainForm.CANVAS.DrawString("M", New Font("Arial", displayfont.Size / 3), Brushes.White, xish + TheRoomWidth / 3 * 2, yish + TheRoomHeight / 3 * 2)
+                            MainForm.CANVAS.DrawString("Ҵ", displayfont, Brushes.OrangeRed, xish, yish)
+                            'ElseIf x = PrevPlayerPosX(0) And y = PrevPlayerPosY(0) And MainForm.Screensaver = False Then
+                            '    LOSMap(x, y) = Redraw
+                            '    MainForm.CANVAS.DrawString("@", New Font("Arial", displayfont.Size / 3 * 2.2), Brushes.Yellow, xish, yish)
+                            '    MainForm.CANVAS.DrawString("T", New Font("Arial", displayfont.Size / 3), Brushes.White, xish + TheRoomWidth / 3 * 2, yish + TheRoomHeight / 3 * 2)
+                            'ElseIf x = PrevPlayerPosX(1) And y = PrevPlayerPosY(1) And MainForm.Screensaver = False Then
+                            '    LOSMap(x, y) = Redraw
+                            '    MainForm.CANVAS.DrawString("@", New Font("Arial", displayfont.Size / 3 * 2.2), Brushes.Yellow, xish, yish)
+                            '    MainForm.CANVAS.DrawString("S", New Font("Arial", displayfont.Size / 3), Brushes.White, xish + TheRoomWidth / 3 * 2, yish + TheRoomHeight / 3 * 2)
+                            'ElseIf x = PrevPlayerPosX(2) And y = PrevPlayerPosY(2) And MainForm.Screensaver = False Then
+                            '     LOSMap(x, y) = Redraw
+                            '     MainForm.CANVAS.DrawString("@", New Font("Arial", displayfont.Size / 3 * 2.2), Brushes.Yellow, xish, yish)
+                            '     MainForm.CANVAS.DrawString("B", New Font("Arial", displayfont.Size / 3), Brushes.White, xish + TheRoomWidth / 3 * 2, yish + TheRoomHeight / 3 * 2)
+                            'ElseIf x = PrevPlayerPosX(3) And y = PrevPlayerPosY(3) And MainForm.Screensaver = False Then
+                            '     LOSMap(x, y) = Redraw
+                            '     MainForm.CANVAS.DrawString("@", New Font("Arial", displayfont.Size / 3 * 2.2), Brushes.Yellow, xish, yish)
+                            '     MainForm.CANVAS.DrawString("M", New Font("Arial", displayfont.Size / 3), Brushes.White, xish + TheRoomWidth / 3 * 2, yish + TheRoomHeight / 3 * 2)
                         End If
                         MainForm.MapShown(MainForm.MapLevel, x, y) = True
                     ElseIf MainForm.MapShown(MainForm.MapLevel, x, y) = True Then
@@ -334,28 +334,67 @@
         MainForm.CreateGraphics.DrawImage(MainForm.PAD, 0, 0)
     End Sub
     Sub DrawTile(ByVal x As Short, ByVal y As Short, ByVal xish As Short, ByVal yish As Short, ByVal TheRoomWidth As Short, ByVal TheRoomHeight As Short, ByVal GraphicalMode As Boolean, ByVal wallart As Bitmap, ByVal floorart As Bitmap)
-        Dim BGColor As Brush
-        If MainForm.EnvironmentType = 1 Then
-            BGColor = Brushes.BurlyWood
+        Dim BGColor As New SolidBrush(Color.Black)
+        Dim Red, Green, Blue As Integer
+        If MainForm.EnvironmentType = 0 Then
+            Red = 35
+            Green = 0
+            Blue = 0
+        ElseIf MainForm.EnvironmentType = 1 Then
+            Red = 0
+            Green = 40
+            Blue = 35
         ElseIf MainForm.EnvironmentType = 2 Then
-            BGColor = Brushes.Chartreuse
+            Red = 75
+            Green = 30
+            Blue = 25
         ElseIf MainForm.EnvironmentType = 3 Then
-            BGColor = Brushes.DarkRed
+            Red = 25
+            Green = 75
+            Blue = 25
         ElseIf MainForm.EnvironmentType = 4 Then
-            BGColor = Brushes.Cornsilk
+            Red = 30
+            Green = 25
+            Blue = 25
         ElseIf MainForm.EnvironmentType = 5 Then
-            BGColor = Brushes.DarkKhaki
+            Red = 50
+            Green = 75
+            Blue = 80
         ElseIf MainForm.EnvironmentType = 6 Then
-            BGColor = Brushes.DarkOrange
+            Red = 25
+            Green = 150
+            Blue = 50
         ElseIf MainForm.EnvironmentType = 7 Then
-            BGColor = Brushes.DarkGreen
+            Red = 125
+            Green = 75
+            Blue = 50
         ElseIf MainForm.EnvironmentType = 8 Then
-            BGColor = Brushes.DarkViolet
-        ElseIf MainForm.EnvironmentType = 9 Then
-            BGColor = Brushes.DeepPink
+            Red = 150
+            Green = 125
+            Blue = 0
         Else
-            BGColor = New SolidBrush(Color.FromArgb(35, 0, 0))
+            Red = 5
+            Green = 0
+            Blue = 0
         End If
+        If MainForm.FogMap(MainForm.MapLevel, x, y) = 1 Then
+            If Red > Green And Red > Blue Then Red += 5
+            If Green > Red And Green > Blue Then Green += 5
+            If Blue > Red And Blue > Green Then Green -= 5
+        ElseIf MainForm.FogMap(MainForm.MapLevel, x, y) = 2 Then
+            If Red > Green And Red > Blue Then Red += 10
+            If Green > Red And Green > Blue Then Green += 10
+            If Blue > Red And Blue > Green Then Green -= 10
+        ElseIf MainForm.FogMap(MainForm.MapLevel, x, y) = 3 Then
+            If Red > Green And Red > Blue Then Red += 15
+            If Green > Red And Green > Blue Then Green += 15
+            If Blue > Red And Blue > Green Then Green -= 15
+        Else
+            If Red > Green And Red > Blue Then Red += 20
+            If Green > Red And Green > Blue Then Green += 20
+            If Blue > Red And Blue > Green Then Green -= 20
+        End If
+        BGColor.Color = Color.FromArgb(Red, Green, Blue)
         If MainForm.Map(MainForm.MapLevel, x, y) = Wall Then
             MainForm.CANVAS.FillRectangle(Brushes.DarkGray, xish, yish, TheRoomWidth, TheRoomHeight)
             MainForm.CANVAS.DrawString("#", displayfont, Brushes.Black, xish, yish)
