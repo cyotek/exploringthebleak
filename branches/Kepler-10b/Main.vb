@@ -103,6 +103,7 @@ Public Class MainForm
     Public Aggroperc As Short
     Public PlayersPlusRange As UShort
     Public Playermaxitems As Short = 2
+    Public PlayerMapMovement As Boolean
 
     Public HighScores As String
 
@@ -130,7 +131,7 @@ Public Class MainForm
 
     Public CommentBoxOpen As Boolean = False
 
-    Public MusicOn As Boolean = True
+    Public MusicOn As Boolean = False
     Public Music_FileToPlay As String
     Public MusicBaseName(9) As String
     Public MusicDecrease(9) As Short
@@ -1360,61 +1361,99 @@ Public Class MainForm
         End If
     End Sub
     Sub PopulateEntrances()
-        Dim RandomNum As New Random
-        Dim RandomPosX As Short = RandomNum.Next(1, MapSize - 1)
-        Dim RandomPosY As Short = RandomNum.Next(1, MapSize - 1)
-        Dim EntrancePosX, EntrancePosY As Short
-        Dim Foundentrance, Foundexit As Boolean
-        Dim Tries As Short = 0
-        While Foundentrance = False
-            Tries += 1
-            If Tries > 1000 Then
-                'no place to put the item, recursion too high, exit (catch)
-                Exit While
-            End If
-            If Map(MapLevel, RandomPosX, RandomPosY) = Floor Then
-                Foundentrance = True
-                If MapLevel >= 2 Then 'ensures that the player can't go to levels before 1
-                    Map(MapLevel, RandomPosX, RandomPosY) = StairsUp 'uncomment this to allow stairs up
-                    EntrancePosX = RandomPosX 'uncomment this to allow stairs up
-                    EntrancePosY = RandomPosY 'uncomment this to allow stairs up
-                    MapEntrances(MapLevel, 1, 0) = RandomPosX
-                    MapEntrances(MapLevel, 1, 1) = RandomPosY
+        If PlayerMapMovement = True Then 'map movement wasn't up or down, must place character in the appropriate position, therefor that map position must be accessible.
+            'there won't be problems with diagonal movement on corners because
+            'we'll favor x over y in directions. first one pushed into spot
+            'will be accepted
+            If PlayerPosX = 0 Then
+                If Map(MapLevel, MapSize, PlayerPosY) <> Wall Then
+                    PlayerPosX = MapSize
+                    PlayerMapMovement = False
+                Else
+                    'bad push, reformat map (will do so until a map found is accepting new player position)
+                    BuildNewMap(True, "descend")
                 End If
-                PlayerPosX = RandomPosX : DrawingProcedures.PrevPlayerPosX(0) = PlayerPosX : DrawingProcedures.PrevPlayerPosX(2) = PlayerPosX : DrawingProcedures.PrevPlayerPosX(2) = PlayerPosX : DrawingProcedures.PrevPlayerPosX(3) = PlayerPosX
-                PlayerPosY = RandomPosY : DrawingProcedures.PrevPlayerPosY(0) = PlayerPosY : DrawingProcedures.PrevPlayerPosY(2) = PlayerPosY : DrawingProcedures.PrevPlayerPosY(2) = PlayerPosY : DrawingProcedures.PrevPlayerPosY(3) = PlayerPosY
-                RandomPosX = RandomNum.Next(1, MapSize - 1) 'not necessary if stairs up is allowed, prevents stairs down from spawning on player
-                RandomPosY = RandomNum.Next(1, MapSize - 1) 'not necessary if stairs up is allowed, prevents stairs down from spawning on player
-            Else
-                RandomPosX = RandomNum.Next(1, MapSize - 1)
-                RandomPosY = RandomNum.Next(1, MapSize - 1)
+            ElseIf PlayerPosX = MapSize Then
+                If Map(MapLevel, 0, PlayerPosY) <> Wall Then
+                    PlayerPosX = 0
+                    PlayerMapMovement = False
+                Else
+                    'bad push, reformat map (will do so until a map found is accepting new player position)
+                End If
+            ElseIf PlayerPosY = 0 Then
+                If Map(MapLevel, PlayerPosX, MapSize) <> Wall Then
+                    PlayerPosY = MapSize
+                    PlayerMapMovement = False
+                Else
+                    'bad push, reformat map (will do so until a map found is accepting new player position)
+                    BuildNewMap(True, "descend")
+                End If
+            ElseIf PlayerPosY = MapSize Then
+                If Map(MapLevel, PlayerPosX, 0) <> Wall Then
+                    PlayerPosY = 0
+                    PlayerMapMovement = False
+                Else
+                    'bad push, reformat map (will do so until a map found is accepting new player position)
+                    BuildNewMap(True, "descend")
+                End If
             End If
-        End While
-        If MapLevel = 28 Then Foundexit = True 'don't allow stairs on the last level
-        Tries = 0
-        While Foundexit = False
-            Tries += 1
-            If Tries > 1000 Then
-                'no place to put the item, recursion too high, exit (catch)
-                Exit While
-            End If
-            If Map(MapLevel, RandomPosX, RandomPosY) = Floor Then
-                If Math.Abs(RandomPosX - EntrancePosX) >= 5 Or Math.Abs(RandomPosY - EntrancePosY) >= 5 Then
-                    Map(MapLevel, RandomPosX, RandomPosY) = StairsDown
-                    MapEntrances(MapLevel, 0, 0) = RandomPosX
-                    MapEntrances(MapLevel, 0, 1) = RandomPosY
-                    ExitPosX = RandomPosX
-                    ExitPosY = RandomPosY
-                    Foundexit = True
+        Else
+            Dim RandomNum As New Random
+            Dim RandomPosX As Short = RandomNum.Next(1, MapSize - 1)
+            Dim RandomPosY As Short = RandomNum.Next(1, MapSize - 1)
+            Dim EntrancePosX, EntrancePosY As Short
+            Dim Foundentrance, Foundexit As Boolean
+            Dim Tries As Short = 0
+            While Foundentrance = False
+                Tries += 1
+                If Tries > 1000 Then
+                    'no place to put the item, recursion too high, exit (catch)
+                    Exit While
+                End If
+                If Map(MapLevel, RandomPosX, RandomPosY) = Floor Then
+                    Foundentrance = True
+                    If MapLevel >= 2 Then 'ensures that the player can't go to levels before 1
+                        Map(MapLevel, RandomPosX, RandomPosY) = StairsUp 'uncomment this to allow stairs up
+                        EntrancePosX = RandomPosX 'uncomment this to allow stairs up
+                        EntrancePosY = RandomPosY 'uncomment this to allow stairs up
+                        MapEntrances(MapLevel, 1, 0) = RandomPosX
+                        MapEntrances(MapLevel, 1, 1) = RandomPosY
+                    End If
+                    PlayerPosX = RandomPosX : DrawingProcedures.PrevPlayerPosX(0) = PlayerPosX : DrawingProcedures.PrevPlayerPosX(2) = PlayerPosX : DrawingProcedures.PrevPlayerPosX(2) = PlayerPosX : DrawingProcedures.PrevPlayerPosX(3) = PlayerPosX
+                    PlayerPosY = RandomPosY : DrawingProcedures.PrevPlayerPosY(0) = PlayerPosY : DrawingProcedures.PrevPlayerPosY(2) = PlayerPosY : DrawingProcedures.PrevPlayerPosY(2) = PlayerPosY : DrawingProcedures.PrevPlayerPosY(3) = PlayerPosY
+                    RandomPosX = RandomNum.Next(1, MapSize - 1) 'not necessary if stairs up is allowed, prevents stairs down from spawning on player
+                    RandomPosY = RandomNum.Next(1, MapSize - 1) 'not necessary if stairs up is allowed, prevents stairs down from spawning on player
                 Else
                     RandomPosX = RandomNum.Next(1, MapSize - 1)
                     RandomPosY = RandomNum.Next(1, MapSize - 1)
                 End If
-            Else
-                RandomPosX = RandomNum.Next(1, MapSize - 1)
-                RandomPosY = RandomNum.Next(1, MapSize - 1)
-            End If
-        End While
+            End While
+            If MapLevel = 28 Then Foundexit = True 'don't allow stairs on the last level
+            Tries = 0
+            While Foundexit = False
+                Tries += 1
+                If Tries > 1000 Then
+                    'no place to put the item, recursion too high, exit (catch)
+                    Exit While
+                End If
+                If Map(MapLevel, RandomPosX, RandomPosY) = Floor Then
+                    If Math.Abs(RandomPosX - EntrancePosX) >= 5 Or Math.Abs(RandomPosY - EntrancePosY) >= 5 Then
+                        Map(MapLevel, RandomPosX, RandomPosY) = StairsDown
+                        MapEntrances(MapLevel, 0, 0) = RandomPosX
+                        MapEntrances(MapLevel, 0, 1) = RandomPosY
+                        ExitPosX = RandomPosX
+                        ExitPosY = RandomPosY
+                        Foundexit = True
+                    Else
+                        RandomPosX = RandomNum.Next(1, MapSize - 1)
+                        RandomPosY = RandomNum.Next(1, MapSize - 1)
+                    End If
+                Else
+                    RandomPosX = RandomNum.Next(1, MapSize - 1)
+                    RandomPosY = RandomNum.Next(1, MapSize - 1)
+                End If
+            End While
+        End If
     End Sub
     Sub DetermineEnvironment()
         Dim RandomNum As New Random
@@ -2298,6 +2337,10 @@ Public Class MainForm
                     PlayerHitLocation(PlayerPosX, PlayerPosY - 1)
                     ReDraw()
                 End If
+            ElseIf e.KeyCode = Keys.Up And PlayerPosY = 0 And PlayerTargeting = False Or e.KeyCode = Keys.NumPad8 And PlayerPosY = 0 And PlayerTargeting = False Then
+                MapLevel += 1
+                PlayerMapMovement = True
+                BuildNewMap(True, "descend")
             ElseIf e.KeyCode = Keys.Down And PlayerPosY < MapSize And PlayerTargeting = False Or e.KeyCode = Keys.NumPad2 And PlayerPosY < MapSize And PlayerTargeting = False Then
                 If Map(MapLevel, PlayerPosX, PlayerPosY + 1) > 0 And MapOccupied(MapLevel, PlayerPosX, PlayerPosY + 1) = 0 Then
                     PlayerLastPosX = PlayerPosX : PlayerLastPosY = PlayerPosY
@@ -2308,6 +2351,10 @@ Public Class MainForm
                     PlayerHitLocation(PlayerPosX, PlayerPosY + 1)
                     ReDraw()
                 End If
+            ElseIf e.KeyCode = Keys.Down And PlayerPosY = MapSize And PlayerTargeting = False Or e.KeyCode = Keys.NumPad2 And PlayerPosY = MapSize And PlayerTargeting = False Then
+                MapLevel += 1
+                PlayerMapMovement = True
+                BuildNewMap(True, "descend")
             ElseIf e.KeyCode = Keys.Right And PlayerPosX < MapSize And PlayerTargeting = False Or e.KeyCode = Keys.NumPad6 And PlayerPosX < MapSize And PlayerTargeting = False Then
                 If Map(MapLevel, PlayerPosX + 1, PlayerPosY) > 0 And MapOccupied(MapLevel, PlayerPosX + 1, PlayerPosY) = 0 Then
                     PlayerLastPosX = PlayerPosX : PlayerLastPosY = PlayerPosY
@@ -2318,6 +2365,10 @@ Public Class MainForm
                     PlayerHitLocation(PlayerPosX + 1, PlayerPosY)
                     ReDraw()
                 End If
+            ElseIf e.KeyCode = Keys.Right And PlayerPosX = MapSize And PlayerTargeting = False Or e.KeyCode = Keys.NumPad6 And PlayerPosX = MapSize And PlayerTargeting = False Then
+                MapLevel += 1
+                PlayerMapMovement = True
+                BuildNewMap(True, "descend")
             ElseIf e.KeyCode = Keys.Left And PlayerPosX > 0 And PlayerTargeting = False Or e.KeyCode = Keys.NumPad4 And PlayerPosX > 0 And PlayerTargeting = False Then
                 If Map(MapLevel, PlayerPosX - 1, PlayerPosY) > 0 And MapOccupied(MapLevel, PlayerPosX - 1, PlayerPosY) = 0 Then
                     PlayerLastPosX = PlayerPosX : PlayerLastPosY = PlayerPosY
@@ -2328,6 +2379,10 @@ Public Class MainForm
                     PlayerHitLocation(PlayerPosX - 1, PlayerPosY)
                     ReDraw()
                 End If
+            ElseIf e.KeyCode = Keys.Left And PlayerPosX = 0 And PlayerTargeting = False Or e.KeyCode = Keys.NumPad4 And PlayerPosX = 0 And PlayerTargeting = False Then
+                MapLevel += 1
+                PlayerMapMovement = True
+                BuildNewMap(True, "descend")
             ElseIf e.KeyCode = Keys.NumPad7 And PlayerPosX > 0 And PlayerPosY > 0 And PlayerTargeting = False Then
                 If Map(MapLevel, PlayerPosX - 1, PlayerPosY - 1) > 0 And MapOccupied(MapLevel, PlayerPosX - 1, PlayerPosY - 1) = 0 Then
                     PlayerLastPosX = PlayerPosX : PlayerLastPosY = PlayerPosY
@@ -2338,6 +2393,10 @@ Public Class MainForm
                     PlayerHitLocation(PlayerPosX - 1, PlayerPosY - 1)
                     ReDraw()
                 End If
+            ElseIf e.KeyCode = Keys.NumPad7 And PlayerPosX = 0 And PlayerTargeting = False Or e.KeyCode = Keys.NumPad7 And PlayerPosY = 0 And PlayerTargeting = False Then
+                MapLevel += 1
+                PlayerMapMovement = True
+                BuildNewMap(True, "descend")
             ElseIf e.KeyCode = Keys.NumPad9 And PlayerPosX < MapSize And PlayerPosY > 0 And PlayerTargeting = False Then
                 If Map(MapLevel, PlayerPosX + 1, PlayerPosY - 1) > 0 And MapOccupied(MapLevel, PlayerPosX + 1, PlayerPosY - 1) = 0 Then
                     PlayerLastPosX = PlayerPosX : PlayerLastPosY = PlayerPosY
@@ -2348,6 +2407,10 @@ Public Class MainForm
                     PlayerHitLocation(PlayerPosX + 1, PlayerPosY - 1)
                     ReDraw()
                 End If
+            ElseIf e.KeyCode = Keys.NumPad9 And PlayerPosX = MapSize And PlayerTargeting = False Or e.KeyCode = Keys.NumPad9 And PlayerPosY = 0 And PlayerTargeting = False Then
+                MapLevel += 1
+                PlayerMapMovement = True
+                BuildNewMap(True, "descend")
             ElseIf e.KeyCode = Keys.NumPad3 And PlayerPosX < MapSize And PlayerPosY < MapSize And PlayerTargeting = False Then
                 If Map(MapLevel, PlayerPosX + 1, PlayerPosY + 1) > 0 And MapOccupied(MapLevel, PlayerPosX + 1, PlayerPosY + 1) = 0 Then
                     PlayerLastPosX = PlayerPosX : PlayerLastPosY = PlayerPosY
@@ -2358,6 +2421,10 @@ Public Class MainForm
                     PlayerHitLocation(PlayerPosX + 1, PlayerPosY + 1)
                     ReDraw()
                 End If
+            ElseIf e.KeyCode = Keys.NumPad3 And PlayerPosX = MapSize And PlayerTargeting = False Or e.KeyCode = Keys.NumPad3 And PlayerPosY = MapSize And PlayerTargeting = False Then
+                MapLevel += 1
+                PlayerMapMovement = True
+                BuildNewMap(True, "descend")
             ElseIf e.KeyCode = Keys.NumPad1 And PlayerPosX > 0 And PlayerPosY < MapSize And PlayerTargeting = False Then
                 If Map(MapLevel, PlayerPosX - 1, PlayerPosY + 1) > 0 And MapOccupied(MapLevel, PlayerPosX - 1, PlayerPosY + 1) = 0 Then
                     PlayerLastPosX = PlayerPosX : PlayerLastPosY = PlayerPosY
@@ -2368,6 +2435,10 @@ Public Class MainForm
                     PlayerHitLocation(PlayerPosX - 1, PlayerPosY + 1)
                     ReDraw()
                 End If
+            ElseIf e.KeyCode = Keys.NumPad1 And PlayerPosX = 0 And PlayerTargeting = False Or e.KeyCode = Keys.NumPad1 And PlayerPosY = MapSize And PlayerTargeting = False Then
+                MapLevel += 1
+                PlayerMapMovement = True
+                BuildNewMap(True, "descend")
             ElseIf e.KeyCode = Keys.Up And PlayerTargeting = True Then
                 If MobileVisible(MapLevel, 0, 1) > 0 Then
                     DrawingProcedures.TargetEnemy(True)
@@ -2567,7 +2638,6 @@ Public Class MainForm
     '        Me.CANVAS.DrawRectangle(Pens.IndianRed, xish, yish, TheRoomWidth - 2, TheRoomHeight - 2)
     '        Me.CreateGraphics.DrawImage(PAD, 0, 0)
     '    End Sub
-
     Private Sub ScreensaverActivate(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Timer.Tick
         If Screensaver = True Then 'move character, it's the screensaver
             If PlayerPosX = ExitPosX And PlayerPosY = ExitPosY Then
@@ -2598,7 +2668,7 @@ Public Class MainForm
     End Sub
     Public Sub PlayMusic(ByVal Type As String)
         'allow just the ambience during the screensaver
-        If MusicOn = True And Screensaver = False Or Type = "Ambience" Then
+        If MusicOn = True And Screensaver = False Or Type = "Ambience" And MusicOn = True Then
             'play the ambience and repeat it
             If Type = "Ambience" And MusicBaseName(0) = "" Then
                 MusicBaseName(0) = "Ambience"

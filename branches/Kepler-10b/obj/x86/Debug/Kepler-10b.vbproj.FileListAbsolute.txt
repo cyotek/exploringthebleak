@@ -10,3 +10,15 @@ D:\Station\Projects\Kepler-10b\obj\x86\Debug\Kepler-10b.exe
 D:\Station\Projects\Kepler-10b\obj\x86\Debug\Kepler-10b.xml
 D:\Station\Projects\Kepler-10b\obj\x86\Debug\Kepler-10b.pdb
 D:\Station\Projects\Kepler-10b\obj\x86\Debug\Exploring_The_Bleak.MyProgBar.resources
+E:\Station\Projects\Kepler-10b\obj\x86\Debug\Kepler-10b.exe
+E:\Station\Projects\Kepler-10b\obj\x86\Debug\Kepler-10b.xml
+E:\Station\Projects\Kepler-10b\obj\x86\Debug\Kepler-10b.pdb
+E:\Station\Projects\Kepler-10b\bin\Debug\Kepler-10b.exe
+E:\Station\Projects\Kepler-10b\bin\Debug\Kepler-10b.pdb
+E:\Station\Projects\Kepler-10b\bin\Debug\Kepler-10b.xml
+E:\Station\Projects\Kepler-10b\obj\x86\Debug\ResolveAssemblyReference.cache
+E:\Station\Projects\Kepler-10b\obj\x86\Debug\Exploring_The_Bleak.MainForm.resources
+E:\Station\Projects\Kepler-10b\obj\x86\Debug\Exploring_The_Bleak.Resources.resources
+E:\Station\Projects\Kepler-10b\obj\x86\Debug\Exploring_The_Bleak.MyProgBar.resources
+E:\Station\Projects\Kepler-10b\obj\x86\Debug\GenerateResource.read.1.tlog
+E:\Station\Projects\Kepler-10b\obj\x86\Debug\GenerateResource.write.1.tlog
