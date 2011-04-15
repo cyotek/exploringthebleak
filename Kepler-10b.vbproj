@@ -78,6 +78,7 @@
     <Compile Include="ApplicationEvents.vb" />
     <Compile Include="DrawingProcedures.vb" />
     <Compile Include="GenerateItem.vb" />
+    <Compile Include="Item.vb" />
     <Compile Include="LineOfSight.vb" />
     <Compile Include="Main.vb">
       <SubType>Form</SubType>
@@ -86,6 +87,8 @@
       <DependentUpon>Main.vb</DependentUpon>
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Map.vb" />
+    <Compile Include="Mobile.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>
@@ -107,6 +110,7 @@
     <Compile Include="MyProgressBar.vb">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Player.vb" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Main.resx">
