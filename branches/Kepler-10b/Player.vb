@@ -19,10 +19,11 @@
 #End Region
 #Region "Statistics"
     Public HealthRejuv, EnergyRejuv As Short
-    Public FearPercent, AggroPercent As Short
-    Public CurHitpoints, Hitpoints As Short
+    Public FearPercent, CounterPercent As Short
+    Public CurHitpoints, MaxHitpoints As Short
     Public CurEnergy, Energy As Short
     Public Strength, MaxStrength As Byte
+    Public Dexterity, MaxDexterity As Byte
     Public Intelligence, MaxIntelligence As Byte
     Public Wisdom, MaxWisdom As Byte
     Public Constitution, MaxConstitution As Byte
