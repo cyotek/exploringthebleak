@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="Environments.xsl"?>
+<!-- <title>Class List</title>
+	 Class list was created in XML on 11/29/12
+	 The list was extended for implementation in Exploring The Bleak : Online
+	 on 11-29-2012. The list is used in Plains of Sedia : Origins, Developed by
+	 Nathaniel Inman of The Other Experiment Studio found @ www.theoestudio.com
+	 All contents within are licensed under GPLv3 -->
+<classlist name="Classes List">
+	<class number="01">
+		<name>Elementalist</name>
+		<tileset x="6" y="0">humans</tileset>
+		<description>Elementalists emblazon themselves with powerful elemental auras to protect themselves from enemies. Elementalists are chaotic mages. Their magic is natirually occurring and is much more powerful than other classes, but they have far less control. They are warriors of a rare kind and relish their chaotic part of nature.</description>
+	</class>
+	<class number="02">
+		<name>Gravedigger</name>
+		<tileset x="1" y="3">humans</tileset>
+		<description>A gravedigger feels the need to expand his knowledge of the mostly unknown and mystic subject of death. They sometimes find that pain can be delightful and relish their own death, hoping that surely it could be strung out a bit longer if possible so they could assess it's many developments upon the way. Gravediggers can be somewhat social at times, but it isn't uncommon to see a hermetic gravedigger or necromancer.</description>
+	</class>
+	<class number="03">
+		<name>Headhunter</name>
+		<tileset x="2" y="1">humans</tileset>
+		<description>Headhunters are most prominently warriors who find little difficulty in disposing of thieves and law-breakers. They use the shadows to hide and break their opponents. Warlords give orders easily to others forming controlled combat situations. They develop great authority quickly and at times can seem to resemble an extension of the law itself.</description>
+	</class>
+	<class number="04">
+		<name>Hermit</name>
+		<tileset x="4" y="2">humans</tileset>
+		<description>Hermits live always curious about the many weaves of magic they can see and distinguish amongst the world. All welemental weaves including spirit as well as draconian sub-elemental magic is accessible to them. With all the knowledge in the world there is still more meaning, a question that begs the quandering of their philosophical minds. They search long and wide for questions, not answer, something they cannot solve.</description>
+	</class>
+	<class number="05">
+		<name>Mageling</name>
+		<tileset x="1" y="2">humans</tileset>
+		<description>Mages form a well-structured society of knowledge harbringers and socialites. Mages form colleges and go throughout life and their travels always looking for another piece of information that they know nothing about. There is little they would not delve their fingers into when it comes to knowledge except perhaps the forbidden art of necromancy.</description>
+	</class>
+	<class number="06">
+		<name>Minstrel</name>
+		<tileset x="2" y="5">humans</tileset>
+		<description>Minstrels bring the harmony of music and lilting melodies to the battlefield unconventionally to boost the morale of their comrads or later in their training as a much more discrete and unfathomable way of battle. Minstrels are generally happy, lively, and bring joy to their party members. Their presence in battle with it's boost in morale and stats has always been welcome in groups, as they can bring a battle from the midst of a losing to a winning situation. Bards are the support strings of any group but should not be underestimated as competant warriors.</description>
+	</class>
+	<class number="07">
+		<name>Monk</name>
+		<tileset x="3" y="1">humans</tileset>
+		<description>Monks are peaceful warriros who battle without weapons and are martially biased to avoid combat if at all possible.</description>
+	</class>
+	<class number="08">
+		<name>Page</name>
+		<tileset x="0" y="3">humans</tileset>
+		<description>Pages are well-versed in armor and protection. They are defenders of their cause. A templar is fully capable, if any one person is, to stand up to the strongest foe with the smallest amount of effort. They protect for it is just to value others above yourself.</description>
+	</class>
+	<class number="09">
+		<name>Pickpocket</name>
+		<tileset x="6" y="2">humans</tileset>
+		<description>Pickpockets are simply the thieves. They think around the corner. They are aware at all times. They have luck, live for pleasure, and think little of consequences. Pickpockets are a rare breed in the law-making cities of the new world, and are remnants of history, fading in and out of the shadows; always there, but rarely seen.</description>
+	</class>
+	<class number="10">
+		<name>Plainsman</name>
+		<tileset x="3" y="5">humans</tileset>
+		<description>Plainsmen are the warriors of the real world, well-versed in natural combat with any weapon and with little remorse or tactical stipulations. Plainsmen have simple concepts of yes or no, live or die, and think little of consequences. Berserkers think only about the basics of their survival and elimination of their enemies.</description>
+	</class>
+	<class number="11">
+		<name>Priest</name>
+		<tileset x="4" y="4">humans</tileset>
+		<description>A priest grows through a well organized foundation of beliefs and political structure and bases much of his authority to secure religious structure amongst his people. A priest is unfamiliar with combat and is likewise extremely skilled in politics and healing the wounded and sick.</description>
+	</class>
+	<class number="12">
+		<name>Runescribe</name>
+		<tileset x="3" y="3">humans</tileset>
+		<description>A runescribe breathes the arcane magic of the dragons and gods into runes. They see the make-up of nature beyond the natural weaves into something more delicate and precise. They are feared greatly and demand great respect by all. They are a dying breed of warriors who speak little because their presence speaks for them.</description>
+	</class>
+	<class number="13">
+		<name>Scout</name>
+		<tileset x="2" y="2">humans</tileset>
+		<description>Scouts are guardians of monks and allow monks to live and reside peacefully without slight of temperament. Scouts are empty-minded warriors of wind who quickly dispatch an enemy and meditate later about the battle. Scouts are of no emotion.</description>
+	</class>
+	<class number="14">
+		<name>Woodsman</name>
+		<tileset x="1" y="0">humans</tileset>
+		<description>A woodsman has little need for society and its petty quanderings and instead relies on his intuition and well-versed knowledge of nature to procure the needed inertia to modulate any outcome of a battle or encounter. Some druis form basic communication s kills depending on their background but lack the necessary skills to effectively gather anything more than basic information socially. They aren't able to persuade or develop constructive insight on civilization-based problems. A woodsman isn't usually too prideful to take advice, but because of his generally high wisdom, he has the tenacity to learn and expand from situations that might ordinarily be unfamiliar, and adapt quickly.</description>
+	</class>
+</classlist>

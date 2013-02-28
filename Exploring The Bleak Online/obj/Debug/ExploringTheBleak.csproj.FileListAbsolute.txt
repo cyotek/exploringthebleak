@@ -1,0 +1,5 @@
+E:\Station\Projects\ETB\ExploringTheBleak\bin\ExploringTheBleak.dll
+E:\Station\Projects\ETB\ExploringTheBleak\bin\ExploringTheBleak.pdb
+E:\Station\Projects\ETB\ExploringTheBleak\obj\Debug\ExploringTheBleak.csprojResolveAssemblyReference.cache
+E:\Station\Projects\ETB\ExploringTheBleak\obj\Debug\ExploringTheBleak.dll
+E:\Station\Projects\ETB\ExploringTheBleak\obj\Debug\ExploringTheBleak.pdb

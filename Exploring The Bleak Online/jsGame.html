@@ -1,0 +1,90 @@
+<!--
+Copyright (c) 2012, Nathaniel Inman
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+    * Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright
+      notice, this list of conditions and the following disclaimer in the
+      documentation and/or other materials provided with the distribution.
+    * Neither the name of the <organization> nor the
+      names of its contributors may be used to endorse or promote products
+      derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL NATHANIEL INMAN BE LIABLE FOR ANY
+DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset = "utf-8">
+		<title>Exploring The Bleak</title>
+		<link href="styleSheet.css" rel="stylesheet" type="text/css" />
+		<!-- Jquery Library                                                          -->
+		<script src="jquery-1.8.2.min.js"></script>
+		<!-- Kinetic Library                                                         -->
+		<script src="kinetic-v4.1.2.min.js"></script>
+		<!-- Three Library                                                           -->
+		<script src="three.js"></script>
+		<!-- Snow Library                                                            -->
+		<script src="snow.js"></script>
+		<!-- globalVariables.js holds all of the variables not declared in this html -->
+		<script type="text/javascript" src="scripts/globalVariables.js"></script>
+		<!-- generateMap.js holds the random map generation algorithm & positioning  -->
+		<script type="text/javascript" src="scripts/generateMap.js"    ></script>
+		<!-- generateMobs.js randomly generates mobs based on player.cDepth & positions   -->
+		<script type="text/javascript" src="scripts/generateMobs.js"   ></script>
+		<!-- generateItems.js randomly generates items based on player.cDepth & positions -->
+		<script type="text/javascript" src="scripts/generateItems.js"   ></script>
+		<!-- mobAI.js contains all of the mob pathing, and ai using state-driven ai  -->
+		<script type="text/javascript" src="scripts/mobAI.js"          ></script>
+		<!-- playerMovement.js handles all keyboard input and player interactions    -->
+		<script type="text/javascript" src="scripts/playerMovement.js" ></script>
+		<!-- playerFOV.js handles the field of view, fog of war, & what to draw      -->
+		<script type="text/javascript" src="scripts/playerFOV.js"      ></script>
+		<!-- drawFunctions.js contains all map & ui drawing functions w/ HTML5 canvas-->
+		<script type="text/javascript" src="scripts/drawFunctions.js"  ></script>
+		<!-- textOutput.js manages all of the console text output                    -->
+		<script type="text/javascript" src="scripts/textOutput.js"     ></script>
+		<!-- titleScreen.js holds all of the snow and menu generation functions      -->
+		<script type="text/javascript" src="scripts/titleScreen.js"></script>
+		<!-- parseFiles.js receives the xml files and parses them for the game       -->
+		<script type="text/javascript" src="scripts/parseFiles.js"></script>
+		<script>
+			/* Load Mobiles From The Database */
+			$.get('db/Classes.xml',          parseClasses);
+			$.get('db/Races.xml',            parseRaces);
+			$.get('db/Environments.xml',     parseEnvironments);
+			$.get('db/MagicalCreatures.xml', parseMobiles);
+			$.get('db/TL.Weapons.xml',       parseWeapons);
+			$.get('db/TL.Armor.xml',         parseArmor);
+			/* Canvas Dimensions */
+			var canvasWidth=window.innerWidth-21,canvasHeight=window.innerHeight-21;
+			var canvasMax=(canvasWidth>canvasHeight?canvasHeight:canvasWidth);
+			var roomsize=Math.floor(canvasMax/size)-1; //size in pixels of the rooms
+			/* Write a HTML5 canvas */
+			document.writeln("<div id='wrap'><div id ='menu'></div><div id='snow'></div><canvas id = 'map' width='"+canvasWidth+"' height='"+canvasHeight+"'>")
+			document.writeln("	<font color='FFFFFF'>Your browser does not support canvas.</font>")
+			document.writeln("</canvas><div id='pad'></div><div id='intro'></div></div>");
+			/* Dimension main canvas variables */
+			var canvas = document.getElementById("map");
+			var context = canvas.getContext("2d");
+			var canvasData;
+			/* set the key events */
+			document.onkeydown = checkKey;
+			document.onkeyup = resetcheckKey;
+		</script>
+	</head>
+	<body onload="init()"></body>
+</html>
+
