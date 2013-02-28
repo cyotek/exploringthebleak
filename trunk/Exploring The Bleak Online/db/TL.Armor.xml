@@ -1,0 +1,4007 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="TL.Armor.xsl"?>
+<!-- <title>Armor Types</title>
+	 Armor list was converted from Terminal Groupings *.TG to XML on 01/11/11
+	 The list was extended for implementation in Exploring The Bleak : Online
+	 on 11-16-2012. The list is used in Plains of Sedia : Origins, Developed by
+	 Nathaniel Inman of The Other Experiment Studio found @ www.theoestudio.com
+	 All contents within are licensed under GPLv3 
+-->
+<itemlist>
+	<item number="001">
+		<name>Crown</name>
+		<character>c</character>
+		<equipmenttype>Head</equipmenttype>
+		<proficiencyrequirement>Citizen Rank 6+</proficiencyrequirement>
+		<levelrequirement>60</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>1</bashac>
+		<slashac>0</slashac>
+		<pierceac>1</pierceac>
+		<fistac>1</fistac>
+		<exoticac>3</exoticac>
+		<purchasableprovince>Not Purchasable</purchasableprovince>
+		<worth>10 Sovern</worth>
+		<affectedbymaterials>No</affectedbymaterials>
+		<weight>5 Stones</weight>
+		<description>A crown is a circular helm used primarily by heraldry to distinguish rank. A crown is always made of gold and silver with diamond and other inserted cut gems.</description>
+	</item>
+	<item number="002">
+		<name>Chapeau</name>
+		<character>C</character>
+		<equipmenttype>Head</equipmenttype>
+		<proficiencyrequirement>Citizen Rank 3+</proficiencyrequirement>
+		<levelrequirement>40</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>1</bashac>
+		<slashac>0</slashac>
+		<pierceac>1</pierceac>
+		<fistac>1</fistac>
+		<exoticac>0</exoticac>
+		<purchasableprovince>Not Purchasable</purchasableprovince>
+		<worth>18 Dover</worth>
+		<affectedbymaterials>No</affectedbymaterials>
+		<weight>2 Stones</weight>
+		<description>A chapeau is a particularly designed hat made predominately of felt and cloth. The sides are generally straight to a shaped top hat may slip with slight bills on every side.</description>
+	</item>
+	<item number="003">
+		<name>Chaplet</name>
+		<character>h</character>
+		<equipmenttype>Head</equipmenttype>
+		<proficiencyrequirement>Citizen Rank 2+</proficiencyrequirement>
+		<levelrequirement>20</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>1</bashac>
+		<slashac>0</slashac>
+		<pierceac>1</pierceac>
+		<fistac>0</fistac>
+		<exoticac>0</exoticac>
+		<purchasableprovince>Not Purchasable</purchasableprovince>
+		<worth>22 Dover</worth>
+		<affectedbymaterials>No</affectedbymaterials>
+		<weight>3 Stones</weight>
+		<description>A chaplet is a chaplain, or priests hat that is most generally small, partly covering the head, and used as an indication of those ordinated to priesthood, regardless of demonination or sect.</description>
+	</item>
+	<item number="004">
+		<name>Coif</name>
+		<character>o</character>
+		<equipmenttype>Head</equipmenttype>
+		<proficiencyrequirement>Heavy</proficiencyrequirement>
+		<levelrequirement>15</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>1</bashac>
+		<slashac>1</slashac>
+		<pierceac>0</pierceac>
+		<fistac>1</fistac>
+		<exoticac>0</exoticac>
+		<purchasableprovince>Jewall</purchasableprovince>
+		<worth>18 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>5 Stones</weight>
+		<description>A coif is made of chainmail and covers the head much like a hood would. Some coifs cover more and appear as masks on the face too, but these are rare.</description>
+	</item>
+	<item number="005">
+		<name>Coronet</name>
+		<character>r</character>
+		<equipmenttype>Head</equipmenttype>
+		<proficiencyrequirement>Citizen Rank 4+</proficiencyrequirement>
+		<levelrequirement>30</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>1</bashac>
+		<slashac>0</slashac>
+		<pierceac>1</pierceac>
+		<fistac>1</fistac>
+		<exoticac>1</exoticac>
+		<purchasableprovince>Not Purchasable</purchasableprovince>
+		<worth>50 Dover</worth>
+		<affectedbymaterials>No</affectedbymaterials>
+		<weight>4 Stones</weight>	
+		<description>A coronet is similar to a crown and is a sign of status</description>
+	</item>
+	<item number="006">
+		<name>Cowl</name>
+		<character>O</character>
+		<equipmenttype>Head</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>20</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>0</bashac>
+		<slashac>0</slashac>
+		<pierceac>1</pierceac>
+		<fistac>1</fistac>
+		<exoticac>0</exoticac>
+		<purchasableprovince>Any</purchasableprovince>
+		<worth>70 Vern</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>1 Stone</weight>
+		<description>A cowl is a headpiece that resembles a hood. A cowl, unlike a hood, covers most of the upper face and appears almost too big, draping. There are some cowls that appear as masks.</description>
+	</item>
+	<item number="007">
+		<name>Spectacles</name>
+		<character>p</character>
+		<equipmenttype>Head</equipmenttype>
+		<proficiencyrequirement>No</proficiencyrequirement>
+		<levelrequirement>No</levelrequirement>
+		<genderrequirement>75</genderrequirement>
+		<bashac>4</bashac>
+		<slashac>5</slashac>
+		<pierceac>2</pierceac>
+		<fistac>8</fistac>
+		<exoticac>2</exoticac>
+		<purchasableprovince>Tharsis</purchasableprovince>
+		<worth>3 Sovern</worth>
+		<affectedbymaterials>No</affectedbymaterials>
+		<weight>1 Stone</weight>
+		<description>Spectacles are a form of eyeglasses that are made much smaller in effort to improve the ability of reading for those with eyesight problems.</description>
+	</item>
+	<item number="008">
+		<name>Tiara</name>
+		<character>t</character>
+		<equipmenttype>Head</equipmenttype>
+		<proficiencyrequirement>No</proficiencyrequirement>
+		<levelrequirement>30</levelrequirement>
+		<genderrequirement>Female</genderrequirement>
+		<bashac>1</bashac>
+		<slashac>2</slashac>
+		<pierceac>3</pierceac>
+		<fistac>1</fistac>
+		<exoticac>0</exoticac>
+		<purchasableprovince>Tharsis, Narsis, Crecia</purchasableprovince>
+		<worth>1 Dover</worth>
+		<affectedbymaterials>No</affectedbymaterials>
+		<weight>1 Stone</weight>
+		<description>A tiara is an unenclosed circlet, usually a half circle that is worn by those who have some form of recognized power over others.</description>
+	</item>
+	<item number="009">
+		<name>Eyeglasses</name>
+		<character>e</character>
+		<equipmenttype>Head</equipmenttype>
+		<proficiencyrequirement>No</proficiencyrequirement>
+		<levelrequirement>50</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>3</bashac>
+		<slashac>2</slashac>
+		<pierceac>1</pierceac>
+		<fistac>3</fistac>
+		<exoticac>1</exoticac>
+		<purchasableprovince>Tharsis</purchasableprovince>
+		<worth>4 Sovern</worth>
+		<affectedbymaterials>No</affectedbymaterials>
+		<weight>1</weight>
+		<description>Eyeglasses are two circular glass sheets rounded by light and malleable metal that connect them and wrap around ones ears to secure them properly upon the face.</description>
+	</item>
+	<item number="010">
+		<name>Monocle</name>
+		<character>m</character>
+		<equipmenttype>Head</equipmenttype>
+		<proficiencyrequirement>No</proficiencyrequirement>
+		<levelrequirement>80</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>3</bashac>
+		<slashac>4</slashac>
+		<pierceac>1</pierceac>
+		<fistac>7</fistac>
+		<exoticac>7</exoticac>
+		<purchasableprovince>Tharsis</purchasableprovince>
+		<worth>1 Sovern</worth>
+		<affectedbymaterials>No</affectedbymaterials>
+		<weight>1 Stone</weight>
+		<description>A monocle is a circular sheet of glass attached to metal necklace that one may pin to their chest to ensure it doesn't drop and shatter on the ground.</description>
+	</item>
+	<item number="011">
+		<name>Wreath</name>
+		<character>w</character>
+		<equipmenttype>Head</equipmenttype>
+		<proficiencyrequirement>Citien Rank 7+</proficiencyrequirement>
+		<levelrequirement>80</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>3</bashac>
+		<slashac>3</slashac>
+		<pierceac>3</pierceac>
+		<fistac>3</fistac>
+		<exoticac>3</exoticac>
+		<purchasableprovince>Not Purchasable</purchasableprovince>
+		<worth>10 Dover</worth>
+		<affectedbymaterials>No</affectedbymaterials>
+		<weight>2 Stones</weight>
+		<description>A wreath is a circlet upon the top of ones head guilded with images of thorns, laurel leaves, and sometimes bejeweled as a sign of status.</description>
+	</item>
+	<item number="012">
+		<name>Circlet</name>
+		<character>i</character>
+		<equipmenttype>Head</equipmenttype>
+		<proficiencyrequirement>No</proficiencyrequirement>
+		<levelrequirement>30</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>1</bashac>
+		<slashac>2</slashac>
+		<pierceac>1</pierceac>
+		<fistac>1</fistac>
+		<exoticac>2</exoticac>
+		<purchasableprovince>Tharsis, Narsis, Crecia</purchasableprovince>
+		<worth>5 Dover</worth>
+		<affectedbymaterials>No</affectedbymaterials>
+		<weight>3 Stones</weight>
+		<description>A circlet is usually metallic and thin, wrapping about the upper circumference of teh head, generally pinned to the hair, or with support thorns that drop to rest upon the head securely.</description>
+	</item>
+	<item number="013">
+		<name>Mask</name>
+		<character>M</character>
+		<equipmenttype>Head</equipmenttype>
+		<proficiencyrequirement>No</proficiencyrequirement>
+		<levelrequirement>25</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>2</bashac>
+		<slashac>1</slashac>
+		<pierceac>1</pierceac>
+		<fistac>4</fistac>
+		<exoticac>1</exoticac>
+		<purchasableprovince>Any</purchasableprovince>
+		<worth>1 Dover</worth>
+		<affectedbymaterials>No</affectedbymaterials>
+		<weight>2 Stones</weight>
+		<description>A mask is a piece of equipment worn about the face to conceal ones identity They may resemble jesters, daemune, avarie, or simple facial reconstructions of generic emotions.</description>
+	</item>
+	<item number="014">
+		<name>Headdress</name>
+		<character>H</character>
+		<equipmenttype>Head</equipmenttype>
+		<proficiencyrequirement>Citizen Rank 8+</proficiencyrequirement>
+		<levelrequirement>90</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>5</bashac>
+		<slashac>4</slashac>
+		<pierceac>8</pierceac>
+		<fistac>4</fistac>
+		<exoticac>6</exoticac>
+		<purchasableprovince>Not Purchasable</purchasableprovince>
+		<worth>10 Sovern</worth>
+		<affectedbymaterials>No</affectedbymaterials>
+		<weight>4 Stones</weight>
+		<description>A headdress is a wreath except made more elaborately to represent ones stature in society more clearly. Sometimes they are beaded and engulfed in feather dress in some tribal societies and desert customs.</description>
+	</item>
+	<item number="015">
+		<name>Hood</name>
+		<character>d</character>
+		<equipmenttype>Head</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>5</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>4</bashac>
+		<slashac>1</slashac>
+		<pierceac>1</pierceac>
+		<fistac>1</fistac>
+		<exoticac>0</exoticac>
+		<purchasableprovince>Any</purchasableprovince>
+		<worth>30 Vern</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>1 Stone</weight>
+		<description>A hood is a piece of cloth that is draped like a cowl over ones head, sometimes attached to other clothing. A hood protects one from the sun, weather, or may be used to secure ones identity.</description>
+	</item>
+	<item number="016">
+		<name>Cap</name>
+		<character>a</character>
+		<equipmenttype>Head</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>0</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>1</bashac>
+		<slashac>1</slashac>
+		<pierceac>1</pierceac>
+		<fistac>0</fistac>
+		<exoticac>0</exoticac>
+		<purchasableprovince>Any</purchasableprovince>
+		<worth>Any</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>1 Stone</weight>
+		<description>A cap is worn about the head to help protect ones face and eyes from the sun.</description>
+	</item>
+	<item number="017">
+		<name>Helm</name>
+		<character>E</character>
+		<equipmenttype>Head</equipmenttype>
+		<proficiencyrequirement>Heavy</proficiencyrequirement>
+		<levelrequirement>15</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>1</bashac>
+		<slashac>1</slashac>
+		<pierceac>1</pierceac>
+		<fistac>1</fistac>
+		<exoticac>2</exoticac>
+		<purchasableprovince>Any</purchasableprovince>
+		<worth>15 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>6 Stones</weight>
+		<description>A helm is similar to a cap except it doesn't have a visor, but instead has ear protectors and is usually made of meetallic materials.</description>
+	</item>
+	<item number="018">
+		<name>Full Helm</name>
+		<character>f</character>
+		<equipmenttype>Head</equipmenttype>
+		<proficiencyrequirement>Heavy</proficiencyrequirement>
+		<levelrequirement>25</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>2</bashac>
+		<slashac>2</slashac>
+		<pierceac>2</pierceac>
+		<fistac>2</fistac>
+		<exoticac>3</exoticac>
+		<purchasableprovince>Jewall, Tharsis</purchasableprovince>
+		<worth>70 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>7 Stones</weight>
+		<description>A full helm protects more than a regular helm, as it has a lip covering the back of the neck as well as the ears. A full helm is usually made of metallic materials.</description>
+	</item>
+	<item number="019">
+		<name>Horned Helm</name>
+		<character>R</character>
+		<equipmenttype>Head</equipmenttype>
+		<proficiencyrequirement>Heavy</proficiencyrequirement>
+		<levelrequirement>45</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>3</bashac>
+		<slashac>3</slashac>
+		<pierceac>3</pierceac>
+		<fistac>3</fistac>
+		<exoticac>4</exoticac>
+		<purchasableprovince>Narsis</purchasableprovince>
+		<worth>80 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>8 Stones</weight>
+		<description>A horned helm is similar to a full helm except with the addition of horns. Though headbutting is rare in battle, the fear of one wearing this sort of helm does help pin swaying strengths during battle.</description>
+	</item>
+	<item number="020">
+		<name>Skull Cap</name>
+		<character>s</character>
+		<equipmenttype>Head</equipmenttype>
+		<proficiencyrequirement>Medium or Heavy</proficiencyrequirement>
+		<levelrequirement>15</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>1</bashac>
+		<slashac>2</slashac>
+		<pierceac>1</pierceac>
+		<fistac>2</fistac>
+		<exoticac>0</exoticac>
+		<purchasableprovince>Esthar, Jewall</purchasableprovince>
+		<worth>15 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>4 Stones</weight>
+		<description>A skull cap is a cap without a bill, and usually a cross of supporting extra material with rivets or thatchings of thread in leather caps.</description>
+	</item>
+	<item number="021">
+		<name>Face Guard</name>
+		<character>g</character>
+		<equipmenttype>Head</equipmenttype>
+		<proficiencyrequirement>Heavy</proficiencyrequirement>
+		<levelrequirement>20</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>0</bashac>
+		<slashac>3</slashac>
+		<pierceac>0</pierceac>
+		<fistac>1</fistac>
+		<exoticac>2</exoticac>
+		<purchasableprovince>Narsis</purchasableprovince>
+		<worth>25 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>4 Stones</weight>
+		<description>A face guard is a billed cage that wraps around ones head to protect primarily from head trauma during battle.</description>
+	</item>
+	<item number="022">
+		<name>Face Plate</name>
+		<character>P</character>
+		<equipmenttype>Head</equipmenttype>
+		<proficiencyrequirement>Heavy</proficiencyrequirement>
+		<levelrequirement>30</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>0</bashac>
+		<slashac>4</slashac>
+		<pierceac>0</pierceac>
+		<fistac>2</fistac>
+		<exoticac>3</exoticac>
+		<purchasableprovince>Narsis, Crecia</purchasableprovince>
+		<worth>35 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>5 Stones</weight>
+		<description>A face plate is exclusively a face guard without the support of extra armored areas.</description>
+	</item>
+	<item number="023">
+		<name>Armet</name>
+		<character>T</character>
+		<equipmenttype>Head</equipmenttype>
+		<proficiencyrequirement>Heavy</proficiencyrequirement>
+		<levelrequirement>45</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>3</bashac>
+		<slashac>8</slashac>
+		<pierceac>3</pierceac>
+		<fistac>3</fistac>
+		<exoticac>3</exoticac>
+		<purchasableprovince>Dumasque</purchasableprovince>
+		<worth>80 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>8 Stones</weight>
+		<description>An armet is similar to a faceplate except it is a full helm with a spiked top and occasionally a billed mouth</description>
+	</item>
+	<item number="024">
+		<name>Barbute</name>
+		<character>b</character>
+		<equipmenttype>Head</equipmenttype>
+		<proficiencyrequirement>Heavy</proficiencyrequirement>
+		<levelrequirement>50</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>5</bashac>
+		<slashac>4</slashac>
+		<pierceac>4</pierceac>
+		<fistac>4</fistac>
+		<exoticac>3</exoticac>
+		<purchasableprovince>Menusia</purchasableprovince>
+		<worth>90 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>9 Stones</weight>
+		<description>A barbute is a large full helm with an extended muzzle clasp.</description>
+	</item>
+	<item number="025">
+		<name>Bascinet</name>
+		<character>B</character>
+		<equipmenttype>Head</equipmenttype>
+		<proficiencyrequirement>Heavy</proficiencyrequirement>
+		<levelrequirement>50</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>4</bashac>
+		<slashac>5</slashac>
+		<pierceac>4</pierceac>
+		<fistac>4</fistac>
+		<exoticac>3</exoticac>
+		<purchasableprovince>Amari, Menusia</purchasableprovince>
+		<worth>90 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>9 Stones</weight>
+		<description>A bascinet is a Full Helm where the mouth guard rotates up or down into place. It is similar to a sallet.</description>
+	</item>
+	<item number="026">
+		<name>Burgonet</name>
+		<character>G</character>
+		<equipmenttype>Head</equipmenttype>
+		<proficiencyrequirement>Heavy</proficiencyrequirement>
+		<levelrequirement>50</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>4</bashac>
+		<slashac>4</slashac>
+		<pierceac>5</pierceac>
+		<fistac>4</fistac>
+		<exoticac>3</exoticac>
+		<purchasableprovince>Narsis</purchasableprovince>
+		<worth>90 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>9 Stones</weight>
+		<description>A burgonet is a bulky Bascinet whose mouthpiece rotates on a hinge to the side instead of up and down.</description>
+	</item>
+	<item number="027">
+		<name>Sallet</name>
+		<character>l</character>
+		<equipmenttype>Head</equipmenttype>
+		<proficiencyrequirement>Heavy</proficiencyrequirement>
+		<levelrequirement>50</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>4</bashac>
+		<slashac>4</slashac>
+		<pierceac>4</pierceac>
+		<fistac>5</fistac>
+		<exoticac>3</exoticac>
+		<purchasableprovince>Tharsis, Crecia</purchasableprovince>
+		<worth>75 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>12 Stones</weight>
+		<description>A sallet has extra metal around the bottom back of the helm that allows cloth materials to cover and drape beneath the helm and help obscure ones body or retain an emblem of office.</description>
+	</item>
+	<item number="028">
+		<name>Hounskull</name>
+		<character>L</character>
+		<equipmenttype>Head</equipmenttype>
+		<proficiencyrequirement>Heavy</proficiencyrequirement>
+		<levelrequirement>50</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>3</bashac>
+		<slashac>7</slashac>
+		<pierceac>3</pierceac>
+		<fistac>6</fistac>
+		<exoticac>1</exoticac>
+		<purchasableprovince>Jewall</purchasableprovince>
+		<worth>1 Sovern</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>8 Stones</weight>
+		<description>A hounskull comes together at the mouth like a snout of an animal except very much like a point.</description>
+	</item>
+	<item number="029">
+		<name>Nasal Helm</name>
+		<character>S</character>
+		<equipmenttype>Head</equipmenttype>
+		<proficiencyrequirement>Heavy</proficiencyrequirement>
+		<levelrequirement>50</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>7</bashac>
+		<slashac>3</slashac>
+		<pierceac>6</pierceac>
+		<fistac>1</fistac>
+		<exoticac>3</exoticac>
+		<purchasableprovince>Narsis, Jewall, Amari</purchasableprovince>
+		<worth>90 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>10 Stones</weight>
+		<description>A nasal helm looks similar to a hounskull excep the snout is circular with slits instead of holes in it for breathing and communication.</description>
+	</item>
+	<item number="030">
+		<name>Spagenhelm</name>
+		<character>A</character>
+		<equipmenttype>Head</equipmenttype>
+		<proficiencyrequirement>Heavy</proficiencyrequirement>
+		<levelrequirement>50</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>10</bashac>
+		<slashac>5</slashac>
+		<pierceac>5</pierceac>
+		<fistac>0</fistac>
+		<exoticac>0</exoticac>
+		<purchasableprovince>Not Purchasable</purchasableprovince>
+		<worth>2 Sovern</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>9 Stones</weight>
+		<description>A spagenhelm is an elaborate full helm that is rare from the days before the War of Souls.</description>
+	</item>
+	<item number="031">
+		<name>Full Sallet</name>
+		<character>F</character>
+		<equipmenttype>Head</equipmenttype>
+		<proficiencyrequirement>Heavy</proficiencyrequirement>
+		<levelrequirement>75</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>5</bashac>
+		<slashac>5</slashac>
+		<pierceac>5</pierceac>
+		<fistac>4</fistac>
+		<exoticac>1</exoticac>
+		<purchasableprovince>Tharsis, Crecia</purchasableprovince>
+		<worth>1 Sovern</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>9 Stones</weight>
+		<description>A full Sallet is much larger than a standard sallet, and comes down to the shoulders in the back.</description>
+	</item>
+	<item number="032">
+		<name>Kippah</name>
+		<character>k</character>
+		<equipmenttype>Head</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>100</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>8</bashac>
+		<slashac>4</slashac>
+		<pierceac>2</pierceac>
+		<fistac>4</fistac>
+		<exoticac>2</exoticac>
+		<purchasableprovince>Not Purchasable</purchasableprovince>
+		<worth>18 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>1 Stones</weight>
+		<description>A kippah is a small hat with no bill and a symbol of the religious deity on the top.</description>
+	</item>
+	<item number="033">
+		<name>Klobuk</name>
+		<character>K</character>
+		<equipmenttype>Head</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>100</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>2</bashac>
+		<slashac>8</slashac>
+		<pierceac>4</pierceac>
+		<fistac>4</fistac>
+		<exoticac>2</exoticac>
+		<purchasableprovince>Not Purchasable</purchasableprovince>
+		<worth>18 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>1 Stones</weight>
+		<description>A klobuk is a casual billed hat dented on the top and formed of one material piece.</description>
+	</item>
+	<item number="034">
+		<name>Kolpik</name>
+		<character>q</character>
+		<equipmenttype>Head</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>100</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>3</bashac>
+		<slashac>3</slashac>
+		<pierceac>2</pierceac>
+		<fistac>1</fistac>
+		<exoticac>11</exoticac>
+		<purchasableprovince>Not Purchasable</purchasableprovince>
+		<worth>18 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>1 Stones</weight>
+		<description>A large and round furry hat worn near the northern and colder areas.</description>
+	</item>
+	<item number="035">
+		<name>Kufi</name>
+		<character>Q</character>
+		<equipmenttype>Head</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>100</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>2</bashac>
+		<slashac>3</slashac>
+		<pierceac>3</pierceac>
+		<fistac>2</fistac>
+		<exoticac>10</exoticac>
+		<purchasableprovince>Not Purchasable</purchasableprovince>
+		<worth>18 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>1 Stones</weight>
+		<description>A kufi is similar to a kippah except it isn't worn for religious reasons.</description>
+	</item>
+	<item number="036">
+		<name>Mitre</name>
+		<character>I</character>
+		<equipmenttype>Head</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>30</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>4</bashac>
+		<slashac>3</slashac>
+		<pierceac>1</pierceac>
+		<fistac>3</fistac>
+		<exoticac>10</exoticac>
+		<purchasableprovince>Not Purchasable</purchasableprovince>
+		<worth>18 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>1 Stones</weight>
+		<description>A large domed hat used for religious services and indication of bishop or higher.</description>
+	</item>
+	<item number="037">
+		<name>Mitznefet</name>
+		<character>ᴁ</character>
+		<equipmenttype>Head</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>100</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>5</bashac>
+		<slashac>3</slashac>
+		<pierceac>2</pierceac>
+		<fistac>2</fistac>
+		<exoticac>8</exoticac>
+		<purchasableprovince>Not Purchasable</purchasableprovince>
+		<worth>18 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>1 Stones</weight>
+		<description>A mitznefet is a headdress similar to a turban that is used by some clerical people to the far north near Doonan.</description>
+	</item>	
+	<item number="038">
+		<name>Keffiyeh</name>
+		<character>ᴂ</character>
+		<equipmenttype>Head</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>100</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>8</bashac>
+		<slashac>5</slashac>
+		<pierceac>2</pierceac>
+		<fistac>3</fistac>
+		<exoticac>2</exoticac>
+		<purchasableprovince>Not Purchasable</purchasableprovince>
+		<worth>18 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>1 Stones</weight>
+		<description>A keffiyeh, sometimes known as a ghutrah is a head wrap used in extremely arid regions to help with direction sun exposure. It can also sometimes protect the mouth and eyes from blown dust or sand. It is similar to a loose turban.</description>
+	</item>
+	<item number="039">
+		<name>Sevilla Mantilla</name>
+		<character>ᴃ</character>
+		<equipmenttype>Head</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>100</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>5</bashac>
+		<slashac>8</slashac>
+		<pierceac>3</pierceac>
+		<fistac>2</fistac>
+		<exoticac>2</exoticac>
+		<purchasableprovince>Not Purchasable</purchasableprovince>
+		<worth>18 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>1 Stones</weight>
+		<description>A mantilla is a lace or silk veil or shawl worn about teh head and shoulders. It is often over a high combed hair cut. It's used in warm regions as an ornamental comb.</description>
+	</item>
+	<item number="040">
+		<name>Shtreimel</name>
+		<character>ᴄ</character>
+		<equipmenttype>Head</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>100</levelrequirement>
+		<genderrequirement>Female</genderrequirement>
+		<bashac>2</bashac>
+		<slashac>5</slashac>
+		<pierceac>8</pierceac>
+		<fistac>3</fistac>
+		<exoticac>2</exoticac>
+		<purchasableprovince>Not Purchasable</purchasableprovince>
+		<worth>18 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>1 Stones</weight>
+		<description>A shtreimel is a religious head covering that from atop looks simlar to a flat diamond. The head covering is used predominately in the southeastern parts of Sedia.</description>
+	</item>
+	<item number="041">
+		<name>Skufia</name>
+		<character>ᴅ</character>
+		<equipmenttype>Head</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>100</levelrequirement>
+		<genderrequirement>Male</genderrequirement>
+		<bashac>4</bashac>
+		<slashac>5</slashac>
+		<pierceac>4</pierceac>
+		<fistac>4</fistac>
+		<exoticac>3</exoticac>
+		<purchasableprovince>Not Purchasable</purchasableprovince>
+		<worth>18 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>1 Stones</weight>
+		<description>Some high clerical positions use the skufia as a sign of rank. The hat is dome shaped and tall, sometimes with a metallic icon of the deity or religious denomination affixed to the central front portion of the hat.</description>
+	</item>
+	<item number="042">
+		<name>Songkok</name>
+		<character>ᴆ</character>
+		<equipmenttype>Head</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>100</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>5</bashac>
+		<slashac>4</slashac>
+		<pierceac>3</pierceac>
+		<fistac>4</fistac>
+		<exoticac>4</exoticac>
+		<purchasableprovince>Not Purchasable</purchasableprovince>
+		<worth>18 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>1 Stones</weight>
+		<description>A songkok is a cap similar to a skufia that is slightly dome shaped. The hat is predominately made of felt or cotton. The hat is worn to special occasions such as weddings or funerals.</description>
+	</item>
+	<item number="043">
+		<name>Turban</name>
+		<character>ᴇ</character>
+		<equipmenttype>Head</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>100</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>3</bashac>
+		<slashac>4</slashac>
+		<pierceac>5</pierceac>
+		<fistac>4</fistac>
+		<exoticac>4</exoticac>
+		<purchasableprovince>Not Purchasable</purchasableprovince>
+		<worth>18 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>1 Stones</weight>
+		<description>A turban is a headwrap used to help with direct sun exposure. The headwear is worn often by many priests or librarians.</description>
+	</item>
+	<item number="044">
+		<name>Wimple</name>
+		<character>ᴈ</character>
+		<equipmenttype>Head</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>100</levelrequirement>
+		<genderrequirement>Female</genderrequirement>
+		<bashac>3</bashac>
+		<slashac>4</slashac>
+		<pierceac>4</pierceac>
+		<fistac>5</fistac>
+		<exoticac>4</exoticac>
+		<purchasableprovince>Not Purchasable</purchasableprovince>
+		<worth>18 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>1 Stones</weight>
+		<description>A wimple is a garment worn around the neck and chin that usually covers the head. A wimple might be elaborately starched and creased or folded in several ways to represent certain things. Wimples are used primarily in dwarven culture and their representations to other cultures might at times seem ambiguous.</description>
+	</item>
+	<item number="045">
+		<name>Zuchetto</name>
+		<character>ᴉ</character>
+		<equipmenttype>Head</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>100</levelrequirement>
+		<genderrequirement>Male</genderrequirement>
+		<bashac>4</bashac>
+		<slashac>3</slashac>
+		<pierceac>4</pierceac>
+		<fistac>4</fistac>
+		<exoticac>5</exoticac>
+		<purchasableprovince>Not Purchasable</purchasableprovince>
+		<worth>18 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>1 Stones</weight>
+		<description>A zucchetto is a small circular cap worn on the top of ones head. It represents monk civility and devotion.</description>
+	</item>
+	<item number="046">
+		<name>Biretta</name>
+		<character>ᴀ</character>
+		<equipmenttype>Head</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>100</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>2</bashac>
+		<slashac>2</slashac>
+		<pierceac>3</pierceac>
+		<fistac>9</fistac>
+		<exoticac>5</exoticac>
+		<purchasableprovince>Not Purchasable</purchasableprovince>
+		<worth>18 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>1 Stones</weight>
+		<description>A biretta is a square cap with three or four peaks or horns. Sometimes the top of the hat is affixed with a tuft of cloth. The hat is worn as a studious hat among professors of colleges.</description>
+	</item>
+	<item number="047">
+		<name>Camauro</name>
+		<character>ᴊ</character>
+		<equipmenttype>Head</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>100</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>9</bashac>
+		<slashac>8</slashac>
+		<pierceac>1</pierceac>
+		<fistac>1</fistac>
+		<exoticac>1</exoticac>
+		<purchasableprovince>Not Purchasable</purchasableprovince>
+		<worth>18 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>1 Stones</weight>
+		<description>A camauro is a soft winter hat with a woolen bottom to help keep ones head warm during cold months and areas.</description>
+	</item>
+	<item number="048">
+		<name>Canterbury Cap</name>
+		<character>ᴋ</character>
+		<equipmenttype>Head</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>100</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>1</bashac>
+		<slashac>1</slashac>
+		<pierceac>8</pierceac>
+		<fistac>9</fistac>
+		<exoticac>1</exoticac>
+		<purchasableprovince>Not Purchasable</purchasableprovince>
+		<worth>18 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>1 Stones</weight>
+		<description>A canterbury cap is a square cloth hat with sharp corners that is similar to a biretta. The cap has four ridges notably and is found among the highest of aristocracy during spring seasons of courting.</description>
+	</item>
+	<item number="049">
+		<name>Capello Romano</name>
+		<character>ᴌ</character>
+		<equipmenttype>Head</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>100</levelrequirement>
+		<genderrequirement>Male</genderrequirement>
+		<bashac>2</bashac>
+		<slashac>3</slashac>
+		<pierceac>2</pierceac>
+		<fistac>5</fistac>
+		<exoticac>9</exoticac>
+		<purchasableprovince>Not Purchasable</purchasableprovince>
+		<worth>18 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>1 Stones</weight>
+		<description>A cappello romano is a circular brimmed and round hat worn outdoors. The inside is usually lined with silk. The hat is usually worn with formal dress and by men.</description>
+	</item>
+	<item number="050">
+		<name>Kalimavkion</name>
+		<character>ᴍ</character>
+		<equipmenttype>Head</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>100</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>8</bashac>
+		<slashac>1</slashac>
+		<pierceac>9</pierceac>
+		<fistac>1</fistac>
+		<exoticac>1</exoticac>
+		<purchasableprovince>Not Purchasable</purchasableprovince>
+		<worth>18 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>1 Stones</weight>
+		<description>A clerical kalimavkion is a hat worn by clerics of Ettphemones devotion. The top is usually magenta, with the sides black. It is a circular hat with a flat top made predominately of felt with silk inline.</description>
+	</item>
+	<item number="051">
+		<name>Dastar</name>
+		<character>ᴎ</character>
+		<equipmenttype>Head</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>100</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>1</bashac>
+		<slashac>5</slashac>
+		<pierceac>9</pierceac>
+		<fistac>2</fistac>
+		<exoticac>3</exoticac>
+		<purchasableprovince>Not Purchasable</purchasableprovince>
+		<worth>18 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>1 Stones</weight>
+		<description>A dastar is a hat similar to a turban with a much more uniform fold. The dastar is worn in areas the turban is worn except during formal occasions.</description>
+	</item>
+	<item number="052">
+		<name>Fez</name>
+		<character>ᴏ</character>
+		<equipmenttype>Head</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>100</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>4</bashac>
+		<slashac>5</slashac>
+		<pierceac>4</pierceac>
+		<fistac>5</fistac>
+		<exoticac>2</exoticac>
+		<purchasableprovince>Not Purchasable</purchasableprovince>
+		<worth>18 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>1 Stones</weight>
+		<description>A fez is a circular hat with a flat top and a tuft of hair that is attached to a string, falling from it's attachment in the center of the top. A fez is used by nobility around the Menusian province.</description>
+	</item>
+	<item number="053">
+		<name>Kasa</name>
+		<character>ᴐ</character>
+		<equipmenttype>Head</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>100</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>2</bashac>
+		<slashac>5</slashac>
+		<pierceac>4</pierceac>
+		<fistac>5</fistac>
+		<exoticac>4</exoticac>
+		<purchasableprovince>Not Purchasable</purchasableprovince>
+		<worth>18 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>1 Stones</weight>
+		<description>A kasa is a traditional Morian hat used by wariors. The hat is made of wood, and is wide-brimmed and circular shape, with a slight point in the center top. It is attached by linen strips that are centralized and wrapped around the bottom of ones chin. The hat is to assist in deterring rain or falling of small rocks.</description>
+	</item>
+	<item number="054">
+		<name>Gorget</name>
+		<character>j</character>
+		<equipmenttype>Neck</equipmenttype>
+		<proficiencyrequirement>Medium</proficiencyrequirement>
+		<levelrequirement>25</levelrequirement>
+		<genderrequirement>Male</genderrequirement>
+		<bashac>0</bashac>
+		<slashac>4</slashac>
+		<pierceac>2</pierceac>
+		<fistac>4</fistac>
+		<exoticac>1</exoticac>
+		<purchasableprovince>Not Purchasable</purchasableprovince>
+		<worth>29 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>3 Stones</weight>
+		<description>A gorget is a leather neck piece that is tightly sewn so that it protects the wearer from light potentially fatal battle wounds and around the neck, as well as some light cast arrows.</description>
+	</item>
+	<item number="055">
+		<name>Bevor</name>
+		<character>ᴑ</character>
+		<equipmenttype>Neck</equipmenttype>
+		<proficiencyrequirement>Heavy</proficiencyrequirement>
+		<levelrequirement>100</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>1</bashac>
+		<slashac>1</slashac>
+		<pierceac>1</pierceac>
+		<fistac>1</fistac>
+		<exoticac>1</exoticac>
+		<purchasableprovince>Esthar, Moria, Amari</purchasableprovince>
+		<worth>40 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>5 Stones</weight>
+		<description>Empty description</description>
+	</item>
+	<item number="056">
+		<name>Amulet</name>
+		<character>J</character>
+		<equipmenttype>Neck</equipmenttype>
+		<proficiencyrequirement>No</proficiencyrequirement>
+		<levelrequirement>0</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>0</bashac>
+		<slashac>0</slashac>
+		<pierceac>0</pierceac>
+		<fistac>0</fistac>
+		<exoticac>0</exoticac>
+		<purchasableprovince>Any</purchasableprovince>
+		<worth>10 Dover</worth>
+		<affectedbymaterials>No</affectedbymaterials>
+		<weight>0 Stones</weight>
+		<description>An amulet is a loose necklace with some emblem or icon that is worn by many people used to represent some religious or personal affiliation.</description>
+	</item>
+	<item number="057">
+		<name>Choker</name>
+		<character>d</character>
+		<equipmenttype>Neck</equipmenttype>
+		<proficiencyrequirement>No</proficiencyrequirement>
+		<levelrequirement>15</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>0</bashac>
+		<slashac>0</slashac>
+		<pierceac>0</pierceac>
+		<fistac>0</fistac>
+		<exoticac>0</exoticac>
+		<purchasableprovince>Crecia, Menusia</purchasableprovince>
+		<worth>25 Dover</worth>
+		<affectedbymaterials>No</affectedbymaterials>
+		<weight>0 Stones</weight>
+		<description>A choker is a necklacce that is usually hung tight around the neck, sometimes with spikes or emblems.</description>
+	</item>
+	<item number="058">
+		<name>Locket</name>
+		<character>n</character>
+		<equipmenttype>Neck</equipmenttype>
+		<proficiencyrequirement>No</proficiencyrequirement>
+		<levelrequirement>10</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>0</bashac>
+		<slashac>0</slashac>
+		<pierceac>0</pierceac>
+		<fistac>0</fistac>
+		<exoticac>0</exoticac>
+		<purchasableprovince>Any</purchasableprovince>
+		<worth>20 Dover</worth>
+		<affectedbymaterials>No</affectedbymaterials>
+		<weight>0 Stones</weight>
+		<description>A locket is a necklace with a clam shell of metallic substance holding something personal inside. The contents of a locket are predominately pictures.</description>
+	</item>
+	<item number="059">
+		<name>Medallion</name>
+		<character>N</character>
+		<equipmenttype>Neck</equipmenttype>
+		<proficiencyrequirement>No</proficiencyrequirement>
+		<levelrequirement>0</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>0</bashac>
+		<slashac>0</slashac>
+		<pierceac>0</pierceac>
+		<fistac>0</fistac>
+		<exoticac>0</exoticac>
+		<purchasableprovince>Any</purchasableprovince>
+		<worth>10 Dover</worth>
+		<affectedbymaterials>No</affectedbymaterials>
+		<weight>0 Stones</weight>
+		<description>A medallion is very similar to an amulet except it holds less of a significance. Medallions represent more superfluous things than religious, personal, or otherwise important amulets.</description>
+	</item>
+	<item number="060">
+		<name>Neckband</name>
+		<character>u</character>
+		<equipmenttype>Neck</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>20</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>0</bashac>
+		<slashac>0</slashac>
+		<pierceac>0</pierceac>
+		<fistac>0</fistac>
+		<exoticac>0</exoticac>
+		<purchasableprovince>Any</purchasableprovince>
+		<worth>30 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>0 Stones</weight>
+		<description>A neckband is flexible and used sometimes for warmth in cold areas.</description>
+	</item>
+	<item number="061">
+		<name>Necklace</name>
+		<character>U</character>
+		<equipmenttype>Neck</equipmenttype>
+		<proficiencyrequirement>No</proficiencyrequirement>
+		<levelrequirement>0</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>0</bashac>
+		<slashac>0</slashac>
+		<pierceac>0</pierceac>
+		<fistac>0</fistac>
+		<exoticac>0</exoticac>
+		<purchasableprovince>Any</purchasableprovince>
+		<worth>10 Dover</worth>
+		<affectedbymaterials>No</affectedbymaterials>
+		<weight>0 Stones</weight>
+		<description>A necklace is a simple jewelry item worn about the neck that is usually made of a type of chain, sometimes leather. Some necklaces are adorned with precious stones, minerals, or rare materials.</description>
+	</item>
+	<item number="062">
+		<name>Mark</name>
+		<character>v</character>
+		<equipmenttype>Neck</equipmenttype>
+		<proficiencyrequirement>No</proficiencyrequirement>
+		<levelrequirement>10</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>0</bashac>
+		<slashac>0</slashac>
+		<pierceac>0</pierceac>
+		<fistac>0</fistac>
+		<exoticac>0</exoticac>
+		<purchasableprovince>Any</purchasableprovince>
+		<worth>20 Dover</worth>
+		<affectedbymaterials>No</affectedbymaterials>
+		<weight>0</weight>
+		<description>A mark is generally a distinct symbol used predominately in reference to a church, god, cult, clan, house, or province.</description>
+	</item>
+	<item number="063">
+		<name>Pendant</name>
+		<character>V</character>
+		<equipmenttype>Neck</equipmenttype>
+		<proficiencyrequirement>No</proficiencyrequirement>
+		<levelrequirement>35</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>0</bashac>
+		<slashac>0</slashac>
+		<pierceac>0</pierceac>
+		<fistac>0</fistac>
+		<exoticac>0</exoticac>
+		<purchasableprovince>Any</purchasableprovince>
+		<worth>45 Dover</worth>
+		<affectedbymaterials>No</affectedbymaterials>
+		<weight>0 Stones</weight>
+		<description>Pendants are personal necklaces, usually consisting of an encircled stone with gilded edging or embevelled to show its essences or distinct properties.</description>
+	</item>
+	<item number="064">
+		<name>Icon</name>
+		<character>W</character>
+		<equipmenttype>Neck</equipmenttype>
+		<proficiencyrequirement>No</proficiencyrequirement>
+		<levelrequirement>0</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>0</bashac>
+		<slashac>0</slashac>
+		<pierceac>0</pierceac>
+		<fistac>0</fistac>
+		<exoticac>0</exoticac>
+		<purchasableprovince>Any</purchasableprovince>
+		<worth>10 Dover</worth>
+		<affectedbymaterials>No</affectedbymaterials>
+		<weight>0 Stones</weight>
+		<description>An icon is generally a temporary emblem of something simple. Icons are used during diplomatic sessions of voting as well.</description>
+	</item>
+	<item number="065">
+		<name>Talisman</name>
+		<character>x</character>
+		<equipmenttype>Neck</equipmenttype>
+		<proficiencyrequirement>No</proficiencyrequirement>
+		<levelrequirement>20</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>0</bashac>
+		<slashac>0</slashac>
+		<pierceac>0</pierceac>
+		<fistac>0</fistac>
+		<exoticac>0</exoticac>
+		<purchasableprovince>Any</purchasableprovince>
+		<worth>10 Dover</worth>
+		<affectedbymaterials>No</affectedbymaterials>
+		<weight>0 Stones</weight>
+		<description>A talisman is usually an important necklace handed down from user to user, whether it be lineage or other succession. They are generally rare and strong in imbued power.</description>
+	</item>
+	<item number="066">
+		<name>Amice</name>
+		<character>X</character>
+		<equipmenttype>Shoulders</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>0</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>1</bashac>
+		<slashac>1</slashac>
+		<pierceac>2</pierceac>
+		<fistac>1</fistac>
+		<exoticac>1</exoticac>
+		<purchasableprovince>Crecia, New Saellem, Dumasque</purchasableprovince>
+		<worth>87 Vern</worth>
+		<affectedbymaterials>yes</affectedbymaterials>
+		<weight>3 Stones</weight>
+		<description>Amice are cloth shoulderplates, used sometiems for decoration. They do provide small protection from sunburns and cat scratches.</description>
+	</item>
+	<item number="067">
+		<name>Pauldrons</name>
+		<character>y</character>
+		<equipmenttype>Shoulders</equipmenttype>
+		<proficiencyrequirement>Medium</proficiencyrequirement>
+		<levelrequirement>0</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>8</bashac>
+		<slashac>2</slashac>
+		<pierceac>1</pierceac>
+		<fistac>3</fistac>
+		<exoticac>2</exoticac>
+		<purchasableprovince>Any</purchasableprovince>
+		<worth>3 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>5 Stones</weight>
+		<description>Pauldrons are most often made of leather. They strap pieces of armor together and provide some protection to the upper body, shoulders, arms, and allow more movement than heavy armor.</description>
+	</item>
+	<item number="068">
+		<name>Mantle</name>
+		<character>Y</character>
+		<equipmenttype>Shoulders</equipmenttype>
+		<proficiencyrequirement>Light or Medium</proficiencyrequirement>
+		<levelrequirement>0</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>4</bashac>
+		<slashac>1</slashac>
+		<pierceac>1</pierceac>
+		<fistac>2</fistac>
+		<exoticac>1</exoticac>
+		<purchasableprovince>Any</purchasableprovince>
+		<worth>1 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>4 Stones</weight>
+		<description>A mantle, unlike pauldrons, do not help hold up other armor pieces, put lays atop them, sometimes used to disguise the armor itself during battle.</description>
+	</item>
+	<item number="069">
+		<name>Studded Mantle</name>
+		<character>z</character>
+		<equipmenttype>Shoulders</equipmenttype>
+		<proficiencyrequirement>Medium</proficiencyrequirement>
+		<levelrequirement>15</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>7</bashac>
+		<slashac>1</slashac>
+		<pierceac>2</pierceac>
+		<fistac>2</fistac>
+		<exoticac>3</exoticac>
+		<purchasableprovince>Any</purchasableprovince>
+		<worth>8 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>5 Stones</weight>
+		<description>A studded mantle lays atop armor, and wtih the provision of armored studds, has a greater chance to deter weapons and provide greater protection.</description>
+	</item>
+	<item number="070">
+		<name>Shoulder Pads</name>
+		<character>Z</character>
+		<equipmenttype>Shoulders</equipmenttype>
+		<proficiencyrequirement>Light or Medium</proficiencyrequirement>
+		<levelrequirement>0</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>4</bashac>
+		<slashac>2</slashac>
+		<pierceac>1</pierceac>
+		<fistac>1</fistac>
+		<exoticac>3</exoticac>
+		<purchasableprovince>Any</purchasableprovince>
+		<worth>2 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>3 Stones</weight>
+		<description>Shoulder pads have a general degree of protection to the shoulders, but are simple and easy to acquire.</description>
+	</item>
+	<item number="071">
+		<name>Spaulders</name>
+		<character>À</character>
+		<equipmenttype>Shoulders</equipmenttype>
+		<proficiencyrequirement>Medium</proficiencyrequirement>
+		<levelrequirement>0</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>5</bashac>
+		<slashac>2</slashac>
+		<pierceac>1</pierceac>
+		<fistac>2</fistac>
+		<exoticac>1</exoticac>
+		<purchasableprovince>Crecia, New Saellem</purchasableprovince>
+		<worth>55 Vern</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>3 Stones</weight>
+		<description>Spaulders strap about the chest to help weigh chest armor down and provide clear movement of the head while still providing ample protection to the neck and shoulders.</description>
+	</item>
+	<item number="072">
+		<name>Scaled Shoulders</name>
+		<character>Á</character>
+		<equipmenttype>Shoulders</equipmenttype>
+		<proficiencyrequirement>Heavy</proficiencyrequirement>
+		<levelrequirement>30</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>10</bashac>
+		<slashac>8</slashac>
+		<pierceac>6</pierceac>
+		<fistac>4</fistac>
+		<exoticac>4</exoticac>
+		<purchasableprovince>Amari</purchasableprovince>
+		<worth>88 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>8 Stones</weight>
+		<description>Scaled shoulders are the oldest form of regal plated heavy armor. It has a tendency to be expensive because it is rarely still made, but found as relics from ages past.</description>
+	</item>
+	<item number="073">
+		<name>Splint Shoulders</name>
+		<character>Â</character>
+		<equipmenttype>Shoulders</equipmenttype>
+		<proficiencyrequirement>Exotic</proficiencyrequirement>
+		<levelrequirement>40</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>11</bashac>
+		<slashac>10</slashac>
+		<pierceac>9</pierceac>
+		<fistac>6</fistac>
+		<exoticac>6</exoticac>
+		<purchasableprovince>Not Purchasable</purchasableprovince>
+		<worth>1 Sovern</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>7 Stones</weight>
+		<description>Splint shoulders are rare and exotic armor pieces made completely of wood and usually heavily imbued with magic. Splint shoulders are difficult to master and require particular training in order to use during combat.</description>
+	</item>
+	<item number="074">
+		<name>Half-plate Shoulders</name>
+		<character>Ã</character>
+		<equipmenttype>Shoulders</equipmenttype>
+		<proficiencyrequirement>Heavy</proficiencyrequirement>
+		<levelrequirement>50</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>13</bashac>
+		<slashac>11</slashac>
+		<pierceac>12</pierceac>
+		<fistac>9</fistac>
+		<exoticac>7</exoticac>
+		<purchasableprovince>Any</purchasableprovince>
+		<worth>44 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>6 Stones</weight>
+		<description>Half-plate is half as light as full plate and is used primarily with those who require heavy armor but also need the extra movement and agility during combat.</description>
+	</item>
+	<item number="075">
+		<name>Plate Shoulders</name>
+		<character>Ä</character>
+		<equipmenttype>Shoulders</equipmenttype>
+		<proficiencyrequirement>Heavy</proficiencyrequirement>
+		<levelrequirement>60</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>14</bashac>
+		<slashac>12</slashac>
+		<pierceac>12</pierceac>
+		<fistac>12</fistac>
+		<exoticac>12</exoticac>
+		<purchasableprovince>Crecia, Tharsis, Jewall</purchasableprovince>
+		<worth>75 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>9 Stones</weight>
+		<description>Plate shoulders are the maximum armor available for shoulder equipment, require detailed training for valuable use in combat, and great strength to wear for long periods of time due to its great weight.</description>
+	</item>
+	<item number="076">
+		<name>Armlets</name>
+		<character>Å</character>
+		<equipmenttype>Arms</equipmenttype>
+		<proficiencyrequirement>Light or Medium</proficiencyrequirement>
+		<levelrequirement>0</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>5</bashac>
+		<slashac>2</slashac>
+		<pierceac>3</pierceac>
+		<fistac>1</fistac>
+		<exoticac>0</exoticac>
+		<purchasableprovince>Any</purchasableprovince>
+		<worth>66 Vern</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>3 Stones</weight>
+		<description>Armlets may resemble bangles of cloth, leather, or straps of material attached atop and stranding down a portion of the arm to not so much guard the body as much as confuse the arms actual position during combat.</description>
+	</item>
+	<item number="077">
+		<name>Bangle</name>
+		<character>ᴒ</character>
+		<equipmenttype>Arms</equipmenttype>
+		<proficiencyrequirement>Heavy</proficiencyrequirement>
+		<levelrequirement>25</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>4</bashac>
+		<slashac>3</slashac>
+		<pierceac>3</pierceac>
+		<fistac>3</fistac>
+		<exoticac>7</exoticac>
+		<purchasableprovince>Any</purchasableprovince>
+		<worth>5 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>5 Stones</weight>
+		<description>A bangal is a heavy festiv arm band worn primarily by women. They can occasionally be formed into warrior armaments by attaching small spikes.</description>
+	</item>
+	<item number="078">
+		<name>Ailettes</name>
+		<character>ᴓ</character>
+		<equipmenttype>Arms</equipmenttype>
+		<proficiencyrequirement>Heavy</proficiencyrequirement>
+		<levelrequirement>50</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>4</bashac>
+		<slashac>4</slashac>
+		<pierceac>3</pierceac>
+		<fistac>3</fistac>
+		<exoticac>6</exoticac>
+		<purchasableprovince>Narsis, Dumasque</purchasableprovince>
+		<worth>10 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>6 Stones</weight>
+		<description>Ailettes mean little wing, and are quadrangular pieces of hard leather or metal decorated with heraldic signs and affixed to the shoulders and upper arms.</description>
+	</item>
+	<item number="079">
+		<name>Besagews</name>
+		<character>ᴔ</character>
+		<equipmenttype>Arms</equipmenttype>
+		<proficiencyrequirement>Heavy</proficiencyrequirement>
+		<levelrequirement>30</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>3</bashac>
+		<slashac>4</slashac>
+		<pierceac>4</pierceac>
+		<fistac>4</fistac>
+		<exoticac>5</exoticac>
+		<purchasableprovince>New Saellem, Esthar</purchasableprovince>
+		<worth>12 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>6 Stones</weight>
+		<description>Besagews are protecting pieces of the axillary arteries found near the armpits. They are noticed as circular shapes in the front of ones chestplate that affix to the sides and bottoms of the arms as well.</description>
+	</item>
+	<item number="080">
+		<name>Armband</name>
+		<character>ᴕ</character>
+		<equipmenttype>Arms</equipmenttype>
+		<proficiencyrequirement>Light or Medium</proficiencyrequirement>
+		<levelrequirement>0</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>0</bashac>
+		<slashac>0</slashac>
+		<pierceac>0</pierceac>
+		<fistac>4</fistac>
+		<exoticac>1</exoticac>
+		<purchasableprovince>Any</purchasableprovince>
+		<worth>35 Vern</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>4 Stones</weight>
+		<description>Armbands are tight bangles made of cloth or leather and usually emblazoned with sigils of ones house.</description>
+	</item>
+	<item number="081">
+		<name>Arm-guards</name>
+		<character>Æ</character>
+		<equipmenttype>Arms</equipmenttype>
+		<proficiencyrequirement>Medium or Heavy</proficiencyrequirement>
+		<levelrequirement>20</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>6</bashac>
+		<slashac>4</slashac>
+		<pierceac>0</pierceac>
+		<fistac>4</fistac>
+		<exoticac>3</exoticac>
+		<purchasableprovince>Any</purchasableprovince>
+		<worth>2 Dover</worth>
+		<affectedbymaterials>yes</affectedbymaterials>
+		<weight>4 Stones</weight>
+		<description>Arm-guards are meant to be used in combat to prevent weapon slipping when dueling and damaging ones arms with a large hand-guard is not available. Helps increase parry success.</description>
+	</item>
+	<item number="082">
+		<name>Arm Wraps</name>
+		<character>Ç</character>
+		<equipmenttype>Arms</equipmenttype>
+		<proficiencyrequirement>Light or Medium</proficiencyrequirement>
+		<levelrequirement>0</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>3</bashac>
+		<slashac>2</slashac>
+		<pierceac>0</pierceac>
+		<fistac>2</fistac>
+		<exoticac>1</exoticac>
+		<purchasableprovince>Any</purchasableprovince>
+		<worth>45 Vern</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>2 Stones</weight>
+		<description>Arm wraps are similar to arm-guards except made of light material and accomodating those of more dexterous origin.</description>
+	</item>
+	<item number="083">
+		<name>Cuffs</name>
+		<character>É</character>
+		<equipmenttype>Wrists</equipmenttype>
+		<proficiencyrequirement>Light, Medium, or Heavy</proficiencyrequirement>
+		<levelrequirement>15</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>2</bashac>
+		<slashac>1</slashac>
+		<pierceac>1</pierceac>
+		<fistac>0</fistac>
+		<exoticac>3</exoticac>
+		<purchasableprovince>Dumasque</purchasableprovince>
+		<worth>19 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>3 Stones</weight>
+		<description>Cuffs attach to arm protections in efforts to more predominately protect the wrist during dueling from sliding weapons.</description>
+	</item>
+	<item number="084">
+		<name>Wristband</name>
+		<character>È</character>
+		<equipmenttype>Wrists</equipmenttype>
+		<proficiencyrequirement>Light or Medium</proficiencyrequirement>
+		<levelrequirement>0</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>1</bashac>
+		<slashac>2</slashac>
+		<pierceac>0</pierceac>
+		<fistac>1</fistac>
+		<exoticac>1</exoticac>
+		<purchasableprovince>Any</purchasableprovince>
+		<worth>5 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>4 Stones</weight>
+		<description>Wristbands are generic protection to provide little actual armor more then just aesthetic value.</description>
+	</item>
+	<item number="085">
+		<name>Bracers</name>
+		<character>Í</character>
+		<equipmenttype>Wrists</equipmenttype>
+		<proficiencyrequirement>Medium or Heavy</proficiencyrequirement>
+		<levelrequirement>5</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>3</bashac>
+		<slashac>1</slashac>
+		<pierceac>1</pierceac>
+		<fistac>0</fistac>
+		<exoticac>0</exoticac>
+		<purchasableprovince>Any</purchasableprovince>
+		<worth>9 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>2 Stones</weight>
+		<description>Bracers are great wrist protectino against generic battle maneavors and attach hand equipment with arm protection fully.</description>
+	</item>
+	<item number="086">
+		<name>Bracelet</name>
+		<character>Ñ</character>
+		<equipmenttype>Wrists</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>0</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>0</bashac>
+		<slashac>0</slashac>
+		<pierceac>1</pierceac>
+		<fistac>2</fistac>
+		<exoticac>0</exoticac>
+		<purchasableprovince>Any</purchasableprovince>
+		<worth>22 Vern</worth>
+		<affectedbymaterials>yes</affectedbymaterials>
+		<weight>2 Stones</weight>
+		<description>Bracelets are simple armor equipment used predominately for looks that actual battle merit.</description>
+	</item>
+	<item number="087">
+		<name>Shackles</name>
+		<character>Ù</character>
+		<equipmenttype>Wrists</equipmenttype>
+		<proficiencyrequirement>Heavy</proficiencyrequirement>
+		<levelrequirement>20</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>3</bashac>
+		<slashac>4</slashac>
+		<pierceac>2</pierceac>
+		<fistac>1</fistac>
+		<exoticac>1</exoticac>
+		<purchasableprovince>Crecia, Tharsis, Narsis, Jewall</purchasableprovince>
+		<worth>25 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>3 Stones</weight>
+		<description>Shackles chain a prisoner to a location ,sometimes an iron ball, sometimes a line of other prisoners, but usually a dungeon.</description>
+	</item>
+	<item number="088">
+		<name>Bindings</name>
+		<character>è</character>
+		<equipmenttype>Wrists</equipmenttype>
+		<proficiencyrequirement>Light, Medium, or Heavy</proficiencyrequirement>
+		<levelrequirement>10</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>2</bashac>
+		<slashac>2</slashac>
+		<pierceac>1</pierceac>
+		<fistac>1</fistac>
+		<exoticac>0</exoticac>
+		<purchasableprovince>Narsis, Dumasque</purchasableprovince>
+		<worth>14 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>2 Stones</weight>
+		<description>Bindings can have a variety of various forms and materials, but form a stable and consistant amount of protection.</description>
+	</item>
+	<item number="089">
+		<name>Gloves</name>
+		<character>é</character>
+		<equipmenttype>Hands</equipmenttype>
+		<proficiencyrequirement>Light or Medium</proficiencyrequirement>
+		<levelrequirement>0</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>0</bashac>
+		<slashac>2</slashac>
+		<pierceac>2</pierceac>
+		<fistac>4</fistac>
+		<exoticac>1</exoticac>
+		<purchasableprovince>Any</purchasableprovince>
+		<worth>18 Vern</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>1 Stone</weight>
+		<description>Gloves are generic protection of the hands, particularly the fingers. Gloves are usually light and unrestricting to allow easy grip of a weapon during combat.</description>
+	</item>
+	<item number="090">
+		<name>Saami</name>
+		<character>ᴖ</character>
+		<equipmenttype>Hands</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>0</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>0</bashac>
+		<slashac>5</slashac>
+		<pierceac>5</pierceac>
+		<fistac>5</fistac>
+		<exoticac>5</exoticac>
+		<purchasableprovince>Amari, Esthar</purchasableprovince>
+		<worth>2 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>1 Stones</weight>
+		<description>Saami are worn primarily around Amari, and are cloth handpieces with wooden affixings to help protect ones hand from light damage during melee fighting.</description>
+	</item>
+	<item number="091">
+		<name>Mittens</name>
+		<character>ø</character>
+		<equipmenttype>Hands</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>0</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>0</bashac>
+		<slashac>1</slashac>
+		<pierceac>1</pierceac>
+		<fistac>1</fistac>
+		<exoticac>0</exoticac>
+		<purchasableprovince>Moria, Jewall, New Saellem</purchasableprovince>
+		<worth>22 Vern</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>2 Stones</weight>
+		<description>Mittens provide little protection other than that of frozen fingers.</description>
+	</item>
+	<item number="092">
+		<name>Handwraps</name>
+		<character>ï</character>
+		<equipmenttype>Hands</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>10</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>1</bashac>
+		<slashac>1</slashac>
+		<pierceac>1</pierceac>
+		<fistac>1</fistac>
+		<exoticac>1</exoticac>
+		<purchasableprovince>Dumasque</purchasableprovince>
+		<worth>14 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>2 Stones</weight>
+		<description>Handwraps are used to protect areas of the hands that are frequently used from sores or callouses from over use. They provide some basic protection from any form of damage.</description>
+	</item>
+	<item number="093">
+		<name>Handguards</name>
+		<character>Ý</character>
+		<equipmenttype>Hands</equipmenttype>
+		<proficiencyrequirement>Medium or Heavy</proficiencyrequirement>
+		<levelrequirement>20</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>2</bashac>
+		<slashac>2</slashac>
+		<pierceac>2</pierceac>
+		<fistac>2</fistac>
+		<exoticac>2</exoticac>
+		<purchasableprovince>Any</purchasableprovince>
+		<worth>22 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>3 Stones</weight>
+		<description>Handguards were created to provide good protection from most all attack and damage. They aren't usually too restrictive of hand movement.</description>
+	</item>
+	<item number="094">
+		<name>Gauntlets</name>
+		<character>Ð</character>
+		<equipmenttype>Hands</equipmenttype>
+		<proficiencyrequirement>Heavy</proficiencyrequirement>
+		<levelrequirement>30</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>3</bashac>
+		<slashac>4</slashac>
+		<pierceac>4</pierceac>
+		<fistac>5</fistac>
+		<exoticac>2</exoticac>
+		<purchasableprovince>Any</purchasableprovince>
+		<worth>33 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>4 Stones</weight>
+		<description>Guantlets provide great protection from attacks during most all forms of combat. Gauntlets may be very restricting of the fingers. Gauntlets are made of a variety of plate, scale, and chain meshes.</description>
+	</item>
+	<item number="095">
+		<name>Chainmail Gauntlets</name>
+		<character>õ</character>
+		<equipmenttype>Hands</equipmenttype>
+		<proficiencyrequirement>Heavy</proficiencyrequirement>
+		<levelrequirement>40</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>5</bashac>
+		<slashac>4</slashac>
+		<pierceac>4</pierceac>
+		<fistac>3</fistac>
+		<exoticac>3</exoticac>
+		<purchasableprovince>Any</purchasableprovince>
+		<worth>49 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>5 Stones</weight>
+		<description>Chainmail gauntlets are a newer form of equipment that surprisingly affords great maneuverability while maintaining supurb protection.</description>
+	</item>
+	<item number="096">
+		<name>Scalemail Gauntlets</name>
+		<character>Ö</character>
+		<equipmenttype>Hands</equipmenttype>
+		<proficiencyrequirement>Heavy</proficiencyrequirement>
+		<levelrequirement>30</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>3</bashac>
+		<slashac>1</slashac>
+		<pierceac>4</pierceac>
+		<fistac>3</fistac>
+		<exoticac>3</exoticac>
+		<purchasableprovince>Amari</purchasableprovince>
+		<worth>85 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>6 Stones</weight>
+		<description>Scalemail gauntlets are an older form of equipment and are rarely made today, but provide some specific protection from piercing weapons.</description>
+	</item>
+	<item number="097">
+		<name>Platemail Gauntlets</name>
+		<character>ð</character>
+		<equipmenttype>Hands</equipmenttype>
+		<proficiencyrequirement>Heavy</proficiencyrequirement>
+		<levelrequirement>60</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>6</bashac>
+		<slashac>5</slashac>
+		<pierceac>4</pierceac>
+		<fistac>5</fistac>
+		<exoticac>5</exoticac>
+		<purchasableprovince>Crecia, Tharsis, Jewall</purchasableprovince>
+		<worth>75 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>5 Stones</weight>
+		<description>Platemail gauntlets are the heaviest equipment of the sort, provide little maneaverability, cost great encumberance, but is second in protection to no other of its type.</description>
+	</item>
+	<item number="098">
+		<name>Platemail</name>
+		<character>Ø</character>
+		<equipmenttype>Chest</equipmenttype>
+		<proficiencyrequirement>Heavy</proficiencyrequirement>
+		<levelrequirement>60</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>9</bashac>
+		<slashac>11</slashac>
+		<pierceac>9</pierceac>
+		<fistac>7</fistac>
+		<exoticac>5</exoticac>
+		<purchasableprovince>Crecia, Tharsis, Jewall</purchasableprovince>
+		<worth>6 Sovern</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>20 Stones</weight>
+		<description>Platemail is a very encumbersome armor that is used by the strong to provide great protection from damage. Platemail is hard to maneuver in.</description>
+	</item>
+	<item number="099">
+		<name>Toga</name>
+		<character>ᴗ</character>
+		<equipmenttype>Chest</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>0</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>3</bashac>
+		<slashac>3</slashac>
+		<pierceac>3</pierceac>
+		<fistac>8</fistac>
+		<exoticac>3</exoticac>
+		<purchasableprovince>Dumasque</purchasableprovince>
+		<worth>2 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>3 Stones</weight>
+		<description>A toga is a distinctive garmet wrapped around the body and usually worn above a tunic. A toga is primarily made of wool or linen. It is a loose cloth draping elegantly and clasped at the waist with some form of belt.</description>
+	</item>
+	<item number="100">
+		<name>Bodice</name>
+		<character>ᴘ</character>
+		<equipmenttype>Chest</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>0</levelrequirement>
+		<genderrequirement>Female</genderrequirement>
+		<bashac>0</bashac>
+		<slashac>7</slashac>
+		<pierceac>5</pierceac>
+		<fistac>8</fistac>
+		<exoticac>0</exoticac>
+		<purchasableprovince>Any</purchasableprovince>
+		<worth>1 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>4 Stones</weight>
+		<description>A bodice is an artical of clothing made for women that covers the body from the neck to the waist. The clothing is tied together in the front with inlined holes and string that cross elegantly about the front of the womens chest.</description>
+	</item>
+	<item number="101">
+		<name>Frock</name>
+		<character>ᴙ</character>
+		<equipmenttype>Chest</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>0</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>7</bashac>
+		<slashac>0</slashac>
+		<pierceac>7</pierceac>
+		<fistac>0</fistac>
+		<exoticac>6</exoticac>
+		<purchasableprovince>Any</purchasableprovince>
+		<worth>2 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>4 Stones</weight>
+		<description>A frock is an artical of clothing similar to a coat used by a man or women with full sleeves and not attached in the front of the body.</description>
+	</item>
+	<item number="102">
+		<name>Farthingale</name>
+		<character>ᴚ</character>
+		<equipmenttype>Chest</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>0</levelrequirement>
+		<genderrequirement>Female</genderrequirement>
+		<bashac>3</bashac>
+		<slashac>6</slashac>
+		<pierceac>3</pierceac>
+		<fistac>6</fistac>
+		<exoticac>2</exoticac>
+		<purchasableprovince>Any</purchasableprovince>
+		<worth>11 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>3 Stones</weight>
+		<description>A farthingale is an elegant dress with elaborate stitchings that may be fit like skirts to any desired shape.</description>
+	</item>
+	<item number="103">
+		<name>Houppelande</name>
+		<character>ᴛ</character>
+		<equipmenttype>Chest</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>0</levelrequirement>
+		<genderrequirement>Female</genderrequirement>
+		<bashac>6</bashac>
+		<slashac>6</slashac>
+		<pierceac>3</pierceac>
+		<fistac>3</fistac>
+		<exoticac>2</exoticac>
+		<purchasableprovince>Esthar, Menusia</purchasableprovince>
+		<worth>10 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>3 Stones</weight>
+		<description>A houppelande is an outer garmet with a long full body and flaring sleeves worn by women in the western regions of Sedia.</description>
+	</item>
+	<item number="104">
+		<name>Furisode</name>
+		<character>ᴜ</character>
+		<equipmenttype>Chest</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>0</levelrequirement>
+		<genderrequirement>Female</genderrequirement>
+		<bashac>6</bashac>
+		<slashac>3</slashac>
+		<pierceac>3</pierceac>
+		<fistac>6</fistac>
+		<exoticac>2</exoticac>
+		<purchasableprovince>Menusia</purchasableprovince>
+		<worth>10 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>4 Stones</weight>
+		<description>A furisode is a party dress worn by the morian women. It has draping sleeves and a tight wrapped skirt and robe-like quality.</description>
+	</item>
+	<item number="105">
+		<name>Guernsey</name>
+		<character>ᴝ</character>
+		<equipmenttype>Chest</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>0</levelrequirement>
+		<genderrequirement>Male</genderrequirement>
+		<bashac>5</bashac>
+		<slashac>6</slashac>
+		<pierceac>7</pierceac>
+		<fistac>2</fistac>
+		<exoticac>0</exoticac>
+		<purchasableprovince>Jewall</purchasableprovince>
+		<worth>11 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>8 Stones</weight>
+		<description>A guernsey is a knitted woolen sweater.</description>
+	</item>
+	<item number="106">
+		<name>Hanton</name>
+		<character>+</character>
+		<equipmenttype>Chest</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>40</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>0</bashac>
+		<slashac>6</slashac>
+		<pierceac>5</pierceac>
+		<fistac>7</fistac>
+		<exoticac>2</exoticac>
+		<purchasableprovince>Moria</purchasableprovince>
+		<worth>* Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>6 Stones</weight>
+		<description>A hanton is a formal chest piece worn by the morian men during festivals. It is similar to a jacket without sleeves.</description>
+	</item>
+	<item number="107">
+		<name>Happi</name>
+		<character>ᴟ</character>
+		<equipmenttype>Chest</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>50</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>5</bashac>
+		<slashac>6</slashac>
+		<pierceac>6</pierceac>
+		<fistac>3</fistac>
+		<exoticac>0</exoticac>
+		<purchasableprovince>Dumasque</purchasableprovince>
+		<worth>4 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>3 Stones</weight>
+		<description>Happi are short robes worn by children of the morian people.</description>
+	</item>
+	<item number="108">
+		<name>Banyan</name>
+		<character>ᴤ</character>
+		<equipmenttype>Chest</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>50</levelrequirement>
+		<genderrequirement>Male</genderrequirement>
+		<bashac>6</bashac>
+		<slashac>3</slashac>
+		<pierceac>0</pierceac>
+		<fistac>6</fistac>
+		<exoticac>5</exoticac>
+		<purchasableprovince>Dumasque, Amari</purchasableprovince>
+		<worth>3 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>5 Dover</weight>
+		<description>A banyan is a garmet worn by men that is flowing and long, much like a kimono in a T-shape over breeches.</description>
+	</item>
+	<item number="109">
+		<name>Chiton</name>
+		<character>ᴥ</character>
+		<equipmenttype>Chest</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>60</levelrequirement>
+		<genderrequirement>Female</genderrequirement>
+		<bashac>0</bashac>
+		<slashac>0</slashac>
+		<pierceac>0</pierceac>
+		<fistac>0</fistac>
+		<exoticac>20</exoticac>
+		<purchasableprovince>Moria</purchasableprovince>
+		<worth>5 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>7 Stones</weight>
+		<description>A chiton is a sewn garmet buttoned at teh shoulder. The fabric is sometimes just pinned instead of sewn into place, but affixed primarily by buttoning up ones back. The garmet looks similar to a toga but is fashioned to be slightly smaller and tighter.</description>
+	</item>
+	<item number="110">
+		<name>Chlamys</name>
+		<character>ᴦ</character>
+		<equipmenttype>Chest</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>65</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>20</bashac>
+		<slashac>0</slashac>
+		<pierceac>0</pierceac>
+		<fistac>0</fistac>
+		<exoticac>0</exoticac>
+		<purchasableprovince>Not Purchasable</purchasableprovince>
+		<worth>3 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>5 Stones</weight>
+		<description>A chlamys is a form of military attire wrapped around ones neck and draping elegantly down about a chestplate.</description>
+	</item>
+	<item number="111">
+		<name>Jerkin</name>
+		<character>ᴧ</character>
+		<equipmenttype>Chest</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>65</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>0</bashac>
+		<slashac>6</slashac>
+		<pierceac>6</pierceac>
+		<fistac>6</fistac>
+		<exoticac>2</exoticac>
+		<purchasableprovince>Any</purchasableprovince>
+		<worth>15 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>3 Stones</weight>
+		<description>A jerkin is a close and short fitting jacket usually made out of leather or heavy fabric. It is a light form of a chestplate worn for ornament during festival dress where a chestplate might seem unnecessary.</description>
+	</item>
+	<item number="112">
+		<name>Palla</name>
+		<character>ᴨ</character>
+		<equipmenttype>Chest</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>65</levelrequirement>
+		<genderrequirement>Female</genderrequirement>
+		<bashac>0</bashac>
+		<slashac>20</slashac>
+		<pierceac>0</pierceac>
+		<fistac>0</fistac>
+		<exoticac>0</exoticac>
+		<purchasableprovince>Not Purchasable</purchasableprovince>
+		<worth>2 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>3 Stones</weight>
+		<description>A palla traditional mantle is fastened by brooches and looks similar to a robe except attired specifically to form around a females body.</description>
+	</item>
+	<item number="113">
+		<name>Himation</name>
+		<character>ᴩ</character>
+		<equipmenttype>Chest</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>75</levelrequirement>
+		<genderrequirement>Female</genderrequirement>
+		<bashac>0</bashac>
+		<slashac>0</slashac>
+		<pierceac>20</pierceac>
+		<fistac>0</fistac>
+		<exoticac>0</exoticac>
+		<purchasableprovince>Dumasque, Esthar</purchasableprovince>
+		<worth>8 Sovern</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>3 Stones</weight>
+		<description>A himation is a type of ancient clothing similar to a robe that is markedly less voluminous than a toga. A himation is an icanographic dress of what the ancients have been seen in pictures to be wearing.</description>
+	</item>
+	<item number="114">
+		<name>Exomis</name>
+		<character>ᴪ</character>
+		<equipmenttype>Chest</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>80</levelrequirement>
+		<genderrequirement>Male</genderrequirement>
+		<bashac>0</bashac>
+		<slashac>0</slashac>
+		<pierceac>0</pierceac>
+		<fistac>20</fistac>
+		<exoticac>0</exoticac>
+		<purchasableprovince>Jewall, Moria</purchasableprovince>
+		<worth>3 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>3 Stones</weight>
+		<description>An exomis is a shoulder and belly tunic, wrapping not so much to cover as much as to present the body in an artful way. It can sometimes be seen among the more muscled warriors.</description>
+	</item>
+	<item number="115">
+		<name>Justacorps</name>
+		<character>ᴫ</character>
+		<equipmenttype>Chest</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>80</levelrequirement>
+		<genderrequirement>Male</genderrequirement>
+		<bashac>8</bashac>
+		<slashac>8</slashac>
+		<pierceac>4</pierceac>
+		<fistac>0</fistac>
+		<exoticac>0</exoticac>
+		<purchasableprovince>New Saellem</purchasableprovince>
+		<worth>15 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>3 Stones</weight>
+		<description>A justacorps is a knee-length coat worn by men that consists of elaborate designs and blooming at the knee similar to a small dress.</description>
+	</item>
+	<item number="116">
+		<name>Sarafan</name>
+		<character>ᵫ</character>
+		<equipmenttype>Chest</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>90</levelrequirement>
+		<genderrequirement>Female</genderrequirement>
+		<bashac>7</bashac>
+		<slashac>4</slashac>
+		<pierceac>3</pierceac>
+		<fistac>3</fistac>
+		<exoticac>3</exoticac>
+		<purchasableprovince>Crecia</purchasableprovince>
+		<worth>8 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>4 Stones</weight>
+		<description>A sarafan is a colorful dress worn by children in the eastern port city of Sedia.</description>
+	</item>
+	<item number="117">
+		<name>Sari</name>
+		<character>ᵬ</character>
+		<equipmenttype>Chest</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>95</levelrequirement>
+		<genderrequirement>Female</genderrequirement>
+		<bashac>15</bashac>
+		<slashac>2</slashac>
+		<pierceac>3</pierceac>
+		<fistac>0</fistac>
+		<exoticac>0</exoticac>
+		<purchasableprovince>Dumasque</purchasableprovince>
+		<worth>23 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>5 Stones</weight>
+		<description>A sari is an unstitched cloth worn by females that is wrapped in elaborate ways about itself to indicate the elegance of the female. The sari is worn around the Dumasque region.</description>
+	</item>
+	<item number="118">
+		<name>Polonaise</name>
+		<character>ᵭ</character>
+		<equipmenttype>Chest</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>100</levelrequirement>
+		<genderrequirement>Male</genderrequirement>
+		<bashac>0</bashac>
+		<slashac>6</slashac>
+		<pierceac>7</pierceac>
+		<fistac>5</fistac>
+		<exoticac>2</exoticac>
+		<purchasableprovince>New Saellem, Esther</purchasableprovince>
+		<worth>16 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>4 Stones</weight>
+		<description>A polonaise is the most elaborate of dresses available in Sedia and worn by the richest of female nobility. it blooms as it progresses to the ground.</description>
+	</item>
+	<item number="119">
+		<name>Ringmail</name>
+		<character>î</character>
+		<equipmenttype>Chest</equipmenttype>
+		<proficiencyrequirement>Heavy</proficiencyrequirement>
+		<levelrequirement>35</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>7</bashac>
+		<slashac>6</slashac>
+		<pierceac>6</pierceac>
+		<fistac>5</fistac>
+		<exoticac>2</exoticac>
+		<purchasableprovince>Esthar, Moria</purchasableprovince>
+		<worth>4 Sovern</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>18 Stones</weight>
+		<description>Ringmail is much easier to move in than platemail. Though the heavy ring mesh can be hard to carry or wear for long periods of time.</description>
+	</item>
+	<item number="120">
+		<name>Chain Cuirass</name>
+		<character>Ð</character>
+		<equipmenttype>Chest</equipmenttype>
+		<proficiencyrequirement>Heavy</proficiencyrequirement>
+		<levelrequirement>40</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>9</bashac>
+		<slashac>8</slashac>
+		<pierceac>8</pierceac>
+		<fistac>5</fistac>
+		<exoticac>2</exoticac>
+		<purchasableprovince>Any</purchasableprovince>
+		<worth>4 Sovern</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>15 Stones</weight>
+		<description>A chain cuirass encompasses only the chest and has much smaller ringed mesh than ringmail., it is less encumbersome than most other heavy equipment of the same type.</description>
+	</item>
+	<item number="121">
+		<name>Half-plate</name>
+		<character>Š</character>
+		<equipmenttype>Chest</equipmenttype>
+		<proficiencyrequirement>Heavy</proficiencyrequirement>
+		<levelrequirement>50</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>9</bashac>
+		<slashac>8</slashac>
+		<pierceac>9</pierceac>
+		<fistac>8</fistac>
+		<exoticac>4</exoticac>
+		<purchasableprovince>Any</purchasableprovince>
+		<worth>5 Sovern</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>17 Stones</weight>
+		<description>Half-plate is made half of plate and half of leather armor to allow combat ease while still providing great protection.</description>
+	</item>
+	<item number="122">
+		<name>Chestplate</name>
+		<character>š</character>
+		<equipmenttype>Chest</equipmenttype>
+		<proficiencyrequirement>Heavy</proficiencyrequirement>
+		<levelrequirement>55</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>9</bashac>
+		<slashac>10</slashac>
+		<pierceac>9</pierceac>
+		<fistac>7</fistac>
+		<exoticac>4</exoticac>
+		<purchasableprovince>Any</purchasableprovince>
+		<worth>5 Sovern</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>15 Stones</weight>
+		<description>A chestplate protects only the front chest with leather straps upon the back. It is much similar to platemail with the less protection.</description>
+	</item>
+	<item number="123">
+		<name>Chestguard</name>
+		<character>Ž</character>
+		<equipmenttype>Chest</equipmenttype>
+		<proficiencyrequirement>Medium</proficiencyrequirement>
+		<levelrequirement>30</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>3</bashac>
+		<slashac>2</slashac>
+		<pierceac>2</pierceac>
+		<fistac>4</fistac>
+		<exoticac>2</exoticac>
+		<purchasableprovince>Any</purchasableprovince>
+		<worth>3 Sovern</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>14 Stones</weight>
+		<description>A chestguard is a chestplate made of hard leather. It is much light and easier to perform combat skills in than its havey alternatives.</description>
+	</item>
+	<item number="124">
+		<name>Scalemail</name>
+		<character>ž</character>
+		<equipmenttype>Chest</equipmenttype>
+		<proficiencyrequirement>Heavy</proficiencyrequirement>
+		<levelrequirement>30</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>4</bashac>
+		<slashac>3</slashac>
+		<pierceac>5</pierceac>
+		<fistac>4</fistac>
+		<exoticac>4</exoticac>
+		<purchasableprovince>Amari</purchasableprovince>
+		<worth>8 Sovern</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>18 Stones</weight>
+		<description>Scalemail is an old and rare armor type that is conditioned to receive more magical properties than standard armor.</description>
+	</item>
+	<item number="125">
+		<name>Splintmail</name>
+		<character>Ô</character>
+		<equipmenttype>Chest</equipmenttype>
+		<proficiencyrequirement>Exotic</proficiencyrequirement>
+		<levelrequirement>40</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>8</bashac>
+		<slashac>5</slashac>
+		<pierceac>7</pierceac>
+		<fistac>3</fistac>
+		<exoticac>4</exoticac>
+		<purchasableprovince>Not Purchasable</purchasableprovince>
+		<worth>10 Sovern</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>17 Stones</weight>
+		<description>Splintmail is a very rare armor type that is incredibly difficult to craft. Splintmail can hold a tremendous amount of magical properties.</description>
+	</item>
+	<item number="126">
+		<name>Studded Tunic</name>
+		<character>Û</character>
+		<equipmenttype>Chest</equipmenttype>
+		<proficiencyrequirement>Medium</proficiencyrequirement>
+		<levelrequirement>15</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>2</bashac>
+		<slashac>1</slashac>
+		<pierceac>1</pierceac>
+		<fistac>4</fistac>
+		<exoticac>1</exoticac>
+		<purchasableprovince>Any</purchasableprovince>
+		<worth>80 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>8 Stones</weight>
+		<description>Studded tunics provide exceptional protection against fist fighting.</description>
+	</item>
+	<item number="127">
+		<name>Tunic</name>
+		<character>Ï</character>
+		<equipmenttype>Chest</equipmenttype>
+		<proficiencyrequirement>Light or Medium</proficiencyrequirement>
+		<levelrequirement>0</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>1</bashac>
+		<slashac>1</slashac>
+		<pierceac>1</pierceac>
+		<fistac>2</fistac>
+		<exoticac>1</exoticac>
+		<purchasableprovince>Any</purchasableprovince>
+		<worth>4 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>7 Stones</weight>
+		<description>Tunics don't encompass the shoulders or arms, and simply may cover the front and back and keep open sides. Tunics are very simple and ordinary.</description>
+	</item>
+	<item number="128">
+		<name>Vestment</name>
+		<character>Ü</character>
+		<equipmenttype>Chest</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>0</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>1</bashac>
+		<slashac>0</slashac>
+		<pierceac>1</pierceac>
+		<fistac>1</fistac>
+		<exoticac>1</exoticac>
+		<purchasableprovince>Any</purchasableprovince>
+		<worth>1 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>8 Stones</weight>
+		<description>Vestments are ordinary ware for religious people and are usually elegant or resemblant of some dressed fashion.</description>
+	</item>
+	<item number="129">
+		<name>Hauberk</name>
+		<character>à</character>
+		<equipmenttype>Chest</equipmenttype>
+		<proficiencyrequirement>Exotic</proficiencyrequirement>
+		<levelrequirement>85</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>15</bashac>
+		<slashac>13</slashac>
+		<pierceac>11</pierceac>
+		<fistac>12</fistac>
+		<exoticac>10</exoticac>
+		<purchasableprovince>Amari, Menusia</purchasableprovince>
+		<worth>15 Sovern</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>19 Stones</weight>
+		<description>Hauberk is the most expensive and extraordinary chest armor type. Hauberk are elaborately entwined with metal strings through wool, hard stone, and other rare metals.</description>
+	</item>
+	<item number="130">
+		<name>Field Plate</name>
+		<character>Ó</character>
+		<equipmenttype>Chest</equipmenttype>
+		<proficiencyrequirement>Heavy</proficiencyrequirement>
+		<levelrequirement>70</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>13</bashac>
+		<slashac>11</slashac>
+		<pierceac>13</pierceac>
+		<fistac>10</fistac>
+		<exoticac>8</exoticac>
+		<purchasableprovince>Not Purchasable</purchasableprovince>
+		<worth>18 Sovern</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>20 Stones</weight>
+		<description>Field plate is not accomodated to specific genders or muscle tones and is almost considered a barrel with holes for arms, beaten down to correct size. Field plate may not be incredibly comfortable, but has been proven useful nonetheless.</description>
+	</item>
+	<item number="131">
+		<name>Banded Mail</name>
+		<character>Î</character>
+		<equipmenttype>Chest</equipmenttype>
+		<proficiencyrequirement>Heavy</proficiencyrequirement>
+		<levelrequirement>60</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>11</bashac>
+		<slashac>9</slashac>
+		<pierceac>5</pierceac>
+		<fistac>8</fistac>
+		<exoticac>9</exoticac>
+		<purchasableprovince>Not Purchasable</purchasableprovince>
+		<worth>23 Sovern</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>18 Stones</weight>
+		<description>Banded mail is built to be especially resistant to bashing weapon types by bonding heavy materials in patchwork tempered metals.</description>
+	</item>
+	<item number="132">
+		<name>Brigandine Armor</name>
+		<character>ä</character>
+		<equipmenttype>Chest</equipmenttype>
+		<proficiencyrequirement>Exotic</proficiencyrequirement>
+		<levelrequirement>90</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>15</bashac>
+		<slashac>13</slashac>
+		<pierceac>15</pierceac>
+		<fistac>14</fistac>
+		<exoticac>15</exoticac>
+		<purchasableprovince>Not Purchasable</purchasableprovince>
+		<worth>42 Sovern</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>25 Stones</weight>
+		<description>Brigandine armor is the third most expensive armor. Brigandine is an exotic equipment type whose partiular formation requires special training to utilize fully.</description>
+	</item>
+	<item number="133">
+		<name>Robe</name>
+		<character>á</character>
+		<equipmenttype>Chest</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>0</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>1</bashac>
+		<slashac>1</slashac>
+		<pierceac>1</pierceac>
+		<fistac>1</fistac>
+		<exoticac>1</exoticac>
+		<purchasableprovince>Any</purchasableprovince>
+		<worth>1 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>4 Stones</weight>
+		<description>Robes are the most generic equipment type in existance. A robe will prevent you from running around naked and getting sunburnt.</description>
+	</item>
+	<item number="134">
+		<name>Raiment</name>
+		<character>Þ</character>
+		<equipmenttype>Chest</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>20</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>3</bashac>
+		<slashac>3</slashac>
+		<pierceac>3</pierceac>
+		<fistac>3</fistac>
+		<exoticac>3</exoticac>
+		<purchasableprovince>Narsis, Crecia, Dumasque</purchasableprovince>
+		<worth>10 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>5 Stones</weight>
+		<description>Raiment are incredibly formal vestments. They are usually emblazoned with a sigil of ones position and god.</description>
+	</item>
+	<item number="135">
+		<name>Tabard</name>
+		<character>ß</character>
+		<equipmenttype>Chest</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>1</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>2</bashac>
+		<slashac>1</slashac>
+		<pierceac>1</pierceac>
+		<fistac>0</fistac>
+		<exoticac>0</exoticac>
+		<purchasableprovince>Any</purchasableprovince>
+		<worth>4 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>3 Stones</weight>
+		<description>A tabard is much like a poncho except cut to a rectangle and drapes beneath armor on front and back, holding the sigil of ones clan for easy identification. These are especially useful during war to distinguish ones side.</description>
+	</item>
+	<item number="136">
+		<name>Doublet</name>
+		<character>Õ</character>
+		<equipmenttype>Chest</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>5</levelrequirement>
+		<genderrequirement>Female</genderrequirement>
+		<bashac>1</bashac>
+		<slashac>0</slashac>
+		<pierceac>1</pierceac>
+		<fistac>1</fistac>
+		<exoticac>0</exoticac>
+		<purchasableprovince>Crecia, Moria</purchasableprovince>
+		<worth>89 Vern</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>4 Stones</weight>
+		<description>A particularly scandalous item to be worn without clothes atop it, a double is a top piece lingerie used by many women.</description>
+	</item>
+	<item number="137">
+		<name>Chemise</name>
+		<character>â</character>
+		<equipmenttype>Chest</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>5</levelrequirement>
+		<genderrequirement>Female</genderrequirement>
+		<bashac>1</bashac>
+		<slashac>1</slashac>
+		<pierceac>0</pierceac>
+		<fistac>1</fistac>
+		<exoticac>0</exoticac>
+		<purchasableprovince>New Saellem, Menusia, Amari</purchasableprovince>
+		<worth>70 Vern</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>5 Stones</weight>
+		<description>A more tight and specific lingerie made to impress a womens breasts. Chemise are considered necessary equipment to any brothel or red-light district wanderer.</description>
+	</item>
+	<item number="138">
+		<name>Lorica Segmentata</name>
+		<character>Ò</character>
+		<equipmenttype>Chest</equipmenttype>
+		<proficiencyrequirement>Exotic</proficiencyrequirement>
+		<levelrequirement>75</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>15</bashac>
+		<slashac>15</slashac>
+		<pierceac>13</pierceac>
+		<fistac>13</fistac>
+		<exoticac>14</exoticac>
+		<purchasableprovince>Not Purchasable</purchasableprovince>
+		<worth>202 Sovern</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>25 Stones</weight>
+		<description>The most expensive and rare equipment type in existence, lorica segmentata is extremely moveable and protected against attacks. It is pieced around movin spots, with no small spots open for a weakness. It is made of the rarest materials.</description>
+	</item>
+	<item number="139">
+		<name>Lamellar</name>
+		<character>Ú</character>
+		<equipmenttype>Chest</equipmenttype>
+		<proficiencyrequirement>Exotic</proficiencyrequirement>
+		<levelrequirement>80</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>15</bashac>
+		<slashac>15</slashac>
+		<pierceac>15</pierceac>
+		<fistac>14</fistac>
+		<exoticac>14</exoticac>
+		<purchasableprovince>Not Purchasable</purchasableprovince>
+		<worth>140 Sovern</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>24 Stones</weight>
+		<description>Lamellar is the second most expensive armor. Lamerller is similar to Lorica Segmentata except it doesn't contain shoulder pieces. It is made of the strongest materials available.</description>
+	</item>
+	<item number="140">
+		<name>Shawl</name>
+		<character>Ì</character>
+		<equipmenttype>Back</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>0</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>1</bashac>
+		<slashac>1</slashac>
+		<pierceac>0</pierceac>
+		<fistac>1</fistac>
+		<exoticac>0</exoticac>
+		<purchasableprovince>Any</purchasableprovince>
+		<worth>18 Vern</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>3 Stones</weight>
+		<description>A shawl is thrown about the neck and back to help keep one warm. It is usually just a long piece of cloth.</description>
+	</item>
+	<item number="141">
+		<name>Manteau</name>
+		<character>ᵮ</character>
+		<equipmenttype>Back</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>25</levelrequirement>
+		<genderrequirement>Female</genderrequirement>
+		<bashac>3</bashac>
+		<slashac>7</slashac>
+		<pierceac>7</pierceac>
+		<fistac>0</fistac>
+		<exoticac>3</exoticac>
+		<purchasableprovince>New Saellem</purchasableprovince>
+		<worth>10 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>4 Stones</weight>
+		<description>A manteau is drapped atop the chest piece to provide slightly greater protection from the cold. It looks quite similar to a very thin dress.</description>
+	</item>
+	<item number="142">
+		<name>Stole</name>
+		<character>ᵯ</character>
+		<equipmenttype>Back</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>30</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>4</bashac>
+		<slashac>5</slashac>
+		<pierceac>5</pierceac>
+		<fistac>2</fistac>
+		<exoticac>4</exoticac>
+		<purchasableprovince>Dumasque, Moria</purchasableprovince>
+		<worth>8 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>3 Stones</weight>
+		<description>A stole is a formal shawl of expensive fabric used around the shoulders over a party dress or ballgown.</description>
+	</item>
+	<item number="143">
+		<name>Cape</name>
+		<character>Ë</character>
+		<equipmenttype>Back</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>5</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>3</bashac>
+		<slashac>3</slashac>
+		<pierceac>1</pierceac>
+		<fistac>0</fistac>
+		<exoticac>0</exoticac>
+		<purchasableprovince>Any</purchasableprovince>
+		<worth>80 Vern</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>2 Stones</weight>
+		<description>A cape drapes down the back and usually may contain an emblem of ones house or clan. Capes may also be used in battle to confuse or disorient an attacker.</description>
+	</item>
+	<item number="144">
+		<name>Capelet</name>
+		<character>ã</character>
+		<equipmenttype>Back</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>0</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>2</bashac>
+		<slashac>2</slashac>
+		<pierceac>1</pierceac>
+		<fistac>0</fistac>
+		<exoticac>0</exoticac>
+		<purchasableprovince>Crecia</purchasableprovince>
+		<worth>50 Vern</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>3 Stones</weight>
+		<description>A capelet is half the length of a cape, and may in itself drape to mid-back or waist.</description>
+	</item>
+	<item number="145">
+		<name>Cloak</name>
+		<character>Ê</character>
+		<equipmenttype>Back</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>10</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>4</bashac>
+		<slashac>4</slashac>
+		<pierceac>2</pierceac>
+		<fistac>1</fistac>
+		<exoticac>0</exoticac>
+		<purchasableprovince>Any</purchasableprovince>
+		<worth>1 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>3 Stones</weight>
+		<description>A cloak is similar to a cape except is much wider an may sometimes be connected to a hood.</description>
+	</item>
+	<item number="146">
+		<name>Heavy Cloak</name>
+		<character>å</character>
+		<equipmenttype>Back</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>20</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>5</bashac>
+		<slashac>5</slashac>
+		<pierceac>2</pierceac>
+		<fistac>1</fistac>
+		<exoticac>0</exoticac>
+		<purchasableprovince>Any</purchasableprovince>
+		<worth>3 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>5</weight>
+		<description>A heavy cloak is reinforced with skins or fur and provides greater wormth, if not protection to a generic cloak.</description>
+	</item>
+	<item number="147">
+		<name>Battle Cloak</name>
+		<character>æ</character>
+		<equipmenttype>Back</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>30</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>6</bashac>
+		<slashac>6</slashac>
+		<pierceac>3</pierceac>
+		<fistac>2</fistac>
+		<exoticac>1</exoticac>
+		<purchasableprovince>Any</purchasableprovince>
+		<worth>10 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>4 Stones</weight>
+		<description>A battle cloak is tapered and sewed so that it naturally floats in a disorganized fashion behind a person to disguise sheathes and a small amount of movement. Battle cloaks are helpful not in strength, but in their adaptability and passivs</description>
+	</item>
+	<item number="148">
+		<name>Royal Cloak</name>
+		<character>ì</character>
+		<equipmenttype>Back</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>40</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>7</bashac>
+		<slashac>7</slashac>
+		<pierceac>4</pierceac>
+		<fistac>4</fistac>
+		<exoticac>0</exoticac>
+		<purchasableprovince>Crecia, Tharsis, Narsis, Jewall</purchasableprovince>
+		<worth>1 Sovern</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>4 Stones</weight>
+		<description>A royal cloak is a semi-wide and long flowing cloak, embroidered and emblazoned with the house sigil of the royal family.</description>
+	</item>
+	<item number="149">
+		<name>Girdle</name>
+		<character>ò</character>
+		<equipmenttype>Waist</equipmenttype>
+		<proficiencyrequirement>Heavy</proficiencyrequirement>
+		<levelrequirement>10</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>3</bashac>
+		<slashac>0</slashac>
+		<pierceac>3</pierceac>
+		<fistac>2</fistac>
+		<exoticac>2</exoticac>
+		<purchasableprovince>Any</purchasableprovince>
+		<worth>10 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>5</weight>
+		<description>A girdle is essentially metallic underwear used to prevent any damage to gentitalia or sensitive arteries.</description>
+	</item>
+	<item number="150">
+		<name>Chatelaine</name>
+		<character>ᵰ</character>
+		<equipmenttype>Waist</equipmenttype>
+		<proficiencyrequirement>Heavy</proficiencyrequirement>
+		<levelrequirement>0</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>5</bashac>
+		<slashac>5</slashac>
+		<pierceac>2</pierceac>
+		<fistac>3</fistac>
+		<exoticac>5</exoticac>
+		<purchasableprovince>Jewall</purchasableprovince>
+		<worth>2 Sovern</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>10 Stones</weight>
+		<description>A chatelain is a decorative belt hook or clasp worn about the waist and made of the most precious metals and minerals available. It is adorned with elaborate designs.</description>
+	</item>
+	<item number="151">
+		<name>Fauld</name>
+		<character>ᵱ</character>
+		<equipmenttype>Waist</equipmenttype>
+		<proficiencyrequirement>Heavy</proficiencyrequirement>
+		<levelrequirement>0</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>2</bashac>
+		<slashac>3</slashac>
+		<pierceac>5</pierceac>
+		<fistac>5</fistac>
+		<exoticac>5</exoticac>
+		<purchasableprovince>Menusia</purchasableprovince>
+		<worth>8 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>3 Stones</weight>
+		<description>Faulds are metallic clasps with holes. They wrap around the waist and have small leather pouches hidden within that may be reached by fingers throught the holes.</description>
+	</item>
+	<item number="152">
+		<name>Belt</name>
+		<character>þ</character>
+		<equipmenttype>Waist</equipmenttype>
+		<proficiencyrequirement>Medium</proficiencyrequirement>
+		<levelrequirement>5</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>1</bashac>
+		<slashac>0</slashac>
+		<pierceac>0</pierceac>
+		<fistac>1</fistac>
+		<exoticac>2</exoticac>
+		<purchasableprovince>Any</purchasableprovince>
+		<worth>3 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>4 Stones</weight>
+		<description>Belts help hold up pants. They may help misdirect a stray dagger in rare lucky occassions but essentially don't provide a lot of protection.</description>
+	</item>
+	<item number="153">
+		<name>Cord</name>
+		<character>ÿ</character>
+		<equipmenttype>Waist</equipmenttype>
+		<proficiencyrequirement>Light or Medium</proficiencyrequirement>
+		<levelrequirement>0</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>2</bashac>
+		<slashac>0</slashac>
+		<pierceac>3</pierceac>
+		<fistac>1</fistac>
+		<exoticac>4</exoticac>
+		<purchasableprovince>Any</purchasableprovince>
+		<worth>18 Vern</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>2</weight>
+		<description>A cord is a basic strip of cylindrical material wrapped about the waste to help hold ones pants up. t may be used for little else.</description>
+	</item>
+	<item number="154">
+		<name>Waistwrap</name>
+		<character>ù</character>
+		<equipmenttype>Waist</equipmenttype>
+		<proficiencyrequirement>Light or Medium</proficiencyrequirement>
+		<levelrequirement>10</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>1</bashac>
+		<slashac>0</slashac>
+		<pierceac>2</pierceac>
+		<fistac>2</fistac>
+		<exoticac>1</exoticac>
+		<purchasableprovince>Not Purchasable</purchasableprovince>
+		<worth>40 Vern</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>2 Stones</weight>
+		<description>A waistwrap is a flatter cord that instead of tied to a knot, has a metal clasp that helps maintain its tightness and allow easier undoing.</description>
+	</item>
+	<item number="155">
+		<name>Sash</name>
+		<character>ö</character>
+		<equipmenttype>Waist</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>0</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>1</bashac>
+		<slashac>0</slashac>
+		<pierceac>1</pierceac>
+		<fistac>0</fistac>
+		<exoticac>2</exoticac>
+		<purchasableprovince>Any</purchasableprovince>
+		<worth>35 Vern</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>2 Stones</weight>
+		<description>A sash is a light and wide fabric used to tie into an easily undoable knot at the corner waist or back to prevent the knot from interfering with everyday doings. The sash is draped down about a foot.</description>
+	</item>
+	<item number="156">
+		<name>Genouillere</name>
+		<character>ó</character>
+		<equipmenttype>Legs</equipmenttype>
+		<proficiencyrequirement>Medium or Heavy</proficiencyrequirement>
+		<levelrequirement>15</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>3</bashac>
+		<slashac>0</slashac>
+		<pierceac>5</pierceac>
+		<fistac>3</fistac>
+		<exoticac>0</exoticac>
+		<purchasableprovince>Not Purchasable</purchasableprovince>
+		<worth>18 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>11 Stones</weight>
+		<description>A genouillere s a kneecap pie used to protect the protruding joint from damage from a variety of sources, including tumbling.</description>
+	</item>
+	<item number="157">
+		<name>Poleyns</name>
+		<character>ᵲ</character>
+		<equipmenttype>Legs</equipmenttype>
+		<proficiencyrequirement>Heavy</proficiencyrequirement>
+		<levelrequirement>0</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>3</bashac>
+		<slashac>3</slashac>
+		<pierceac>3</pierceac>
+		<fistac>8</fistac>
+		<exoticac>3</exoticac>
+		<purchasableprovince>Menusia</purchasableprovince>
+		<worth>1 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>3 Stones</weight>
+		<description>A poleyn is a chausse that is worn about the legs. They are padded with leather bucklets and sometimes incorporate goussets.</description>
+	</item>
+	<item number="158">
+		<name>Sarongs</name>
+		<character>ᵳ</character>
+		<equipmenttype>Legs</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>20</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>2</bashac>
+		<slashac>6</slashac>
+		<pierceac>8</pierceac>
+		<fistac>4</fistac>
+		<exoticac>0</exoticac>
+		<purchasableprovince>Dumasque</purchasableprovince>
+		<worth>8 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>5 Stones</weight>
+		<description>A sarong is a colorful ankle-length kilt.</description>
+	</item>
+	<item number="159">
+		<name>Culottes</name>
+		<character>ᵴ</character>
+		<equipmenttype>Legs</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>30</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>6</bashac>
+		<slashac>6</slashac>
+		<pierceac>6</pierceac>
+		<fistac>1</fistac>
+		<exoticac>1</exoticac>
+		<purchasableprovince>Menusia</purchasableprovince>
+		<worth>11 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>7 Stones</weight>
+		<description>Culottes are knee-breeches commonly worn by gentlemen of the Menusia aristocracy.</description>
+	</item>
+	<item number="160">
+		<name>Sampot</name>
+		<character>ᵵ</character>
+		<equipmenttype>Legs</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>40</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>2</bashac>
+		<slashac>2</slashac>
+		<pierceac>9</pierceac>
+		<fistac>5</fistac>
+		<exoticac>2</exoticac>
+		<purchasableprovince>Moria</purchasableprovince>
+		<worth>17 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>3 Stones</weight>
+		<description>Sampot are rectangular attached clothes worn around the lower portions of ones body with a center one that drapes to touch the ground both in front and back.</description>
+	</item>
+	<item number="161">
+		<name>Hakama</name>
+		<character>ᵶ</character>
+		<equipmenttype>Legs</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>80</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>2</bashac>
+		<slashac>2</slashac>
+		<pierceac>2</pierceac>
+		<fistac>12</fistac>
+		<exoticac>2</exoticac>
+		<purchasableprovince>Crecia, Moria</purchasableprovince>
+		<worth>80 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>5 Stones</weight>
+		<description>Hakama are ankle-length pressed and pleated dress used to help disguise ones footwork during battle.</description>
+	</item>
+	<item number="162">
+		<name>Schynbalds</name>
+		<character>ᵷ</character>
+		<equipmenttype>Legs</equipmenttype>
+		<proficiencyrequirement>Medium</proficiencyrequirement>
+		<levelrequirement>85</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>9</bashac>
+		<slashac>4</slashac>
+		<pierceac>4</pierceac>
+		<fistac>0</fistac>
+		<exoticac>3</exoticac>
+		<purchasableprovince>Crecia, Esthar</purchasableprovince>
+		<worth>7 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>3 Stones</weight>
+		<description>Schynbalds are experimental plate armor for the lower leg. They are metal plates strapped over chausses and tend to greatly inhibit movement.</description>
+	</item>
+	<item number="163">
+		<name>Bloomers</name>
+		<character>ñ</character>
+		<equipmenttype>Legs</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>5</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>1</bashac>
+		<slashac>0</slashac>
+		<pierceac>0</pierceac>
+		<fistac>1</fistac>
+		<exoticac>0</exoticac>
+		<purchasableprovince>Moria</purchasableprovince>
+		<worth>75 Vern</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>2 Stones</weight>
+		<description>Bloomers are buggy and light pants that are tied at the waist and ankle.</description>
+	</item>
+	<item number="164">
+		<name>Breeches</name>
+		<character>ç</character>
+		<equipmenttype>Legs</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>5</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>0</bashac>
+		<slashac>1</slashac>
+		<pierceac>1</pierceac>
+		<fistac>0</fistac>
+		<exoticac>0</exoticac>
+		<purchasableprovince>New Saellem, Tharsis, Crecia</purchasableprovince>
+		<worth>82 Vern</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>2 Stones</weight>
+		<description>Breeches are bloomers that are less baggy and not tied at the ankles. Breeches also have a tendency to be slightly heavier.</description>
+	</item>
+	<item number="165">
+		<name>Trousers</name>
+		<character>û</character>
+		<equipmenttype>Legs</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>0</levelrequirement>
+		<genderrequirement>Male</genderrequirement>
+		<bashac>0</bashac>
+		<slashac>0</slashac>
+		<pierceac>1</pierceac>
+		<fistac>1</fistac>
+		<exoticac>0</exoticac>
+		<purchasableprovince>Any</purchasableprovince>
+		<worth>18 Vern</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>3 Stones</weight>
+		<description>Trousers are tight breeches that may also be slightly heavier than bloomers. Trousers are made of more material and are the most common pants of the working class.</description>
+	</item>
+	<item number="166">
+		<name>Leggings</name>
+		<character>ú</character>
+		<equipmenttype>Legs</equipmenttype>
+		<proficiencyrequirement>Medium or Heavy</proficiencyrequirement>
+		<levelrequirement>0</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>1</bashac>
+		<slashac>4</slashac>
+		<pierceac>0</pierceac>
+		<fistac>2</fistac>
+		<exoticac>1</exoticac>
+		<purchasableprovince>Any</purchasableprovince>
+		<worth>3 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>3 Stones</weight>
+		<description>Leggings are heavy leather armor created to protect one from combat. Leggings dont protect all the legs, just the thighs, knees, chins, and occassionally buttocks or calves - thought the last two are rare.</description>
+	</item>
+	<item number="167">
+		<name>Legguards</name>
+		<character>ý</character>
+		<equipmenttype>Legs</equipmenttype>
+		<proficiencyrequirement>Heavy</proficiencyrequirement>
+		<levelrequirement>10</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>2</bashac>
+		<slashac>4</slashac>
+		<pierceac>1</pierceac>
+		<fistac>1</fistac>
+		<exoticac>1</exoticac>
+		<purchasableprovince>Any</purchasableprovince>
+		<worth>18 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>4 Stones</weight>
+		<description>Legguards are basic heavy protection for teh legs, they do not include a genouillere, just an upper and lower metal casings connected by light material at teh back and knee location to ease movement.</description>
+	</item>
+	<item number="168">
+		<name>Skirt</name>
+		<character>ô</character>
+		<equipmenttype>Legs</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>0</levelrequirement>
+		<genderrequirement>Female</genderrequirement>
+		<bashac>0</bashac>
+		<slashac>1</slashac>
+		<pierceac>1</pierceac>
+		<fistac>1</fistac>
+		<exoticac>0</exoticac>
+		<purchasableprovince>Any</purchasableprovince>
+		<worth>3 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>3 Stones</weight>
+		<description>Skirts are a common tight dress that is worn predominately in Eastern Sedia by younger courting women.</description>
+	</item>
+	<item number="169">
+		<name>Split Skirt</name>
+		<character>ê</character>
+		<equipmenttype>Legs</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>0</levelrequirement>
+		<genderrequirement>Female</genderrequirement>
+		<bashac>1</bashac>
+		<slashac>1</slashac>
+		<pierceac>1</pierceac>
+		<fistac>0</fistac>
+		<exoticac>0</exoticac>
+		<purchasableprovince>New Saellem, Moran</purchasableprovince>
+		<worth>2 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>3 Stones</weight>
+		<description>A split skirt has a slit down the side to allow easier walking. Split skirts are more popular on the Eastern coast of Sedia where the temperatures are more moderate.</description>
+	</item>
+	<item number="170">
+		<name>Tights</name>
+		<character>ë</character>
+		<equipmenttype>Legs</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>0</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>1</bashac>
+		<slashac>0</slashac>
+		<pierceac>0</pierceac>
+		<fistac>0</fistac>
+		<exoticac>0</exoticac>
+		<purchasableprovince>Crecia, Narsis</purchasableprovince>
+		<worth>40 Vern</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>3 Stones</weight>
+		<description>Tights are exactly what the name suggests... tight. They are composed of light elastic material that sticks to the legs. In an uncomfortable fashion, because apparantly fashion is important.</description>
+	</item>
+	<item number="171">
+		<name>Pantaloons</name>
+		<character>í</character>
+		<equipmenttype>Legs</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>0</levelrequirement>
+		<genderrequirement>Male</genderrequirement>
+		<bashac>1</bashac>
+		<slashac>0</slashac>
+		<pierceac>0</pierceac>
+		<fistac>1</fistac>
+		<exoticac>1</exoticac>
+		<purchasableprovince>Crecia</purchasableprovince>
+		<worth>30 Vern</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>3 Stones</weight>
+		<description>Pantaloons are tights for males. They are elastic and accommodating to the anatomy of a male while to be used in theatre and underclothes in situations where armor might be causing great discomfort by rubbing against the skin or general metal allergies like nickel.</description>
+	</item>
+	<item number="172">
+		<name>Scale Leggings</name>
+		<character>ü</character>
+		<equipmenttype>Legs</equipmenttype>
+		<proficiencyrequirement>Heavy</proficiencyrequirement>
+		<levelrequirement>30</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>7</bashac>
+		<slashac>8</slashac>
+		<pierceac>3</pierceac>
+		<fistac>1</fistac>
+		<exoticac>5</exoticac>
+		<purchasableprovince>Amari</purchasableprovince>
+		<worth>89 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>14 Stones</weight>
+		<description>Scale leggings are very old and rarely seen except when found as enchanted relics of ages past. The craft of scales has not been passed down through the generations, and only a few grand aster artisans are able to replicate it.</description>
+	</item>
+	<item number="173">
+		<name>Splint Leggings</name>
+		<character>Ь</character>
+		<equipmenttype>Legs</equipmenttype>
+		<proficiencyrequirement>Exotic</proficiencyrequirement>
+		<levelrequirement>40</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>10</bashac>
+		<slashac>9</slashac>
+		<pierceac>5</pierceac>
+		<fistac>3</fistac>
+		<exoticac>5</exoticac>
+		<purchasableprovince>Not Purchasable</purchasableprovince>
+		<worth>2 Sovern</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>13 Stones</weight>
+		<description>Splint leggings are terribly exotic and rare. The wood has a tendency to soak up immense enchantments and provide ease of use to those expert templars adept in the exotic armor.</description>
+	</item>
+	<item number="174">
+		<name>Helf-Plate Leggings</name>
+		<character>ы</character>
+		<equipmenttype>Legs</equipmenttype>
+		<proficiencyrequirement>Heavy</proficiencyrequirement>
+		<levelrequirement>50</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>10</bashac>
+		<slashac>10</slashac>
+		<pierceac>9</pierceac>
+		<fistac>4</fistac>
+		<exoticac>8</exoticac>
+		<purchasableprovince>Any</purchasableprovince>
+		<worth>54 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>15 Stones</weight>
+		<description>Halfplate is a combination of plate and medium leathers to provide easier use and greater adaptability during combat scenarios.</description>
+	</item>
+	<item number="175">
+		<name>Plate Leggings</name>
+		<character>ш</character>
+		<equipmenttype>Legs</equipmenttype>
+		<proficiencyrequirement>Heavy</proficiencyrequirement>
+		<levelrequirement>60</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>10</bashac>
+		<slashac>10</slashac>
+		<pierceac>10</pierceac>
+		<fistac>9</fistac>
+		<exoticac>10</exoticac>
+		<purchasableprovince>Crecia, Tharsis, Jewall</purchasableprovince>
+		<worth>67 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>16 Stones</weight>
+		<description>Plate leggings provide great protection, and are seemingly the best leg equipment type available for those who use heavy equipment. Plate has a tendency to greatly encumber its users.</description>
+	</item>
+	<item number="176">
+		<name>Chainmail Leggings</name>
+		<character>щ</character>
+		<equipmenttype>Legs</equipmenttype>
+		<proficiencyrequirement>Heavy</proficiencyrequirement>
+		<levelrequirement>40</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>5</bashac>
+		<slashac>10</slashac>
+		<pierceac>3</pierceac>
+		<fistac>5</fistac>
+		<exoticac>9</exoticac>
+		<purchasableprovince>Any</purchasableprovince>
+		<worth>49 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>14 Stones</weight>
+		<description>Chainmail leggings are made of smaller ringlets tied together to enable ultimate protection against a variety of damaging types. Chainmail is newer to Sedia and is begining to boom in popularity.</description>
+	</item>
+	<item number="177">
+		<name>Greaves</name>
+		<character>ч</character>
+		<equipmenttype>Legs</equipmenttype>
+		<proficiencyrequirement>Heavy</proficiencyrequirement>
+		<levelrequirement>20</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>4</bashac>
+		<slashac>6</slashac>
+		<pierceac>3</pierceac>
+		<fistac>3</fistac>
+		<exoticac>4</exoticac>
+		<purchasableprovince>Any</purchasableprovince>
+		<worth>25 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>13 Stones</weight>
+		<description>Greaves are plated armor made exclusively for battle against a variety of enemies. There are a handful of types still made.</description>
+	</item>
+	<item number="178">
+		<name>Slippers</name>
+		<character>љ</character>
+		<equipmenttype>Feet</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>0</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>1</bashac>
+		<slashac>1</slashac>
+		<pierceac>0</pierceac>
+		<fistac>1</fistac>
+		<exoticac>1</exoticac>
+		<purchasableprovince>Any</purchasableprovince>
+		<worth>33 Vern</worth>
+		<affectedbymaterials>No</affectedbymaterials>
+		<weight>3 Stones</weight>
+		<description>Slippers are soft shoes worn about the house. They provide hardly any protection except preventing dirt or mess upon ones feet.</description>
+	</item>
+	<item number="179">
+		<name>Moccasin</name>
+		<character>ᵹ</character>
+		<equipmenttype>Feet</equipmenttype>
+		<proficiencyrequirement>Medium</proficiencyrequirement>
+		<levelrequirement>0</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>1</bashac>
+		<slashac>2</slashac>
+		<pierceac>2</pierceac>
+		<fistac>5</fistac>
+		<exoticac>10</exoticac>
+		<purchasableprovince>Crecia, Amari, New Saellem</purchasableprovince>
+		<worth>2 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>4 Stones</weight>
+		<description>Moccasin are shoes made completely of leather, stitched togeth at the top. The sole is usually soft and flexible with an upper part stopping right above the ankle for extra protection.</description>
+	</item>
+	<item number="180">
+		<name>Loafers</name>
+		<character>ᵺ</character>
+		<equipmenttype>Feet</equipmenttype>
+		<proficiencyrequirement>Medium</proficiencyrequirement>
+		<levelrequirement>5</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>4</bashac>
+		<slashac>5</slashac>
+		<pierceac>5</pierceac>
+		<fistac>4</fistac>
+		<exoticac>2</exoticac>
+		<purchasableprovince>New Saellem, Jewall</purchasableprovince>
+		<worth>4 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>4 Stones</weight>
+		<description>Loafers are lace-less shoes. They are slipped on and stop well below the ankle and usually have an elaborate top stitching.</description>
+	</item>
+	<item number="181">
+		<name>Valenki</name>
+		<character>ᵽ</character>
+		<equipmenttype>Feet</equipmenttype>
+		<proficiencyrequirement>Medium</proficiencyrequirement>
+		<levelrequirement>10</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>5</bashac>
+		<slashac>5</slashac>
+		<pierceac>4</pierceac>
+		<fistac>4</fistac>
+		<exoticac>2</exoticac>
+		<purchasableprovince>Dumasque, New Saellem</purchasableprovince>
+		<worth>5 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>4 Stones</weight>
+		<description>Valenki are winter footwear and are usually made of felt or wool. They stop above the ankle and are round in shape.</description>
+	</item>
+	<item number="182">
+		<name>Footplates</name>
+		<character>ᵾ</character>
+		<equipmenttype>Feet</equipmenttype>
+		<proficiencyrequirement>Heavy</proficiencyrequirement>
+		<levelrequirement>20</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>6</bashac>
+		<slashac>4</slashac>
+		<pierceac>5</pierceac>
+		<fistac>6</fistac>
+		<exoticac>1</exoticac>
+		<purchasableprovince>Any</purchasableprovince>
+		<worth>29 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>5 Stones</weight>
+		<description>Footplates are terribly heaver foot armor worn with plated casings to help against aggressive damage during warefare. Because of their weight and restrictions, it makes it difficult to move and perform agile combat operations.</description>
+	</item>
+	<item number="183">
+		<name>Mules</name>
+		<character>ᵿ</character>
+		<equipmenttype>Feet</equipmenttype>
+		<proficiencyrequirement>Medium</proficiencyrequirement>
+		<levelrequirement>25</levelrequirement>
+		<genderrequirement>Female</genderrequirement>
+		<bashac>2</bashac>
+		<slashac>4</slashac>
+		<pierceac>2</pierceac>
+		<fistac>3</fistac>
+		<exoticac>9</exoticac>
+		<purchasableprovince>Jewall, Crecia, New Saellem</purchasableprovince>
+		<worth>30 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>4 Stones</weight>
+		<description>Mules are backless and often closed-toed shoes worn by females. They usually have high heels, but can be made with a variety of heel heights.  They are made of leather.</description>
+	</item>
+	<item number="184">
+		<name>Geta</name>
+		<character>ᶀ</character>
+		<equipmenttype>Feet</equipmenttype>
+		<proficiencyrequirement>Medium</proficiencyrequirement>
+		<levelrequirement>35</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>0</bashac>
+		<slashac>7</slashac>
+		<pierceac>2</pierceac>
+		<fistac>8</fistac>
+		<exoticac>3</exoticac>
+		<purchasableprovince>Crecia, Moria</purchasableprovince>
+		<worth>11 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>4 Stones</weight>
+		<description>Geta are wooden sandals with a fabric thong and are used to keep the foot well above the ground. They are used in marshy or rainy regions where mud is very common.</description>
+	</item>
+	<item number="185">
+		<name>Espadrille</name>
+		<character>ᶁ</character>
+		<equipmenttype>Feet</equipmenttype>
+		<proficiencyrequirement>Medium</proficiencyrequirement>
+		<levelrequirement>45</levelrequirement>
+		<genderrequirement>Female</genderrequirement>
+		<bashac>3</bashac>
+		<slashac>4</slashac>
+		<pierceac>3</pierceac>
+		<fistac>5</fistac>
+		<exoticac>5</exoticac>
+		<purchasableprovince>Crecia, Moria</purchasableprovince>
+		<worth>13 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>4 Stones</weight>
+		<description>Espadrille are normally casual flat, but sometimes have a small heel. They are leather soled with a fabric encasement to protect the foot from very light damage, but mostly intended to keep the foot clean during travel.</description>
+	</item>
+	<item number="186">
+		<name>Derby</name>
+		<character>ᶂ</character>
+		<equipmenttype>Feet</equipmenttype>
+		<proficiencyrequirement>Medium</proficiencyrequirement>
+		<levelrequirement>55</levelrequirement>
+		<genderrequirement>Male</genderrequirement>
+		<bashac>4</bashac>
+		<slashac>4</slashac>
+		<pierceac>9</pierceac>
+		<fistac>3</fistac>
+		<exoticac>0</exoticac>
+		<purchasableprovince>New Saellem</purchasableprovince>
+		<worth>13 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>5 Stones</weight>
+		<description>A derby shoe is a style of leather dress shoe similar to oxfords.</description>
+	</item>
+	<item number="187">
+		<name>Creepers</name>
+		<character>ᶃ</character>
+		<equipmenttype>Feet</equipmenttype>
+		<proficiencyrequirement>Medium</proficiencyrequirement>
+		<levelrequirement>65</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>5</bashac>
+		<slashac>5</slashac>
+		<pierceac>5</pierceac>
+		<fistac>5</fistac>
+		<exoticac>0</exoticac>
+		<purchasableprovince>Narsis</purchasableprovince>
+		<worth>50 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>1 Stones</weight>
+		<description>creepers are leather shoes with padded bottoms to help suppress sound caused by movement.</description>
+	</item>
+	<item number="188">
+		<name>Ugg</name>
+		<character>ᶄ</character>
+		<equipmenttype>Feet</equipmenttype>
+		<proficiencyrequirement>Medium</proficiencyrequirement>
+		<levelrequirement>70</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>2</bashac>
+		<slashac>2</slashac>
+		<pierceac>2</pierceac>
+		<fistac>6</fistac>
+		<exoticac>8</exoticac>
+		<purchasableprovince>Jewall</purchasableprovince>
+		<worth>50 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>5 Stones</weight>
+		<description>Uggs are fur-inlined leather boots used to keep the feet incredibly warm throughout cold regions. They usually have a fur top.</description>
+	</item>
+	<item number="189">
+		<name>Brogues</name>
+		<character>ᶅ</character>
+		<equipmenttype>Feet</equipmenttype>
+		<proficiencyrequirement>Medium</proficiencyrequirement>
+		<levelrequirement>80</levelrequirement>
+		<genderrequirement>Male</genderrequirement>
+		<bashac>8</bashac>
+		<slashac>6</slashac>
+		<pierceac>2</pierceac>
+		<fistac>2</fistac>
+		<exoticac>2</exoticac>
+		<purchasableprovince>Moria</purchasableprovince>
+		<worth>50 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>6 Stones</weight>
+		<description>Brogues are the most elaborate dress shoe similar to oxfords and are worn only by men. They usually have a small heel.</description>
+	</item>
+	<item number="190">
+		<name>Jodhpur</name>
+		<character>ᶆ</character>
+		<equipmenttype>Feet</equipmenttype>
+		<proficiencyrequirement>Medium</proficiencyrequirement>
+		<levelrequirement>80</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>2</bashac>
+		<slashac>2</slashac>
+		<pierceac>6</pierceac>
+		<fistac>2</fistac>
+		<exoticac>8</exoticac>
+		<purchasableprovince>New Saellem</purchasableprovince>
+		<worth>49 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>5 Stones</weight>
+		<description>A jodhpur boot is usually worn during riding of horses and are made of leather, coming up to the lower leg.</description>
+	</item>
+	<item number="191">
+		<name>Oxfords</name>
+		<character>ᶈ</character>
+		<equipmenttype>Feet</equipmenttype>
+		<proficiencyrequirement>Medium</proficiencyrequirement>
+		<levelrequirement>85</levelrequirement>
+		<genderrequirement>Male</genderrequirement>
+		<bashac>6</bashac>
+		<slashac>2</slashac>
+		<pierceac>2</pierceac>
+		<fistac>8</fistac>
+		<exoticac>2</exoticac>
+		<purchasableprovince>Esthar</purchasableprovince>
+		<worth>49 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>5 Stones</weight>
+		<description>Oxfords are elaborate male dress shoes made of leather.</description>
+	</item>
+	<item number="192">
+		<name>Sandals</name>
+		<character>њ</character>
+		<equipmenttype>Feet</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>0</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>1</bashac>
+		<slashac>1</slashac>
+		<pierceac>1</pierceac>
+		<fistac>0</fistac>
+		<exoticac>1</exoticac>
+		<purchasableprovince>Dumasque, Crecia</purchasableprovince>
+		<worth>10 Vern</worth>
+		<affectedbymaterials>No</affectedbymaterials>
+		<weight>2 Stones</weight>
+		<description>Sandals are used predominately in hot areas such as near Dumasque, They are also worn during hot months throughout Sedia.</description>
+	</item>
+	<item number="193">
+		<name>Stalkers</name>
+		<character>ь</character>
+		<equipmenttype>Feet</equipmenttype>
+		<proficiencyrequirement>Light or Medium</proficiencyrequirement>
+		<levelrequirement>10</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>2</bashac>
+		<slashac>2</slashac>
+		<pierceac>2</pierceac>
+		<fistac>1</fistac>
+		<exoticac>2</exoticac>
+		<purchasableprovince>Narsis, Tharsis, Dumasque, New Saellem</purchasableprovince>
+		<worth>18 Dover</worth>
+		<affectedbymaterials>No</affectedbymaterials>
+		<weight>2 Stones</weight>
+		<description>Stalkers are a rare foot equipment used to help one sneak about without others noticing, they are also tailored to the agile combat favored by the shadowwalkers and cutpurses.</description>
+	</item>
+	<item number="194">
+		<name>Footguards</name>
+		<character>ю</character>
+		<equipmenttype>Feet</equipmenttype>
+		<proficiencyrequirement>Medium or Heavy</proficiencyrequirement>
+		<levelrequirement>20</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>3</bashac>
+		<slashac>4</slashac>
+		<pierceac>2</pierceac>
+		<fistac>2</fistac>
+		<exoticac>1</exoticac>
+		<purchasableprovince>Any</purchasableprovince>
+		<worth>29 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>2 Stones</weight>
+		<description>Footguards are generic armor equipment used to prevent damage to ones foot during combat. Such accidents as dropping ones weapon during fighting can be marked off as a harmless accident.</description>
+	</item>
+	<item number="195">
+		<name>Scale Boots</name>
+		<character>Ж</character>
+		<equipmenttype>Feet</equipmenttype>
+		<proficiencyrequirement>Heavy</proficiencyrequirement>
+		<levelrequirement>30</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>3</bashac>
+		<slashac>5</slashac>
+		<pierceac>3</pierceac>
+		<fistac>3</fistac>
+		<exoticac>1</exoticac>
+		<purchasableprovince>Amari</purchasableprovince>
+		<worth>88 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>4 Stones</weight>
+		<description>Scale boots are rare and though not to be made anymore except by maybe the grandmaster arisans of crafts. Scale boots were crafted in homage of dragons in the years before the War of Souls when Draconians walked openly being praised by others.</description>
+	</item>
+	<item number="196">
+		<name>Splint Boots</name>
+		<character>ж</character>
+		<equipmenttype>Feet</equipmenttype>
+		<proficiencyrequirement>Exotic</proficiencyrequirement>
+		<levelrequirement>40</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>5</bashac>
+		<slashac>6</slashac>
+		<pierceac>4</pierceac>
+		<fistac>4</fistac>
+		<exoticac>2</exoticac>
+		<purchasableprovince>Not Purchasable</purchasableprovince>
+		<worth>1 Sovern</worth>
+		<affectedbymaterials>Wood</affectedbymaterials>
+		<weight>4 Stones</weight>
+		<description>Splint boots are a very rare armor type, found to commonly be enchanted greatly due to the adherance of the strange equipment to soak magic easily.</description>
+	</item>
+	<item number="197">
+		<name>Half-plate Boots</name>
+		<character>Я</character>
+		<equipmenttype>Feet</equipmenttype>
+		<proficiencyrequirement>Heavy</proficiencyrequirement>
+		<levelrequirement>50</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>8</bashac>
+		<slashac>5</slashac>
+		<pierceac>2</pierceac>
+		<fistac>4</fistac>
+		<exoticac>3</exoticac>
+		<purchasableprovince>Narsis, New Saellem, Esthar</purchasableprovince>
+		<worth>55 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>7 Stones</weight>
+		<description>Halfplate boots are a very common armor type made of leather and heavy materials to balance maneaverability in combat and utility of protection.</description>
+	</item>
+	<item number="198">
+		<name>Plate Boots</name>
+		<character>ъ</character>
+		<equipmenttype>Feet</equipmenttype>
+		<proficiencyrequirement>Heavy</proficiencyrequirement>
+		<levelrequirement>60</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>8</bashac>
+		<slashac>8</slashac>
+		<pierceac>5</pierceac>
+		<fistac>8</fistac>
+		<exoticac>4</exoticac>
+		<purchasableprovince>Crecia, Tharsis, Jewall</purchasableprovince>
+		<worth>65 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>8 Stones</weight>
+		<description>Plate boots are the most encumbersome, but protective foot equipment available. Plate boots are the standar for templars and many other combatant types.</description>
+	</item>
+	<item number="199">
+		<name>Anklet</name>
+		<character>б</character>
+		<equipmenttype>Feet</equipmenttype>
+		<proficiencyrequirement>No</proficiencyrequirement>
+		<levelrequirement>0</levelrequirement>
+		<genderrequirement>Female</genderrequirement>
+		<bashac>1</bashac>
+		<slashac>0</slashac>
+		<pierceac>0</pierceac>
+		<fistac>0</fistac>
+		<exoticac>0</exoticac>
+		<purchasableprovince>Crecia, Tharsis</purchasableprovince>
+		<worth>40 Vern</worth>
+		<affectedbymaterials>No</affectedbymaterials>
+		<weight>0 Stones</weight>
+		<description>An anklet is a small little piece of jewelry wrapped about ones ankle that may or may not have a personal meaning.</description>
+	</item>
+	<item number="200">
+		<name>Boots</name>
+		<character>П</character>
+		<equipmenttype>Feet</equipmenttype>
+		<proficiencyrequirement>Medium or Heavy</proficiencyrequirement>
+		<levelrequirement>0</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>1</bashac>
+		<slashac>2</slashac>
+		<pierceac>1</pierceac>
+		<fistac>0</fistac>
+		<exoticac>1</exoticac>
+		<purchasableprovince>Any</purchasableprovince>
+		<worth>1 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>2 Stones</weight>
+		<description>Boots are worn on the feet and may be composed of a variety of materials. They offer protection from general walking to some combat warfare.</description>
+	</item>
+	<item number="201">
+		<name>Long Boots</name>
+		<character>ц</character>
+		<equipmenttype>Feet</equipmenttype>
+		<proficiencyrequirement>Medium or Heavy</proficiencyrequirement>
+		<levelrequirement>30</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>2</bashac>
+		<slashac>4</slashac>
+		<pierceac>3</pierceac>
+		<fistac>1</fistac>
+		<exoticac>2</exoticac>
+		<purchasableprovince>Moria</purchasableprovince>
+		<worth>38 Dover</worth>
+		<affectedbymaterials>Yes</affectedbymaterials>
+		<weight>3 Stones</weight>
+		<description>Long boots are meant to provide extra protection by enclosing a greater part of the leg. These scaled boots may also prevent water from entering and are helpful on mudflats or shallow water.</description>
+	</item>
+	<item number="202">
+		<name>Ring</name>
+		<character>ф</character>
+		<equipmenttype>Finger</equipmenttype>
+		<proficiencyrequirement>No</proficiencyrequirement>
+		<levelrequirement>0</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>0</bashac>
+		<slashac>0</slashac>
+		<pierceac>0</pierceac>
+		<fistac>0</fistac>
+		<exoticac>0</exoticac>
+		<purchasableprovince>Any</purchasableprovince>
+		<worth>50 Dover</worth>
+		<affectedbymaterials>No</affectedbymaterials>
+		<weight>0 Stones</weight>
+		<description>A ring is a basic band worn about a finger that may include pieces of precious rocks or materials that appeal cosmeticly. In popular culture rings may generally serve a greater significance or purpose such as an emblem of ones rank.</description>
+	</item>
+	<item number="203">
+		<name>Claddagh Ring</name>
+		<character>ᶇ</character>
+		<equipmenttype>Finger</equipmenttype>
+		<proficiencyrequirement>No</proficiencyrequirement>
+		<levelrequirement>0</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>0</bashac>
+		<slashac>0</slashac>
+		<pierceac>0</pierceac>
+		<fistac>0</fistac>
+		<exoticac>0</exoticac>
+		<purchasableprovince>Jewall</purchasableprovince>
+		<worth>50 Dover</worth>
+		<affectedbymaterials>No</affectedbymaterials>
+		<weight>0 Stones</weight>
+		<description>A claddagh ring is a traditional dwarvish ring used as a token of friendship, love, or sometimes even as an engagement ring. The ring is usually adorned with a crown symbol at the top.</description>
+	</item>
+	<item number="4">
+		<name>Engineers Ring</name>
+		<character>ᶓ</character>
+		<equipmenttype>Finger</equipmenttype>
+		<proficiencyrequirement>No</proficiencyrequirement>
+		<levelrequirement>0</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>0</bashac>
+		<slashac>0</slashac>
+		<pierceac>0</pierceac>
+		<fistac>0</fistac>
+		<exoticac>0</exoticac>
+		<purchasableprovince>Jewall</purchasableprovince>
+		<worth>50 Dover</worth>
+		<affectedbymaterials>No</affectedbymaterials>
+		<weight>0 Stones</weight>
+		<description>an engineer's ring is worn by those who follow the philosophy of engineering the future. The rings are usually clipped and unnattractive rings.</description>
+	</item>
+	<item number="205">
+		<name>Sovereign Ring</name>
+		<character>ᶚ</character>
+		<equipmenttype>Finger</equipmenttype>
+		<proficiencyrequirement>No</proficiencyrequirement>
+		<levelrequirement>0</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>0</bashac>
+		<slashac>0</slashac>
+		<pierceac>0</pierceac>
+		<fistac>0</fistac>
+		<exoticac>0</exoticac>
+		<purchasableprovince>Jewall</purchasableprovince>
+		<worth>50 Dover</worth>
+		<affectedbymaterials>No</affectedbymaterials>
+		<weight>0 Stones</weight>
+		<description>Sovereign rings are most generally made of gold and have the crest of the head of the household, the head of the aristocracy rank by which the ring implies.</description>
+	</item>
+	<item number="206">
+		<name>Finger Armor</name>
+		<character>ᶗ</character>
+		<equipmenttype>Finger</equipmenttype>
+		<proficiencyrequirement>No</proficiencyrequirement>
+		<levelrequirement>0</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>1</bashac>
+		<slashac>1</slashac>
+		<pierceac>1</pierceac>
+		<fistac>1</fistac>
+		<exoticac>1</exoticac>
+		<purchasableprovince>Jewall</purchasableprovince>
+		<worth>50 Dover</worth>
+		<affectedbymaterials>No</affectedbymaterials>
+		<weight>0 Stones</weight>
+		<description>Finger armor is plated and spiked encasements that are usually worn about one finger that have a claw at the end.</description>
+	</item>
+	<item number="207">
+		<name>Band</name>
+		<character>г</character>
+		<equipmenttype>Finger</equipmenttype>
+		<proficiencyrequirement>No</proficiencyrequirement>
+		<levelrequirement>0</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>0</bashac>
+		<slashac>0</slashac>
+		<pierceac>0</pierceac>
+		<fistac>0</fistac>
+		<exoticac>0</exoticac>
+		<purchasableprovince>Any</purchasableprovince>
+		<worth>50 Dover</worth>
+		<affectedbymaterials>No</affectedbymaterials>
+		<weight>0 Stones</weight>
+		<description>A band is a ring that may be slightly of less significance though retaining a similar monetary value.</description>
+	</item>
+	<item number="208">
+		<name>Thumb Ring</name>
+		<character>я</character>
+		<equipmenttype>Finger</equipmenttype>
+		<proficiencyrequirement>No</proficiencyrequirement>
+		<levelrequirement>0</levelrequirement>
+		<genderrequirement>Female</genderrequirement>
+		<bashac>0</bashac>
+		<slashac>0</slashac>
+		<pierceac>0</pierceac>
+		<fistac>0</fistac>
+		<exoticac>0</exoticac>
+		<purchasableprovince>Amari</purchasableprovince>
+		<worth>50 Dover</worth>
+		<affectedbymaterials>No</affectedbymaterials>
+		<weight>0 Stones</weight>
+		<description>Thumb rings are a sign of the bonding of one to a guild. Though few wear them, they generally are colored and worn by the highest officials with signets of the guild emblems and general authority.</description>
+	</item>
+	<item number="209">
+		<name>Wedding Ring</name>
+		<character>Л</character>
+		<equipmenttype>Finger</equipmenttype>
+		<proficiencyrequirement>No</proficiencyrequirement>
+		<levelrequirement>0</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>0</bashac>
+		<slashac>0</slashac>
+		<pierceac>0</pierceac>
+		<fistac>0</fistac>
+		<exoticac>0</exoticac>
+		<purchasableprovince>Any</purchasableprovince>
+		<worth>50 Dover</worth>
+		<affectedbymaterials>No</affectedbymaterials>
+		<weight>0 Stones</weight>
+		<description>Wedding rings show a persons binding to another in a public fashion to prevent others from impeding upon courting fashion or other impure mannerisms.</description>
+	</item>
+	<item number="210">
+		<name>Engagement Ring</name>
+		<character>л</character>
+		<equipmenttype>Finger</equipmenttype>
+		<proficiencyrequirement>No</proficiencyrequirement>
+		<levelrequirement>0</levelrequirement>
+		<genderrequirement>Female</genderrequirement>
+		<bashac>0</bashac>
+		<slashac>0</slashac>
+		<pierceac>0</pierceac>
+		<fistac>0</fistac>
+		<exoticac>0</exoticac>
+		<purchasableprovince>Any</purchasableprovince>
+		<worth>50 Dover</worth>
+		<affectedbymaterials>No</affectedbymaterials>
+		<weight>0 Stones</weight>
+		<description>Engagement rings show an intention of bonding oneself into marriage, and a clear intention to avoid the courting life and prepare oneself for a wedding.</description>
+	</item>
+	<item number="211">
+		<name>Signet Ring</name>
+		<character>Φ</character>
+		<equipmenttype>Finger</equipmenttype>
+		<proficiencyrequirement>No</proficiencyrequirement>
+		<levelrequirement>0</levelrequirement>
+		<genderrequirement>Male</genderrequirement>
+		<bashac>0</bashac>
+		<slashac>0</slashac>
+		<pierceac>0</pierceac>
+		<fistac>0</fistac>
+		<exoticac>0</exoticac>
+		<purchasableprovince>Not Purchasable</purchasableprovince>
+		<worth>50 Dover</worth>
+		<affectedbymaterials>No</affectedbymaterials>
+		<weight>0 Stones</weight>
+		<description>Signet rings are used to impress a house or guild sigil upon glut wax to seal a confidential envelope. They have security impressions that are almost impossible to duplicate and provide distinction to each individual ring.</description>
+	</item>
+	<item number="212">
+		<name>Blood Ring</name>
+		<character>τ</character>
+		<equipmenttype>Finger</equipmenttype>
+		<proficiencyrequirement>No</proficiencyrequirement>
+		<levelrequirement>0</levelrequirement>
+		<genderrequirement>Male</genderrequirement>
+		<bashac>0</bashac>
+		<slashac>0</slashac>
+		<pierceac>0</pierceac>
+		<fistac>0</fistac>
+		<exoticac>0</exoticac>
+		<purchasableprovince>Narsis</purchasableprovince>
+		<worth>50 Dover</worth>
+		<affectedbymaterials>No</affectedbymaterials>
+		<weight>0 Stones</weight>
+		<description>Blood rings are given to death assassins of those whose missions must be carried out in success or die by magical application of the ring. They are also referred to as oath or death rings. Its called blood because its activated by a drop of the wearers blood.</description>
+	</item>
+	<item number="213">
+		<name>Aegis</name>
+		<character>µ</character>
+		<equipmenttype>Shield</equipmenttype>
+		<proficiencyrequirement>Medium</proficiencyrequirement>
+		<levelrequirement>60</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>15</bashac>
+		<slashac>14</slashac>
+		<pierceac>14</pierceac>
+		<fistac>15</fistac>
+		<exoticac>15</exoticac>
+		<purchasableprovince>Tharsis, Narsis, Crecia</purchasableprovince>
+		<worth>69 Dover</worth>
+		<affectedbymaterials>Wood</affectedbymaterials>
+		<weight>10 Stones</weight>
+		<description>An aegis is a powerful shield type that can be represented in a variety of shapes though usually a round-edged triangle, or a scutum shape with reinforced backing and precious material lining the surface that makes it difficult to break through.</description>
+	</item>
+	<item number="214">
+		<name>Scutum</name>
+		<character>σ</character>
+		<equipmenttype>Shield</equipmenttype>
+		<proficiencyrequirement>Heavy</proficiencyrequirement>
+		<levelrequirement>35</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>9</bashac>
+		<slashac>9</slashac>
+		<pierceac>9</pierceac>
+		<fistac>9</fistac>
+		<exoticac>9</exoticac>
+		<purchasableprovince>New Saellem, Moria</purchasableprovince>
+		<worth>2 Sovern</worth>
+		<affectedbymaterials>Wood</affectedbymaterials>
+		<weight>10 Stones</weight>
+		<description>A scutum shield looks like a long oval, sometimes with pointed top and bottoms with spikes. A scutum is rounded slightly to deflect blows from melee and ranged weapons.</description>
+	</item>
+	<item number="215">
+		<name>Targe</name>
+		<character>Θ</character>
+		<equipmenttype>Shield</equipmenttype>
+		<proficiencyrequirement>Medium</proficiencyrequirement>
+		<levelrequirement>20</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>8</bashac>
+		<slashac>8</slashac>
+		<pierceac>8</pierceac>
+		<fistac>8</fistac>
+		<exoticac>8</exoticac>
+		<purchasableprovince>Esthar</purchasableprovince>
+		<worth>29 Dover</worth>
+		<affectedbymaterials>Wood</affectedbymaterials>
+		<weight>10 Stones</weight>
+		<description>A targe shield is a rounded or square shield encompassed by metal rings. It absorbs damage instead of reflecting it and has a tendency to break or crack with too much ranged absorbtion.</description>
+	</item>
+	<item number="216">
+		<name>Roundel</name>
+		<character>Ω</character>
+		<equipmenttype>Shield</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>50</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>12</bashac>
+		<slashac>12</slashac>
+		<pierceac>12</pierceac>
+		<fistac>12</fistac>
+		<exoticac>12</exoticac>
+		<purchasableprovince>Not Purchasable</purchasableprovince>
+		<worth>50 Dover</worth>
+		<affectedbymaterials>Wood</affectedbymaterials>
+		<weight>10 Stones</weight>
+		<description>A roundel is a round convex shield made of precious and strong material used to strictly deflect. It is the preferred shield against ranged fire because of its lightness and maneuverability.</description>
+	</item>
+	<item number="217">
+		<name>Buckler</name>
+		<character>δ</character>
+		<equipmenttype>Shield</equipmenttype>
+		<proficiencyrequirement>Light</proficiencyrequirement>
+		<levelrequirement>0</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>5</bashac>
+		<slashac>5</slashac>
+		<pierceac>5</pierceac>
+		<fistac>5</fistac>
+		<exoticac>5</exoticac>
+		<purchasableprovince>Any</purchasableprovince>
+		<worth>10 Dover</worth>
+		<affectedbymaterials>Wood</affectedbymaterials>
+		<weight>10 Stones</weight>
+		<description>A buckler is a wooden shield with two iron strips that is one of the most basic forms of shield protection available. Bucklers are the most common shield type currently in existence.</description>
+	</item>
+	<item number="218">
+		<name>Disc Shield</name>
+		<character>Σ</character>
+		<equipmenttype>Shield</equipmenttype>
+		<proficiencyrequirement>Heavy</proficiencyrequirement>
+		<levelrequirement>70</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>18</bashac>
+		<slashac>17</slashac>
+		<pierceac>15</pierceac>
+		<fistac>15</fistac>
+		<exoticac>15</exoticac>
+		<purchasableprovince>Amari</purchasableprovince>
+		<worth>7 Sovern</worth>
+		<affectedbymaterials>Metal</affectedbymaterials>
+		<weight>15 Stones</weight>
+		<description>The second most expensive shield, the disc resembles a roundel except it is entirely made of slick surfaced rare material. It is so efficient at deflecting that it rarely becomes damaged.</description>
+	</item>
+	<item number="219">
+		<name>Heater Shield</name>
+		<character>∞</character>
+		<equipmenttype>Shield</equipmenttype>
+		<proficiencyrequirement>Exotic</proficiencyrequirement>
+		<levelrequirement>80</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>18</bashac>
+		<slashac>18</slashac>
+		<pierceac>19</pierceac>
+		<fistac>16</fistac>
+		<exoticac>16</exoticac>
+		<purchasableprovince>Not Purchasable</purchasableprovince>
+		<worth>9 Sovern</worth>
+		<affectedbymaterials>Gem</affectedbymaterials>
+		<weight>18 Stones</weight>
+		<description>Heater shield are magically imbued to resist all forms of fire magic. The magic is absorbed completely without damaing the shield. This does not ensure that the user can block proficiently. They were made in days past when dragons wandered freely and man deemed them sport for combat.</description>
+	</item>
+	<item number="220">
+		<name>Bulwark</name>
+		<character>π</character>
+		<equipmenttype>Shield</equipmenttype>
+		<proficiencyrequirement>Medium or Heavy</proficiencyrequirement>
+		<levelrequirement>40</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>10</bashac>
+		<slashac>10</slashac>
+		<pierceac>9</pierceac>
+		<fistac>9</fistac>
+		<exoticac>9</exoticac>
+		<purchasableprovince>Menusia</purchasableprovince>
+		<worth>40 Dover</worth>
+		<affectedbymaterials>Wood</affectedbymaterials>
+		<weight>10 Stones</weight>
+		<description>Bulwark is the largest shield in existence, slightly larger than the tower shield. In its expert craftsmanship it is made to be no lighter, but because of this, its integrity can't withstand a tremendous amount of force.</description>
+	</item>
+	<item number="221">
+		<name>Tower Shield</name>
+		<character>φ</character>
+		<equipmenttype>Shield</equipmenttype>
+		<proficiencyrequirement>Heavy</proficiencyrequirement>
+		<levelrequirement>60</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>14</bashac>
+		<slashac>13</slashac>
+		<pierceac>15</pierceac>
+		<fistac>15</fistac>
+		<exoticac>16</exoticac>
+		<purchasableprovince>Tharsis, Narsis, Jewall</purchasableprovince>
+		<worth>11 Sovern</worth>
+		<affectedbymaterials>Wood</affectedbymaterials>
+		<weight>10 Stones</weight>
+		<description>Tower shields are the standard of the west central kingdoms for templars, and are  very much worth their weight in vern. Tower shields generally represent a large rectangle, bent slightly to caccoon with other shields in a turtle of phalanx battle formations.</description>
+	</item>
+	<item number="222">
+		<name>Kite Shield</name>
+		<character>ε</character>
+		<equipmenttype>Shield</equipmenttype>
+		<proficiencyrequirement>Exotic</proficiencyrequirement>
+		<levelrequirement>75</levelrequirement>
+		<genderrequirement>No</genderrequirement>
+		<bashac>17</bashac>
+		<slashac>18</slashac>
+		<pierceac>16</pierceac>
+		<fistac>16</fistac>
+		<exoticac>15</exoticac>
+		<purchasableprovince>Not Purchasable</purchasableprovince>
+		<worth>17 Sovern</worth>
+		<affectedbymaterials>Wood</affectedbymaterials>
+		<weight>10 Stones</weight>
+		<description>Kite shields are the most valuable of shields, imbued with strange magics binding the three corners of the triangular shield with complimentary forces to withstand great combat force. They are rare and usually buried with the greatest warlords of all time, predominately in ages of old as teh secret of their creation has since been lost.</description>
+	</item>
+</itemlist>

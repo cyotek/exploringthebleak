@@ -1,0 +1,829 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="Environments.xsl"?>
+<!-- <title>Environment Type List</title>
+	 Environment type list was created in XML on 02/25/11
+	 The list was extended for implementation in Exploring The Bleak : Online
+	 on 11-16-2012. The list is used in Plains of Sedia : Origins, Developed by
+	 Nathaniel Inman of The Other Experiment Studio found @ www.theoestudio.com
+	 All contents within are licensed under GPLv3 -->
+<environmentlist name="Environment List">
+	<environment number="101" name="Player" color="0xFFFFFF">
+		<obstructions></obstructions>
+		<spawnableprovinces tharsis="1" narsis="1" crecia="1" newsaellem="1" jewall="1" oldworld="1"></spawnableprovinces>
+		<temperature>3</temperature>
+		<weatherrestrictions>0</weatherrestrictions>
+		<magicmodifier type="Earth">1</magicmodifier>
+		<description>This sector indicates the sector that the player currently occupies. The reason it's number is 101 is because 0-99 marks environments and it is outside of the scope.</description>
+	</environment>
+	<environment number="100" name="Nothing" color="0x000000">
+		<obstructions></obstructions>
+		<spawnableprovinces tharsis="1" narsis="1" crecia="1" newsaellem="1" jewall="1" oldworld="1"></spawnableprovinces>
+		<temperature>3</temperature>
+		<weatherrestrictions>0</weatherrestrictions>
+		<magicmodifier type="Earth">1</magicmodifier>
+		<description>This sector marks a sector that nothing currently exists on. The reason it's number is 100 is because 0-99 marks environments and it is outside of the scope.</description>
+	</environment>
+	<environment number="1" name="Mountain" color="0x505050">
+		<obstructions>Rock</obstructions>
+		<spawnableprovinces tharsis="1" narsis="0" crecia="1" newsaellem="1" jewall="1" oldworld="1"></spawnableprovinces>
+		<temperature>1</temperature>
+		<weatherrestrictions>1-14,16,20-21</weatherrestrictions>
+		<magicmodifier type="Earth">1.03</magicmodifier>
+		<description>No trees or vegetation.</description>
+	</environment>
+	<environment number="2" name="Canyon" color="0x505023">
+		<obstructions>Rock</obstructions>
+		<spawnableprovinces tharsis="1" narsis="0" crecia="1" newsaellem="1" jewall="1" oldworld="1"></spawnableprovinces>
+		<temperature>4</temperature>
+		<weatherrestrictions>1-5,10-11,17,20</weatherrestrictions>
+		<magicmodifier type="Earth">1.02</magicmodifier>
+		<description>No trees or vegetation.</description>
+	</environment>
+    <environment number="3" name="Anchihaline Cave" color="0x1E1E10">
+		<obstructions>Rock</obstructions>
+		<spawnableprovinces tharsis="1" narsis="0" crecia="1" newsaellem="1" jewall="1" oldworld="1"></spawnableprovinces>
+		<temperature>4</temperature>
+		<weatherrestrictions>0,20-21</weatherrestrictions>
+		<magicmodifier type="Earth">1.03</magicmodifier>
+		<description>Cave containing fresh water, usually coastal.</description>
+	</environment>
+	<environment number="4" name="Talus Cave" color="0x051919">
+		<obstructions>Rock</obstructions>
+		<spawnableprovinces tharsis="1" narsis="0" crecia="1" newsaellem="1" jewall="1" oldworld="1"></spawnableprovinces>
+		<temperature>4</temperature>
+		<weatherrestrictions>0</weatherrestrictions>
+		<magicmodifier type="Earth">1.01</magicmodifier>
+		<description>Cave formed from openings between rocks that have fallen.</description>
+	</environment>
+    <environment number="5" name="Fracture Cave" color="0x1B0D1B">
+		<obstructions>Rock</obstructions>
+		<spawnableprovinces tharsis="1" narsis="0" crecia="1" newsaellem="1" jewall="1" oldworld="1"></spawnableprovinces>
+		<temperature>4</temperature>
+		<weatherrestrictions>0,20-21</weatherrestrictions>
+		<magicmodifier type="Earth">1.03</magicmodifier>
+		<description>Cave consisting of fractured block rocks.</description>
+	</environment>
+    <environment number="6" name="Glacier Cave" color="0x013232">
+		<obstructions>Rock,Floor</obstructions>
+		<spawnableprovinces tharsis="0" narsis="0" crecia="0" newsaellem="1" jewall="1" oldworld="0"></spawnableprovinces>
+		<temperature>1</temperature>
+		<weatherrestrictions>0,20-21</weatherrestrictions>
+		<magicmodifier type="Earth">1.01</magicmodifier>
+		<description>Cave of ice.</description>
+	</environment>
+	<environment number="7" name="Erosional Cave" color="0x300F30">
+		<obstructions>Rock,Floor</obstructions>
+		<spawnableprovinces tharsis="1" narsis="0" crecia="1" newsaellem="0" jewall="0" oldworld="1"></spawnableprovinces>
+		<temperature>4</temperature>
+		<weatherrestrictions>0,20-21</weatherrestrictions>
+		<magicmodifier type="Earth">1.03</magicmodifier>
+		<description>Cave with a river flowing through it.</description>
+	</environment>
+	<environment number="8" name="Sea Cave" color="0x141348">
+		<obstructions>Rock,Floor</obstructions>
+		<spawnableprovinces tharsis="1" narsis="0" crecia="1" newsaellem="1" jewall="1" oldworld="1"></spawnableprovinces>
+		<temperature>4</temperature>
+		<weatherrestrictions>0,21</weatherrestrictions>
+		<magicmodifier type="Earth">1.01</magicmodifier>
+		<description>Cave found along the coast, generally near a cliff.</description>
+	</environment>
+    <environment number="9" name="Primary Cave" color="0x0B0B0B">
+		<obstructions>Rock</obstructions>
+		<spawnableprovinces tharsis="1" narsis="1" crecia="1" newsaellem="1" jewall="1" oldworld="1"></spawnableprovinces>
+		<temperature>5</temperature>
+		<weatherrestrictions>0,20</weatherrestrictions>
+		<magicmodifier type="Earth">1.03</magicmodifier>
+		<description>Cave formed from lava tubes.</description>
+	</environment>
+    <environment number="10" name="Cavern" color="0x311919">
+		<obstructions>Rock,Floor</obstructions>
+		<spawnableprovinces tharsis="0" narsis="1" crecia="0" newsaellem="0" jewall="0" oldworld="0"></spawnableprovinces>
+		<temperature>4</temperature>
+		<weatherrestrictions>0,20</weatherrestrictions>
+		<magicmodifier type="Earth">1.02</magicmodifier>
+		<description>Man-made mine.</description>
+	</environment>
+    <environment number="11" name="Surface Mine" color="0x31184A">
+		<obstructions>Rock,Floor</obstructions>
+		<spawnableprovinces tharsis="1" narsis="0" crecia="1" newsaellem="1" jewall="1" oldworld="1"></spawnableprovinces>
+		<temperature>3</temperature>
+		<weatherrestrictions>1-5,10-11,17,20</weatherrestrictions>
+		<magicmodifier type="Earth">1.01</magicmodifier>
+		<description>Huge step-layered hole in the ground where mining is taken place.</description>
+	</environment>
+    <environment number="12" name="Sub-surface Mine" color="0x322564">
+		<obstructions>Floor</obstructions>
+		<spawnableprovinces tharsis="1" narsis="1" crecia="1" newsaellem="1" jewall="1" oldworld="1"></spawnableprovinces>
+		<temperature>4</temperature>
+		<weatherrestrictions>0,20</weatherrestrictions>
+		<magicmodifier type="Earth">1.02</magicmodifier>
+		<description>Man-made mine.</description>
+	</environment>
+    <environment number="13" name="Graveyard" color="0x4B3232">
+		<obstructions>Wall,Rock</obstructions>
+		<spawnableprovinces tharsis="1" narsis="1" crecia="1" newsaellem="1" jewall="1" oldworld="1"></spawnableprovinces>
+		<temperature>4</temperature>
+		<weatherrestrictions>1-3,10-11,17,21</weatherrestrictions>
+		<magicmodifier type="Spirit">1.05</magicmodifier>
+		<description>Made for poor-class citizens and wanderers.</description>
+	</environment>
+    <environment number="14" name="Cemetary" color="0x4A1A1A">
+		<obstructions>Wall</obstructions>
+		<spawnableprovinces tharsis="1" narsis="0" crecia="1" newsaellem="1" jewall="0" oldworld="1"></spawnableprovinces>
+		<temperature>4</temperature>
+		<weatherrestrictions>1-3,10-11,17,21</weatherrestrictions>
+		<magicmodifier type="Spirit">1.05</magicmodifier>
+		<description>Made for middle-class citizens.</description>
+	</environment>
+    <environment number="15" name="Crypt" color="0x643333">
+		<obstructions>Wall</obstructions>
+		<spawnableprovinces tharsis="1" narsis="1" crecia="1" newsaellem="1" jewall="1" oldworld="1"></spawnableprovinces>
+		<temperature>4</temperature>
+		<weatherrestrictions>0,20</weatherrestrictions>
+		<magicmodifier type="Spirit">1.03</magicmodifier>
+		<description>Made for upper-class citizens.</description>
+	</environment>
+    <environment number="16" name="Mausoleum" color="0x644B4B">
+		<obstructions>Wall</obstructions>
+		<spawnableprovinces tharsis="1" narsis="0" crecia="0" newsaellem="0" jewall="1" oldworld="1"></spawnableprovinces>
+		<temperature>4</temperature>
+		<weatherrestrictions>0,20</weatherrestrictions>
+		<magicmodifier type="Spirit">1.04</magicmodifier>
+		<description>Building constructed as an above ground crypt.</description>
+	</environment>
+    <environment number="17" name="Catacomb" color="0x7D4C4B">
+		<obstructions>Wall</obstructions>
+		<spawnableprovinces tharsis="1" narsis="1" crecia="0" newsaellem="0" jewall="0" oldworld="1"></spawnableprovinces>
+		<temperature>4</temperature>
+		<weatherrestrictions>0,20</weatherrestrictions>
+		<magicmodifier type="Spirit">1.03</magicmodifier>
+		<description>Human-made passageways under cities for dead burial and worship.</description>
+	</environment>
+    <environment number="18" name="Ossuary" color="0x974C4C">
+		<obstructions>Wall</obstructions>
+		<spawnableprovinces tharsis="1" narsis="0" crecia="0" newsaellem="1" jewall="0" oldworld="0"></spawnableprovinces>
+		<temperature>4</temperature>
+		<weatherrestrictions>0,20-21</weatherrestrictions>
+		<magicmodifier type="Spirit">1.06</magicmodifier>
+		<description>Underground cove for skeletal remains.</description>
+	</environment>
+    <environment number="19" name="Charnel House" color="0x4F1A1A">
+		<obstructions>Wall</obstructions>
+		<spawnableprovinces tharsis="0" narsis="0" crecia="0" newsaellem="1" jewall="0" oldworld="0"></spawnableprovinces>
+		<temperature>4</temperature>
+		<weatherrestrictions>0,20</weatherrestrictions>
+		<magicmodifier type="Spirit">1.02</magicmodifier>
+		<description>Building made for skeletal remains.</description>
+	</environment>
+    <environment number="20" name="Arctic Tundra" color="0x4B4B97">
+		<obstructions>Rock,Floor,Tree</obstructions>
+		<spawnableprovinces tharsis="0" narsis="0" crecia="0" newsaellem="1" jewall="1" oldworld="0"></spawnableprovinces>
+		<temperature>1</temperature>
+		<weatherrestrictions>1-9,16,21</weatherrestrictions>
+		<magicmodifier type="Earth">1.01</magicmodifier>
+		<description></description>
+	</environment>
+    <environment number="21" name="Antarctic Tundra" color="0x403B97">
+		<obstructions>Rock,Floor</obstructions>
+		<spawnableprovinces tharsis="0" narsis="0" crecia="0" newsaellem="1" jewall="1" oldworld="0"></spawnableprovinces>
+		<temperature>1</temperature>
+		<weatherrestrictions>1-9,16,21</weatherrestrictions>
+		<magicmodifier type="Earth">1.01</magicmodifier>
+		<description>Few trees.</description>
+	</environment>
+    <environment number="22" name="Alpine Tundra" color="0x194B96">
+		<obstructions>Tree,Rock</obstructions>
+		<spawnableprovinces tharsis="1" narsis="0" crecia="0" newsaellem="1" jewall="1" oldworld="0"></spawnableprovinces>
+		<temperature>1</temperature>
+		<weatherrestrictions>1-9,16,21</weatherrestrictions>
+		<magicmodifier type="Earth">1.01</magicmodifier>
+		<description>Barren.</description>
+	</environment>
+    <environment number="23" name="Fellfield Tundra" color="0x646496">
+		<obstructions>Shrub,Rock</obstructions>
+		<spawnableprovinces tharsis="1" narsis="0" crecia="0" newsaellem="1" jewall="1" oldworld="0"></spawnableprovinces>
+		<temperature>1</temperature>
+		<weatherrestrictions>1-9,16,21</weatherrestrictions>
+		<magicmodifier type="Earth">1.01</magicmodifier>
+		<description>Treeless with little vegetation.</description>
+	</environment>
+    <environment number="24" name="Park Tundra" color="0x009696">
+		<obstructions>Tree,Shrub</obstructions>
+		<spawnableprovinces tharsis="1" narsis="0" crecia="1" newsaellem="1" jewall="1" oldworld="1"></spawnableprovinces>
+		<temperature>1</temperature>
+		<weatherrestrictions>1-14,16,21</weatherrestrictions>
+		<magicmodifier type="Earth">1.01</magicmodifier>
+		<description>Treeless with lots of vegetation.</description>
+	</environment>
+    <environment number="25" name="Closed Forest Taiga" color="0x00967D">
+		<obstructions>Tree,Shrub,Flora</obstructions>
+		<spawnableprovinces tharsis="1" narsis="0" crecia="1" newsaellem="0" jewall="0" oldworld="1"></spawnableprovinces>
+		<temperature>2</temperature>
+		<weatherrestrictions>1-14,16,21</weatherrestrictions>
+		<magicmodifier type="Earth">1.01</magicmodifier>
+		<description>Lots of coniferous trees like larch, spruce, fire, and pine.</description>
+	</environment>
+    <environment number="26" name="Lichen Woodland Taiga" color="0x183219">
+		<obstructions>Tree,Rock</obstructions>
+		<spawnableprovinces tharsis="1" narsis="0" crecia="1" newsaellem="1" jewall="0" oldworld="0"></spawnableprovinces>
+		<temperature>2</temperature>
+		<weatherrestrictions>1-14,16,21</weatherrestrictions>
+		<magicmodifier type="Earth">1.01</magicmodifier>
+		<description>Few coniferous trees like larch, spruce, fir, and pine.</description>
+	</environment>
+    <environment number="27" name="Boreal Forest" color="0x204B24">
+		<obstructions>Tree,Flora</obstructions>
+		<spawnableprovinces tharsis="1" narsis="0" crecia="1" newsaellem="1" jewall="0" oldworld="1"></spawnableprovinces>
+		<temperature>2</temperature>
+		<weatherrestrictions>1-17,21</weatherrestrictions>
+		<magicmodifier type="Earth">1.01</magicmodifier>
+		<description>Lots of coniferous trees like larch, spruce, fire, and pine.</description>
+	</environment>
+    <environment number="28" name="Montane Grassland" color="0x339646">
+		<obstructions>Flora</obstructions>
+		<spawnableprovinces tharsis="1" narsis="0" crecia="1" newsaellem="1" jewall="1" oldworld="1"></spawnableprovinces>
+		<temperature>2</temperature>
+		<weatherrestrictions>1-17,21</weatherrestrictions>
+		<magicmodifier type="Earth">1.01</magicmodifier>
+		<description>No trees, heavy weed-like vegetation.</description>
+	</environment>
+    <environment number="29" name="Montane Shrubland" color="0x5B9740">
+		<obstructions>Shrub,Flora,Rock</obstructions>
+		<spawnableprovinces tharsis="1" narsis="0" crecia="1" newsaellem="1" jewall="1" oldworld="1"></spawnableprovinces>
+		<temperature>2</temperature>
+		<weatherrestrictions>1-17,21</weatherrestrictions>
+		<magicmodifier type="Earth">1.01</magicmodifier>
+		<description>No trees, all other vegetation.</description>
+	</environment>
+    <environment number="30" name="Carpathian Forest" color="0x649664">
+		<obstructions>Tree,Shrub</obstructions>
+		<spawnableprovinces tharsis="1" narsis="0" crecia="1" newsaellem="0" jewall="0" oldworld="1"></spawnableprovinces>
+		<temperature>2</temperature>
+		<weatherrestrictions>1-17,21</weatherrestrictions>
+		<magicmodifier type="Earth">1.01</magicmodifier>
+		<description>Lots of Carpathian's with few shrubs and other vegetation.</description>
+	</environment>
+    <environment number="31" name="Giant Sequoia Forest" color="0x114B25">
+		<obstructions>Tree,Flora</obstructions>
+		<spawnableprovinces tharsis="0" narsis="0" crecia="0" newsaellem="0" jewall="0" oldworld="1"></spawnableprovinces>
+		<temperature>2</temperature>
+		<weatherrestrictions>1-17,21</weatherrestrictions>
+		<magicmodifier type="Earth">1.01</magicmodifier>
+		<description>Lots of Giant Sequoia's with few shrubs and other vegetation.</description>
+	</environment>
+    <environment number="32" name="Coastal Redwood Forest" color="0x973232">
+		<obstructions>Tree,Rock,Flora</obstructions>
+		<spawnableprovinces tharsis="0" narsis="0" crecia="0" newsaellem="0" jewall="0" oldworld="1"></spawnableprovinces>
+		<temperature>2</temperature>
+		<weatherrestrictions>1-17,18,21</weatherrestrictions>
+		<magicmodifier type="Earth">1.01</magicmodifier>
+		<description>Lots of Coastal Redwood's with few shrubs and other vegetation.</description>
+	</environment>
+    <environment number="33" name="Douglas-fir Forest" color="0x96964A">
+		<obstructions>Tree</obstructions>
+		<spawnableprovinces tharsis="1" narsis="0" crecia="1" newsaellem="0" jewall="0" oldworld="0"></spawnableprovinces>
+		<temperature>2</temperature>
+		<weatherrestrictions>1-17,21</weatherrestrictions>
+		<magicmodifier type="Earth">1.01</magicmodifier>
+		<description>Lots of Douglas-fir's with few shrubs and other vegetation.</description>
+	</environment>
+    <environment number="34" name="Sitka Spruce Forest" color="0x7D7D4B">
+		<obstructions>Tree,Flora,Rock</obstructions>
+		<spawnableprovinces tharsis="1" narsis="0" crecia="1" newsaellem="0" jewall="0" oldworld="1"></spawnableprovinces>
+		<temperature>2</temperature>
+		<weatherrestrictions>1-17,21</weatherrestrictions>
+		<magicmodifier type="Earth">1.01</magicmodifier>
+		<description>Lots of Sitka Spruce's with few shrubs and other vegetation.</description>
+	</environment>
+    <environment number="35" name="Alerce Forest" color="0x646451">
+		<obstructions>Tree</obstructions>
+		<spawnableprovinces tharsis="1" narsis="0" crecia="1" newsaellem="0" jewall="0" oldworld="1"></spawnableprovinces>
+		<temperature>2</temperature>
+		<weatherrestrictions>1-17,21</weatherrestrictions>
+		<magicmodifier type="Earth">1.01</magicmodifier>
+		<description>Lots of Alerce's with few shrubs and other vegetation.</description>
+	</environment>
+    <environment number="36" name="Kauri Forest" color="0x7D647D">
+		<obstructions>Tree,Rock,Shrub</obstructions>
+		<spawnableprovinces tharsis="1" narsis="0" crecia="1" newsaellem="0" jewall="0" oldworld="1"></spawnableprovinces>
+		<temperature>2</temperature>
+		<weatherrestrictions>1-17,21</weatherrestrictions>
+		<magicmodifier type="Earth">1.01</magicmodifier>
+		<description>Lots of Kauri's with few shrubs and other vegetation.</description>
+	</environment>
+    <environment number="37" name="Tropical Forest" color="0x649696">
+		<obstructions>Tree,Flora</obstructions>
+		<spawnableprovinces tharsis="0" narsis="0" crecia="0" newsaellem="0" jewall="0" oldworld="1"></spawnableprovinces>
+		<temperature>4</temperature>
+		<weatherrestrictions>1-5,10-11,15,20</weatherrestrictions>
+		<magicmodifier type="Earth">1.01</magicmodifier>
+		<description>Humid</description>
+	</environment>
+    <environment number="38" name="Subtropical Forest" color="0x327E7D">
+		<obstructions>Tree,Flora</obstructions>
+		<spawnableprovinces tharsis="0" narsis="0" crecia="0" newsaellem="0" jewall="0" oldworld="1"></spawnableprovinces>
+		<temperature>4</temperature>
+		<weatherrestrictions>1-5,10-11,15,20</weatherrestrictions>
+		<magicmodifier type="Earth">1.01</magicmodifier>
+		<description>Very humid</description>
+	</environment>
+    <environment number="39" name="Temperate Forest" color="0x4B964B">
+		<obstructions>Tree,Shrub,Rock,Flora</obstructions>
+		<spawnableprovinces tharsis="1" narsis="0" crecia="1" newsaellem="1" jewall="1" oldworld="1"></spawnableprovinces>
+		<temperature>4</temperature>
+		<weatherrestrictions>1-5,10-11,15,20</weatherrestrictions>
+		<magicmodifier type="Earth">1.01</magicmodifier>
+		<description>Humid</description>
+	</environment>
+    <environment number="40" name="Mediterranean Forest" color="0x204B24">
+		<obstructions>Tree,Rock,Flora</obstructions>
+		<spawnableprovinces tharsis="1" narsis="0" crecia="1" newsaellem="0" jewall="1" oldworld="1"></spawnableprovinces>
+		<temperature>5</temperature>
+		<weatherrestrictions>1-5,10-11,15,20</weatherrestrictions>
+		<magicmodifier type="Earth">1.01</magicmodifier>
+		<description>Humid</description>
+	</environment>
+    <environment number="41" name="Mediterranean Woodland" color="0x183219">
+		<obstructions>Tree,Rock</obstructions>
+		<spawnableprovinces tharsis="1" narsis="0" crecia="1" newsaellem="1" jewall="0" oldworld="1"></spawnableprovinces>
+		<temperature>4</temperature>
+		<weatherrestrictions>1-5,10-11,15,20</weatherrestrictions>
+		<magicmodifier type="Earth">1.01</magicmodifier>
+		<description>Less trees</description>
+	</environment>
+    <environment number="42" name="Mediterranean Savanna" color="0x0A9647">
+		<obstructions>Rock,Flora</obstructions>
+		<spawnableprovinces tharsis="0" narsis="0" crecia="0" newsaellem="0" jewall="0" oldworld="1"></spawnableprovinces>
+		<temperature>5</temperature>
+		<weatherrestrictions>1-5,10-11,15,20</weatherrestrictions>
+		<magicmodifier type="Earth">1.01</magicmodifier>
+		<description>Very few trees</description>
+	</environment>
+    <environment number="43" name="Mediterranean Shrubland" color="0x0FAF4B">
+		<obstructions>Shrub,Flora</obstructions>
+		<spawnableprovinces tharsis="0" narsis="0" crecia="1" newsaellem="1" jewall="0" oldworld="1"></spawnableprovinces>
+		<temperature>5</temperature>
+		<weatherrestrictions>1-3,5</weatherrestrictions>
+		<magicmodifier type="Earth">1.01</magicmodifier>
+		<description>No trees, plenty of shrubbery. Very dry.</description>
+	</environment>
+    <environment number="44" name="Mediterranean Grassland" color="0x97AF96">
+		<obstructions>Flora</obstructions>
+		<spawnableprovinces tharsis="0" narsis="0" crecia="1" newsaellem="0" jewall="0" oldworld="1"></spawnableprovinces>
+		<temperature>5</temperature>
+		<weatherrestrictions>1-3,5</weatherrestrictions>
+		<magicmodifier type="Earth">1.01</magicmodifier>
+		<description>No trees or shrubbery but plenty of grass. Very dry.</description>
+	</environment>
+    <environment number="45" name="Tropical Broadleaf Forest" color="0x96AF7D">
+		<obstructions>Tree,Rock,Flora</obstructions>
+		<spawnableprovinces tharsis="0" narsis="0" crecia="0" newsaellem="0" jewall="0" oldworld="1"></spawnableprovinces>
+		<temperature>4</temperature>
+		<weatherrestrictions>1-5,10-11,15,20</weatherrestrictions>
+		<magicmodifier type="Earth">1.01</magicmodifier>
+		<description>Very humid.</description>
+	</environment>
+    <environment number="46" name="Subtropical Broadleaf Forest" color="0x96AE4A">
+		<obstructions>Tree,Flora</obstructions>
+		<spawnableprovinces tharsis="0" narsis="0" crecia="0" newsaellem="0" jewall="0" oldworld="1"></spawnableprovinces>
+		<temperature>5</temperature>
+		<weatherrestrictions>1-5,10-11,15,20</weatherrestrictions>
+		<magicmodifier type="Earth">1.01</magicmodifier>
+		<description>Very humid.</description>
+	</environment>
+    <environment number="47" name="Bayou" color="0x323264">
+		<obstructions>Tree,Flora</obstructions>
+		<spawnableprovinces tharsis="1" narsis="0" crecia="0" newsaellem="1" jewall="0" oldworld="1"></spawnableprovinces>
+		<temperature>4</temperature>
+		<weatherrestrictions>1-5,10-11,15</weatherrestrictions>
+		<magicmodifier type="Water">1.02</magicmodifier>
+		<description>Marshy slow-moving stream or river that's thick with trees.</description>
+	</environment>
+    <environment number="48" name="Wetland Fen" color="0x343693">
+		<obstructions>Tree,Water,Flora</obstructions>
+		<spawnableprovinces tharsis="1" narsis="0" crecia="0" newsaellem="1" jewall="0" oldworld="1"></spawnableprovinces>
+		<temperature>4</temperature>
+		<weatherrestrictions>1-5,10-11,15</weatherrestrictions>
+		<magicmodifier type="Water">1.01</magicmodifier>
+		<description>Tall thick grass with marsh-like soil and standing water.</description>
+	</environment>
+    <environment number="49" name="Valley Bog" color="0x181831">
+		<obstructions>Tree,Flora,Rock,Water</obstructions>
+		<spawnableprovinces tharsis="1" narsis="0" crecia="0" newsaellem="1" jewall="0" oldworld="1"></spawnableprovinces>
+		<temperature>5</temperature>
+		<weatherrestrictions>2,4-5,10-11,15</weatherrestrictions>
+		<magicmodifier type="Water">1.02</magicmodifier>
+		<description>Valley of peat moss, few trees.</description>
+	</environment>
+    <environment number="50" name="Raised Bog" color="0x19324B">
+		<obstructions>Water,Tree,Rock</obstructions>
+		<spawnableprovinces tharsis="1" narsis="0" crecia="0" newsaellem="1" jewall="0" oldworld="1"></spawnableprovinces>
+		<temperature>5</temperature>
+		<weatherrestrictions>2,4-5,10-11,15</weatherrestrictions>
+		<magicmodifier type="Water">1.02</magicmodifier>
+		<description>Raised dome of peat moss covered water with thick trees surrounding.</description>
+	</environment>
+    <environment number="51" name="Blanket Bog" color="0x32324B">
+		<obstructions>Water,Tree,Flora</obstructions>
+		<spawnableprovinces tharsis="1" narsis="0" crecia="0" newsaellem="1" jewall="0" oldworld="1"></spawnableprovinces>
+		<temperature>2</temperature>
+		<weatherrestrictions>2,4-15,21</weatherrestrictions>
+		<magicmodifier type="Water">1.03</magicmodifier>
+		<description>Few trees with icy sludge and swamp-like.</description>
+	</environment>
+    <environment number="52" name="Freshwater Swamp Forest" color="0x323264">
+		<obstructions>Water,Tree</obstructions>
+		<spawnableprovinces tharsis="1" narsis="0" crecia="0" newsaellem="1" jewall="0" oldworld="1"></spawnableprovinces>
+		<temperature>4</temperature>
+		<weatherrestrictions>1-5,10-11,15,20</weatherrestrictions>
+		<magicmodifier type="Earth">1.01</magicmodifier>
+		<description>Very humid</description>
+	</environment>
+    <environment number="53" name="Peat Swamp Forest" color="0x4B324B">
+		<obstructions>Water,Tree</obstructions>
+		<spawnableprovinces tharsis="1" narsis="0" crecia="0" newsaellem="1" jewall="0" oldworld="1"></spawnableprovinces>
+		<temperature>5</temperature>
+		<weatherrestrictions>1-5,10-11,15,20</weatherrestrictions>
+		<magicmodifier type="Earth">1.01</magicmodifier>
+		<description>Very humid</description>
+	</environment>
+    <environment number="54" name="Dambo Swamp" color="0x4B194B">
+		<obstructions>Tree,Water,Flora</obstructions>
+		<spawnableprovinces tharsis="1" narsis="0" crecia="0" newsaellem="1" jewall="0" oldworld="1"></spawnableprovinces>
+		<temperature>4</temperature>
+		<weatherrestrictions>1-5,10-11,15,20</weatherrestrictions>
+		<magicmodifier type="Earth">1.01</magicmodifier>
+		<description>Few tall trees with tons of inter-connecting streams.</description>
+	</environment>
+    <environment number="55" name="Mangrove Swamp" color="0x4B3219">
+		<obstructions>Water,Shrub,Rock</obstructions>
+		<spawnableprovinces tharsis="1" narsis="0" crecia="0" newsaellem="1" jewall="0" oldworld="1"></spawnableprovinces>
+		<temperature>5</temperature>
+		<weatherrestrictions>1-5,10-11,15,20</weatherrestrictions>
+		<magicmodifier type="Earth">1.01</magicmodifier>
+		<description>Very humid with thick tall trees with above ground roots.</description>
+	</environment>
+    <environment number="56" name="Bosque" color="0x4B3232">
+		<obstructions>Water,Shrub</obstructions>
+		<spawnableprovinces tharsis="1" narsis="0" crecia="0" newsaellem="1" jewall="0" oldworld="1"></spawnableprovinces>
+		<temperature>4</temperature>
+		<weatherrestrictions>1-15,17,21</weatherrestrictions>
+		<magicmodifier type="Earth">1.01</magicmodifier>
+		<description>Dry thin woodland area around a river.</description>
+	</environment>
+    <environment number="57" name="Riparian Forest" color="0x1C9647">
+		<obstructions>Tree,Water,Rock,Flora,Shrub</obstructions>
+		<spawnableprovinces tharsis="0" narsis="0" crecia="0" newsaellem="0" jewall="0" oldworld="1"></spawnableprovinces>
+		<temperature>4</temperature>
+		<weatherrestrictions>1-15,17,21</weatherrestrictions>
+		<magicmodifier type="Earth">1.01</magicmodifier>
+		<description>Humid thick woodland area around a river.</description>
+	</environment>
+    <environment number="58" name="Bolster Heathland" color="0x1CAF4B">
+		<obstructions>Shrub,Flora</obstructions>
+		<spawnableprovinces tharsis="0" narsis="0" crecia="1" newsaellem="0" jewall="0" oldworld="1"></spawnableprovinces>
+		<temperature>3</temperature>
+		<weatherrestrictions>1-15,17,21</weatherrestrictions>
+		<magicmodifier type="Earth">1.01</magicmodifier>
+		<description>Cushion plants only which are low-growing fungai.</description>
+	</environment>
+    <environment number="59" name="Chalk Heathland" color="0x63AF45">
+		<obstructions>Shrub,Rock</obstructions>
+		<spawnableprovinces tharsis="0" narsis="0" crecia="1" newsaellem="0" jewall="0" oldworld="1"></spawnableprovinces>
+		<temperature>3</temperature>
+		<weatherrestrictions>1-15,17,21</weatherrestrictions>
+		<magicmodifier type="Earth">1.01</magicmodifier>
+		<description>Thick grass and flowers only.</description>
+	</environment>
+    <environment number="60" name="Chaparral Heathland" color="0xAFC84A">
+		<obstructions>Flora,Rock</obstructions>
+		<spawnableprovinces tharsis="0" narsis="0" crecia="1" newsaellem="0" jewall="0" oldworld="1"></spawnableprovinces>
+		<temperature>4</temperature>
+		<weatherrestrictions>1-15,17,21</weatherrestrictions>
+		<magicmodifier type="Earth">1.01</magicmodifier>
+		<description>Thick shrubs only that's mountain-like.</description>
+	</environment>
+    <environment number="61" name="Fynbos" color="0x6BC17C">
+		<obstructions>Water,Rock</obstructions>
+		<spawnableprovinces tharsis="0" narsis="0" crecia="1" newsaellem="0" jewall="0" oldworld="1"></spawnableprovinces>
+		<temperature>4</temperature>
+		<weatherrestrictions>1-15,17,21</weatherrestrictions>
+		<magicmodifier type="Earth">1.01</magicmodifier>
+		<description>Rough shrubs only.</description>
+	</environment>
+    <environment number="62" name="Garrigue Hills" color="0x96C864">
+		<obstructions>Floor,Rock,Water</obstructions>
+		<spawnableprovinces tharsis="0" narsis="0" crecia="1" newsaellem="0" jewall="0" oldworld="1"></spawnableprovinces>
+		<temperature>4</temperature>
+		<weatherrestrictions>1-15,17,21</weatherrestrictions>
+		<magicmodifier type="Earth">1.01</magicmodifier>
+		<description>Soft shrubs only.</description>
+	</environment>
+    <environment number="63" name="Moorland" color="0x32AEC7">
+		<obstructions>Water,Shrub,Flora</obstructions>
+		<spawnableprovinces tharsis="0" narsis="0" crecia="0" newsaellem="0" jewall="0" oldworld="1"></spawnableprovinces>
+		<temperature>3</temperature>
+		<weatherrestrictions>1-15,17,21</weatherrestrictions>
+		<magicmodifier type="Earth">1.01</magicmodifier>
+		<description>Thick grass and flowers that's hill-like.</description>
+	</environment>
+    <environment number="64" name="Shrubland" color="0x63AF45">
+		<obstructions>Shrub,Flora</obstructions>
+		<spawnableprovinces tharsis="0" narsis="0" crecia="1" newsaellem="0" jewall="0" oldworld="1"></spawnableprovinces>
+		<temperature>3</temperature>
+		<weatherrestrictions>1-15,17,21</weatherrestrictions>
+		<magicmodifier type="Earth">1.01</magicmodifier>
+		<description>Thick low grass and shrubs that's plain-like.</description>
+	</environment>
+    <environment number="65" name="Maquis Shrubland" color="0x96AFC8">
+		<obstructions>Shrub</obstructions>
+		<spawnableprovinces tharsis="0" narsis="0" crecia="1" newsaellem="0" jewall="0" oldworld="1"></spawnableprovinces>
+		<temperature>4</temperature>
+		<weatherrestrictions>1-15,17,21</weatherrestrictions>
+		<magicmodifier type="Earth">1.01</magicmodifier>
+		<description>Thick grass, flowers, and shrubs all hill-like.</description>
+	</environment>
+    <environment number="66" name="Coastal Plain" color="0x3DB54A">
+		<obstructions>Shrub,Flora,Water,Rock</obstructions>
+		<spawnableprovinces tharsis="0" narsis="0" crecia="1" newsaellem="0" jewall="0" oldworld="1"></spawnableprovinces>
+		<temperature>4</temperature>
+		<weatherrestrictions>1-15,17-18,21</weatherrestrictions>
+		<magicmodifier type="Earth">1.01</magicmodifier>
+		<description>Flat low grassland near the coast.</description>
+	</environment>
+    <environment number="67" name="Highland Plateau" color="0x6CBF65">
+		<obstructions>Floor,Flora,Rock,Water,Rock,Shrub</obstructions>
+		<spawnableprovinces tharsis="0" narsis="0" crecia="0" newsaellem="1" jewall="0" oldworld="1"></spawnableprovinces>
+		<temperature>5</temperature>
+		<weatherrestrictions>1-15,17,21</weatherrestrictions>
+		<magicmodifier type="Earth">1.01</magicmodifier>
+		<description>Little grass with dry shrubs.</description>
+	</environment>
+    <environment number="68" name="Prairy" color="0x54B848">
+		<obstructions>Rock,Flora</obstructions>
+		<spawnableprovinces tharsis="0" narsis="0" crecia="1" newsaellem="0" jewall="0" oldworld="1"></spawnableprovinces>
+		<temperature>4</temperature>
+		<weatherrestrictions>1-15,17,21</weatherrestrictions>
+		<magicmodifier type="Earth">1.01</magicmodifier>
+		<description>Thick grass and flowers with flat land.</description>
+	</environment>
+    <environment number="69" name="Water Meadow" color="0x60C3B8">
+		<obstructions>Water,Rock,Flora</obstructions>
+		<spawnableprovinces tharsis="0" narsis="0" crecia="0" newsaellem="1" jewall="0" oldworld="1"></spawnableprovinces>
+		<temperature>4</temperature>
+		<weatherrestrictions>1-15,17,21</weatherrestrictions>
+		<magicmodifier type="Water">1.02</magicmodifier>
+		<description>Thick low grass and standing water rows.</description>
+	</environment>
+    <environment number="70" name="Veldt" color="0x6CC6B0">
+		<obstructions>Water,Rock,Flora</obstructions>
+		<spawnableprovinces tharsis="0" narsis="0" crecia="1" newsaellem="0" jewall="0" oldworld="1"></spawnableprovinces>
+		<temperature>5</temperature>
+		<weatherrestrictions>1-15,17,21</weatherrestrictions>
+		<magicmodifier type="Earth">1.01</magicmodifier>
+		<description>Little low grass with flat land.</description>
+	</environment>
+    <environment number="71" name="Machair" color="0x64AEC7">
+		<obstructions>Water,Rock</obstructions>
+		<spawnableprovinces tharsis="0" narsis="0" crecia="1" newsaellem="0" jewall="0" oldworld="1"></spawnableprovinces>
+		<temperature>4</temperature>
+		<weatherrestrictions>1-15,17,21</weatherrestrictions>
+		<magicmodifier type="Earth">1.01</magicmodifier>
+		<description>Thick grass and flowers, flat land near water.</description>
+	</environment>
+    <environment number="72" name="Cerrado Savanna" color="0x67C5AD">
+		<obstructions>Tree,Floor</obstructions>
+		<spawnableprovinces tharsis="0" narsis="0" crecia="0" newsaellem="0" jewall="0" oldworld="1"></spawnableprovinces>
+		<temperature>5</temperature>
+		<weatherrestrictions>1-15,17,21</weatherrestrictions>
+		<magicmodifier type="Earth">1.01</magicmodifier>
+		<description>Thick grass and few small trees, hilly.</description>
+	</environment>
+    <environment number="73" name="Xeric Shrubland" color="0xAFC864">
+		<obstructions>Shrub,Flora</obstructions>
+		<spawnableprovinces tharsis="0" narsis="0" crecia="0" newsaellem="0" jewall="0" oldworld="1"></spawnableprovinces>
+		<temperature>5</temperature>
+		<weatherrestrictions>1-2</weatherrestrictions>
+		<magicmodifier type="Fire">1.01</magicmodifier>
+		<description>Very dry with few shrubs and broken ground.</description>
+	</environment>
+    <environment number="74" name="Cactus Shrubland" color="0xAFC896">
+		<obstructions>Flora</obstructions>
+		<spawnableprovinces tharsis="0" narsis="0" crecia="0" newsaellem="0" jewall="0" oldworld="1"></spawnableprovinces>
+		<temperature>5</temperature>
+		<weatherrestrictions>1-2</weatherrestrictions>
+		<magicmodifier type="Fire">1.01</magicmodifier>
+		<description>Very dry with few cactus and broken ground.</description>
+	</environment>
+    <environment number="75" name="Hamada Desert" color="0xC6D92C">
+		<obstructions>Rock,Floor,Flora</obstructions>
+		<spawnableprovinces tharsis="0" narsis="0" crecia="0" newsaellem="0" jewall="0" oldworld="1"></spawnableprovinces>
+		<temperature>5</temperature>
+		<weatherrestrictions>1-2</weatherrestrictions>
+		<magicmodifier type="Fire">1.01</magicmodifier>
+		<description>Very dry with no vegetation, rocky, and hilly.</description>
+	</environment>
+    <environment number="76" name="Regs Desert" color="0xC8C831">
+		<obstructions>Flora,Rock</obstructions>
+		<spawnableprovinces tharsis="0" narsis="0" crecia="0" newsaellem="0" jewall="0" oldworld="1"></spawnableprovinces>
+		<temperature>5</temperature>
+		<weatherrestrictions>1-2</weatherrestrictions>
+		<magicmodifier type="Fire">1.01</magicmodifier>
+		<description>Very dry with no vegetation, rocky and flat.</description>
+	</environment>
+    <environment number="77" name="Ergs Desert" color="0xC8C84A">
+		<obstructions>Water,Flora,Shrub</obstructions>
+		<spawnableprovinces tharsis="0" narsis="0" crecia="0" newsaellem="0" jewall="0" oldworld="1"></spawnableprovinces>
+		<temperature>5</temperature>
+		<weatherrestrictions>1-2</weatherrestrictions>
+		<magicmodifier type="Fire">1.01</magicmodifier>
+		<description>Very dry with no vegetation and sandy seas.</description>
+	</environment>
+    <environment number="78" name="Sagebrush Steppe" color="0xC8C896">
+		<obstructions>Rock,Flora</obstructions>
+		<spawnableprovinces tharsis="0" narsis="0" crecia="0" newsaellem="0" jewall="0" oldworld="1"></spawnableprovinces>
+		<temperature>5</temperature>
+		<weatherrestrictions>1-2</weatherrestrictions>
+		<magicmodifier type="Fire">1.01</magicmodifier>
+		<description>Very dry with few sagebrush, rocky, and flat.</description>
+	</environment>
+    <environment number="79" name="Badlands" color="0xAFC836">
+		<obstructions>Flora</obstructions>
+		<spawnableprovinces tharsis="0" narsis="0" crecia="0" newsaellem="0" jewall="0" oldworld="1"></spawnableprovinces>
+		<temperature>5</temperature>
+		<weatherrestrictions>1-2</weatherrestrictions>
+		<magicmodifier type="Fire">1.01</magicmodifier>
+		<description>Very dry with little cactus and broken clay-rich soil.</description>
+	</environment>
+    <environment number="80" name="Fissure Vent" color="0x961A1D">
+		<obstructions>Floor,Lava</obstructions>
+		<spawnableprovinces tharsis="0" narsis="0" crecia="0" newsaellem="0" jewall="0" oldworld="1"></spawnableprovinces>
+		<temperature>6</temperature>
+		<weatherrestrictions>1-2,19</weatherrestrictions>
+		<magicmodifier type="Fire">1.05</magicmodifier>
+		<description>Very dry vent where lava emerges. Is active.</description>
+	</environment>
+    <environment number="81" name="Shield Volcano" color="0xC72026">
+		<obstructions>Floor,Lava</obstructions>
+		<spawnableprovinces tharsis="0" narsis="0" crecia="0" newsaellem="0" jewall="0" oldworld="1"></spawnableprovinces>
+		<temperature>6</temperature>
+		<weatherrestrictions>1-2,19</weatherrestrictions>
+		<magicmodifier type="Fire">1.04</magicmodifier>
+		<description>Hill-like volcanoe that isn't active.</description>
+	</environment>
+    <environment number="82" name="Lava Dome" color="0xE09726">
+		<obstructions>Lava,Floor,Rock</obstructions>
+		<spawnableprovinces tharsis="0" narsis="0" crecia="0" newsaellem="0" jewall="0" oldworld="1"></spawnableprovinces>
+		<temperature>6</temperature>
+		<weatherrestrictions>1-2,19</weatherrestrictions>
+		<magicmodifier type="Fire">1.03</magicmodifier>
+		<description>Very tall mountain-like structure that's always active.</description>
+	</environment>
+    <environment number="83" name="Cryptodome" color="0xED6464">
+		<obstructions>Floor</obstructions>
+		<spawnableprovinces tharsis="0" narsis="0" crecia="0" newsaellem="0" jewall="0" oldworld="1"></spawnableprovinces>
+		<temperature>6</temperature>
+		<weatherrestrictions>1-2,19</weatherrestrictions>
+		<magicmodifier type="Fire">1.01</magicmodifier>
+		<description>Very tall mountain-like structure that's never active</description>
+	</environment>
+    <environment number="84" name="Mud Volcano" color="0xF59596">
+		<obstructions>Water,Floor,Rock</obstructions>
+		<spawnableprovinces tharsis="0" narsis="0" crecia="0" newsaellem="0" jewall="0" oldworld="1"></spawnableprovinces>
+		<temperature>6</temperature>
+		<weatherrestrictions>1-2,19</weatherrestrictions>
+		<magicmodifier type="Fire">1.02</magicmodifier>
+		<description>Circular mud shape that erupts streams of water.</description>
+	</environment>
+    <environment number="85" name="Hot Spring Geyser" color="0x974F9F">
+		<obstructions>Water,Rock</obstructions>
+		<spawnableprovinces tharsis="0" narsis="0" crecia="0" newsaellem="0" jewall="1" oldworld="1"></spawnableprovinces>
+		<temperature>4</temperature>
+		<weatherrestrictions>1-2,19</weatherrestrictions>
+		<magicmodifier type="Air">1.02</magicmodifier>
+		<description>Water.</description>
+	</environment>
+    <environment number="86" name="Hot Spring" color="0x6066AF">
+		<obstructions>Water,Rock</obstructions>
+		<spawnableprovinces tharsis="1" narsis="0" crecia="0" newsaellem="1" jewall="1" oldworld="1"></spawnableprovinces>
+		<temperature>4</temperature>
+		<weatherrestrictions>1-14,20,21</weatherrestrictions>
+		<magicmodifier type="Water">1.01</magicmodifier>
+		<description>Water</description>
+	</environment>
+    <environment number="87" name="Pond" color="0x6465AE">
+		<obstructions>Water,Rock,Flora</obstructions>
+		<spawnableprovinces tharsis="1" narsis="0" crecia="1" newsaellem="1" jewall="1" oldworld="1"></spawnableprovinces>
+		<temperature>2</temperature>
+		<weatherrestrictions>1-14,20,21</weatherrestrictions>
+		<magicmodifier type="Water">1.01</magicmodifier>
+		<description>Water</description>
+	</environment>
+    <environment number="88" name="Rocky Shoreline" color="0xE1E195">
+		<obstructions>Rock,Floor,Flora</obstructions>
+		<spawnableprovinces tharsis="1" narsis="0" crecia="0" newsaellem="1" jewall="0" oldworld="1"></spawnableprovinces>
+		<temperature>2</temperature>
+		<weatherrestrictions>1-14,18,20,21</weatherrestrictions>
+		<magicmodifier type="Water">1.02</magicmodifier>
+		<description>Humid</description>
+	</environment>
+    <environment number="89" name="Mudflat Shoreline" color="0x646432">
+		<obstructions>Floor,Water</obstructions>
+		<spawnableprovinces tharsis="1" narsis="0" crecia="1" newsaellem="1" jewall="0" oldworld="1"></spawnableprovinces>
+		<temperature>2</temperature>
+		<weatherrestrictions>1-14,18,20,21</weatherrestrictions>
+		<magicmodifier type="Water">1.02</magicmodifier>
+		<description>Humid</description>
+	</environment>
+    <environment number="90" name="Shingle Beach" color="0x959737">
+		<obstructions>Floor,Rock,Water</obstructions>
+		<spawnableprovinces tharsis="1" narsis="0" crecia="1" newsaellem="1" jewall="0" oldworld="1"></spawnableprovinces>
+		<temperature>2</temperature>
+		<weatherrestrictions>1-14,18,20,21</weatherrestrictions>
+		<magicmodifier type="Water">1.02</magicmodifier>
+		<description>Pebbled beach.</description>
+	</environment>
+    <environment number="91" name="Sandy Beach" color="0xC7C72E">
+		<obstructions>Water,Rock</obstructions>
+		<spawnableprovinces tharsis="1" narsis="0" crecia="1" newsaellem="1" jewall="0" oldworld="1"></spawnableprovinces>
+		<temperature>2</temperature>
+		<weatherrestrictions>1-14,18,20,21</weatherrestrictions>
+		<magicmodifier type="Water">1.02</magicmodifier>
+		<description>Humid.</description>
+	</environment>
+	<environment number="92" name="Shoal" color="0x646565">
+		<obstructions>Water</obstructions>
+		<spawnableprovinces tharsis="0" narsis="0" crecia="0" newsaellem="1" jewall="0" oldworld="1"></spawnableprovinces>
+		<temperature>2</temperature>
+		<weatherrestrictions>1-14,18,20,21</weatherrestrictions>
+		<magicmodifier type="Water">1.02</magicmodifier>
+		<description>Sand walkways out onto the ocean that sometimes connect to land.</description>
+	</environment>
+    <environment number="93" name="Estuary" color="0x646496">
+		<obstructions>Water,Floor</obstructions>
+		<spawnableprovinces tharsis="0" narsis="0" crecia="1" newsaellem="0" jewall="0" oldworld="1"></spawnableprovinces>
+		<temperature>2</temperature>
+		<weatherrestrictions>1-14,18,20,21</weatherrestrictions>
+		<magicmodifier type="Water">1.02</magicmodifier>
+		<description>Coastal body of water where one or more streams flow into it.</description>
+	</environment>
+    <environment number="94" name="River Delta" color="0x6465AD">
+		<obstructions>Floor,Water</obstructions>
+		<spawnableprovinces tharsis="0" narsis="0" crecia="1" newsaellem="0" jewall="0" oldworld="1"></spawnableprovinces>
+		<temperature>2</temperature>
+		<weatherrestrictions>1-14,18,20,21</weatherrestrictions>
+		<magicmodifier type="Water">1.02</magicmodifier>
+		<description>Muddy alluvial fan of water flowing into the ocean.</description>
+	</environment>
+	<!-- The following water environments aren't currently available in the world for random generation. -->
+	<!-- they are used for static maps for reference. -->
+    <environment number="95" name="Neritic Zone" color="0x3D439B">
+		<obstructions>Water</obstructions>
+		<spawnableprovinces tharsis="0" narsis="0" crecia="0" newsaellem="0" jewall="0" oldworld="0"></spawnableprovinces>
+		<temperature>1</temperature>
+		<weatherrestrictions>0</weatherrestrictions>
+		<magicmodifier type="Water">1.05</magicmodifier>
+		<description>Highest underwater oceanic.</description>
+	</environment>
+    <environment number="96" name="Kelp Forest" color="0x2993D1">
+		<obstructions>Tree,Water</obstructions>
+		<spawnableprovinces tharsis="0" narsis="0" crecia="0" newsaellem="0" jewall="0" oldworld="0"></spawnableprovinces>
+		<temperature>1</temperature>
+		<weatherrestrictions>0</weatherrestrictions>
+		<magicmodifier type="Water">1.05</magicmodifier>
+		<description>Underwater forest.</description>
+	</environment>
+    <environment number="97" name="Coral Reef" color="0x475AA8">
+		<obstructions>Water,Rock</obstructions>
+		<spawnableprovinces tharsis="0" narsis="0" crecia="0" newsaellem="0" jewall="0" oldworld="0"></spawnableprovinces>
+		<temperature>1</temperature>
+		<weatherrestrictions>0</weatherrestrictions>
+		<magicmodifier type="Water">1.05</magicmodifier>
+		<description>Underwater coral reef.</description>
+	</environment>
+    <environment number="98" name="Hydrothermal Vent" color="0x31184A">
+		<obstructions>Water</obstructions>
+		<spawnableprovinces tharsis="0" narsis="0" crecia="0" newsaellem="0" jewall="0" oldworld="0"></spawnableprovinces>
+		<temperature>1</temperature>
+		<weatherrestrictions>0</weatherrestrictions>
+		<magicmodifier type="Air">1.05</magicmodifier>
+		<description>Underwater hot air vent.</description>
+	</environment>
+    <environment number="99" name="Benthic Zone" color="0x0F102F">
+		<obstructions>Floor,Water</obstructions>
+		<spawnableprovinces tharsis="0" narsis="0" crecia="0" newsaellem="0" jewall="0" oldworld="0"></spawnableprovinces>
+		<temperature>1</temperature>
+		<weatherrestrictions>0</weatherrestrictions>
+		<magicmodifier type="Water">1.05</magicmodifier>
+		<description>Bottom of all bodies of water that aren't oceanic.</description>
+	</environment>
+	<!-- Inside is a catch-all when the environment isn't found -->
+	<environment number="0" name="Inside" color="0x4B4B4B">
+		<obstructions>Water</obstructions>
+		<spawnableprovinces tharsis="1" narsis="1" crecia="1" newsaellem="1" jewall="1" oldworld="1"></spawnableprovinces>
+		<temperature>3</temperature>
+		<weatherrestrictions>0</weatherrestrictions>
+		<magicmodifier type="Earth">1</magicmodifier>
+		<description>This sector marks the environment Inside. Inside environment is not affected by weather.</description>
+	</environment>
+</environmentlist>
