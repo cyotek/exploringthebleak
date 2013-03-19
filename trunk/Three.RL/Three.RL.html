@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Three.RL</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<style>body{font-family: Monospace;background-color:black;margin:0px;overflow:hidden;}</style>
+	</head>
+	<body>
+		<!-- Library Dependencies -->
+		<script type="application/javascript" src="keyboard.js"></script>
+		<script type="application/javascript" src="three.min.js"></script>
+		<script type="application/javascript" src="stats.min.js"></script>
+		<!-- Object Dependencies -->
+		<script type="application/javascript" src="fonts/helvetiker_regular.typeface.js"></script>
+		<!-- Core Dependencies -->
+		<script type="application/javascript" src="map_constructors.js"></script>
+		<script type="application/javascript" src="map_drawAs3d.js"></script>
+		<script type="application/javascript" src="map_generateBSP.js"></script>
+		<script type="application/javascript" src="map_globalVar.js"></script>
+		<script type="application/javascript" src="io_listen.js"></script>
+		<script type="application/javascript" src="io_process.js"></script>
+		<!-- Main Procedure -->
+		<script>
+			if(generateMap_BSP(size, objects)){
+				placePlayer();
+				drawMap();
+				listen();
+			} //end if		
+		</script>
+	</body>
+</html>
