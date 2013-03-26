@@ -119,8 +119,8 @@ function makeCorridor(x, y, length, direction){
 
 function makeRoom(x, y, xlength, ylength, direction){
 	//define the dimensions of the room, it should be at least 4x4 tiles (2x2 for walking on, the rest is walls)
-	var xlen = getRand(4, xlength);
-	var ylen = getRand(4, ylength);
+	var xlen = getRand(roomSizeMin+2, xlength);
+	var ylen = getRand(roomSizeMin+2, ylength);
 	//tile type its going to be filled with
 	var floor = tileDirtFloor;
 	var wall = tileDirtWall;
