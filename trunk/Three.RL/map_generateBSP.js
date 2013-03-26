@@ -42,9 +42,15 @@
  *           R E T U R N E D      V A R I A B L E S           *
  *------------------------------------------------------------*
  * map.type  - Alters from intial value to one of the required*
- *             constants visible above
-                *
+ *             constants visible above                        *
 \**************************************************************/
+
+/* initialize some temporary "constants" to help with directions */
+var _north=2,__north=0;
+var _east=3,__east=1;
+var _south=0,__south=2;
+var _west=1,__west=3;
+var _none=-1;
 
 function setCell(x, y, type){
 	map[x][y].type=type;
@@ -59,59 +65,55 @@ function getRand(min, max){
 } //end getRand
 
 function makeCorridor(x, y, length, direction){
-	var len = getRand(2, length);
-	var floor = tileCorridor;
-	var dir = 0;
-	if (direction > 0 && direction < 4)dir = direction;
-	var xtemp = 0;
-	var ytemp = 0;
 	if (x < 0 || x > size)return false;
 	if (y < 0 || y > size)return false;
-	if (dir == 0){
-		// north
-		xtemp = x;
-		//make sure its not out of bounds
-		for (ytemp = y; ytemp > (y - len); ytemp--){
-			if (ytemp < 0 || ytemp > size)return false;
-			if (getCell(xtemp, ytemp) != tileUnused)return false;
-		} //end for
-		//start building
-		for (ytemp = y; ytemp > (y - len); ytemp--){
-			setCell(xtemp, ytemp, floor);
-		} //end for
-	}else if(dir == 1){
-		// east
-		ytemp = y;
-		for (xtemp = x; xtemp < (x + len); xtemp++){
-			if (xtemp < 0 || xtemp > size)return false;
-			if (getCell(xtemp, ytemp) != tileUnused)return false;
-		} //end for
-		for (xtemp = x; xtemp < (x + len); xtemp++){
-			setCell(xtemp, ytemp, floor);
-		} //end for
-	}else if(dir == 2){
-		// south
-		xtemp = x;
-		//make sure its not out of bounds
-		for (ytemp = y; ytemp < (y + len); ytemp++){
-			if (ytemp < 0 || ytemp > size)return false;
-			if (getCell(xtemp, ytemp) != tileUnused)return false;
-		} //end for
-		//start building
-		for (ytemp = y; ytemp < (y + len); ytemp++){
-			setCell(xtemp, ytemp, floor);
-		} //end for
-	}else if(dir == 3){
-		// west
-		ytemp = y;
-		for (xtemp = x; xtemp > (x - len); xtemp--){
-			if (xtemp < 0 || xtemp > size)return false;
-			if (getCell(xtemp, ytemp) != tileUnused)return false;
-		} //end for
-		for (xtemp = x; xtemp > (x - len); xtemp--){
-			setCell(xtemp, ytemp, floor);
-		} //end for
-	} //end if
+	var noDir=0;
+	if(direction==__north){noDir=__south;
+	}else if(direction==__east){noDir=__west;
+	}else if(direction==__south){noDir=__north;
+	}else if(direction==__west){noDir=__east;}
+	var len = length;
+	var floor = tileCorridor;
+	var dir = direction;
+	var xtemp = x;
+	var ytemp = y;
+	if(getCell(xtemp,ytemp)==tileUnused && xtemp!=0 && ytemp!=0 && xtemp!=size && ytemp!=size){setCell(xtemp, ytemp, floor);}else{return false;}
+	do{
+		if (dir == 0){ // north
+			if (ytemp-1 < 0 && len==length){setCell(xtemp,ytemp,tileUnused);return false;
+			}else if(ytemp-1<0 &&len!=length){return true;}
+			if (getCell(xtemp, ytemp-1)!=tileUnused && len==length){setCell(xtemp,ytemp,tileUnused);return false;
+			}else if(getCell(xtemp,ytemp-1)!=tileUnused && len!=length){return true;}
+			ytemp--;
+		}else if(dir == 1){ // east
+			if (xtemp+1 > size && len==length){setCell(xtemp,ytemp,tileUnused);return false;
+			}else if(xtemp+1>size &&len!=length){return true;}
+			if (getCell(xtemp+1, ytemp)!=tileUnused && len==length){setCell(xtemp,ytemp,tileUnused);return false;
+			}else if(getCell(xtemp+1,ytemp)!=tileUnused && len!=length){return true;}
+			xtemp++;
+		}else if(dir == 2){ // south
+			if (ytemp+1 > size && len==length){setCell(xtemp,ytemp,tileUnused);return false;
+			}else if(ytemp+1>size &&len!=length){return true;}
+			if (getCell(xtemp, ytemp+1)!=tileUnused && len==length){setCell(xtemp,ytemp,tileUnused);return false;
+			}else if(getCell(xtemp,ytemp+1)!=tileUnused && len!=length){return true;}
+			ytemp++;
+		}else if(dir == 3){ // west
+			if (xtemp-1 < 0 && len==length){setCell(xtemp,ytemp,tileUnused);return false;
+			}else if(xtemp-1<0 &&len!=length){return true;}
+			if (getCell(xtemp-1, ytemp)!=tileUnused && len==length){setCell(xtemp,ytemp,tileUnused);return false;
+			}else if(getCell(xtemp-1,ytemp)!=tileUnused && len!=length){return true;}
+			xtemp--;	
+		} //end if
+		if(xtemp==0||ytemp==0||xtemp==size||ytemp==size)return true;
+		len--;
+		setCell(xtemp, ytemp, floor);
+		/* choose a different direction with each iteration */
+		if(1+Math.floor(Math.random()*100)<=chanceCorridorBend){
+			do{
+				dir=Math.floor(Math.random()*4);
+			}while(dir==noDir); //end while
+		} //end if
+	}while(len>0); //end do
 	return true;
 } //end function
 
@@ -229,10 +231,7 @@ function makeRoom(x, y, xlength, ylength, direction){
 function surroundCorridors(){
 	for(var y=0;y<size;y++){
 		for(var x=0;x<size;x++){
-			if(getCell(x,y)==tileCorridor){ //remove corridor type
-				setCell(x,y,tileDirtFloor);
-			} //end if
-			if(getCell(x,y)==tileDirtFloor||getCell(x,y)==tileDoor){
+			if(getCell(x,y)==tileDirtFloor||getCell(x,y)==tileCorridor||getCell(x,y)==tileDoor){
 				if(x>0            ){if(getCell(x-1,y)==tileUnused)setCell(x-1,y,tileDirtWall);} //to the left
 				if(x<size         ){if(getCell(x+1,y)==tileUnused)setCell(x+1,y,tileDirtWall);} //to the right
 				if(y>0            ){if(getCell(x,y-1)==tileUnused)setCell(x,y-1,tileDirtWall);} //top
@@ -242,6 +241,10 @@ function surroundCorridors(){
 				if(x>0&&y<size    ){if(getCell(x-1,y+1)==tileUnused)setCell(x-1,y+1,tileDirtWall);} //bottomleft
 				if(x<size&&y>0    ){if(getCell(x+1,y-1)==tileUnused)setCell(x+1,y-1,tileDirtWall);} //topright
 			} //end if
+			if(x>0   ){if(getCell(x,y)==tileDoor&&getCell(x-1,y)==tileCorridor)setCell(x,y,tileDirtFloor);}
+			if(x<size){if(getCell(x,y)==tileDoor&&getCell(x+1,y)==tileCorridor)setCell(x,y,tileDirtFloor);}
+			if(y>0   ){if(getCell(x,y)==tileDoor&&getCell(x,y-1)==tileCorridor)setCell(x,y,tileDirtFloor);}
+			if(y<size){if(getCell(x,y)==tileDoor&&getCell(x,y+1)==tileCorridor)setCell(x,y,tileDirtFloor);}
 		} //end for
 	} //end for
 } //end function
@@ -314,53 +317,53 @@ function generateMap_BSP(size, inobj){
 		var xmod = 0;
 		var newy = 0;
 		var ymod = 0;
-		var validTile = -1;
+		var validTileDirection = _none;
 		//1000 chances to find a suitable object (room or corridor)..
 		for (var testing = 0; testing < 1000; testing++){
 			newx = getRand(1, size - 1);
 			newy = getRand(1, size - 1);
-			validTile = -1;
+			validTileDirection = -1;
 			if(getCell(newx, newy) == tileDirtWall || getCell(newx, newy) == tileCorridor){
 				//check if we can reach the place
 				if(getCell(newx, newy + 1) == tileDirtFloor || getCell(newx, newy + 1) == tileCorridor){
-					validTile = 0;
+					validTileDirection = _south;
 					xmod = 0;
 					ymod = -1;
 				}else if(getCell(newx - 1, newy) == tileDirtFloor || getCell(newx - 1, newy) == tileCorridor){
-					validTile = 1;
+					validTileDirection = _west;
 					xmod = +1;
 					ymod = 0;
 				}else if (getCell(newx, newy - 1) == tileDirtFloor || getCell(newx, newy - 1) == tileCorridor){
-					validTile = 2;
+					validTileDirection = _north;
 					xmod = 0;
 					ymod = +1;
 				}else if(getCell(newx + 1, newy) == tileDirtFloor || getCell(newx + 1, newy) == tileCorridor){
-					validTile = 3;
+					validTileDirection = _east;
 					xmod = -1;
 					ymod = 0;
 				} //end if
 				//check that we haven't got another door nearby, so we won't get alot of openings besides
 				//each other
-				if(validTile > -1){
+				if(validTileDirection!=_none){
 					if(getCell(newx, newy + 1) == tileDoor){ //north
-						validTile = -1;
+						validTileDirection = _none;
 					}else if(getCell(newx - 1, newy) == tileDoor){ //east
-						validTile = -1;
+						validTileDirection = _none;
 					}else if(getCell(newx, newy - 1) == tileDoor){ //south
-						validTile = -1;
+						validTileDirection = _none;
 					}else if(getCell(newx + 1, newy) == tileDoor){ //west
-						validTile = -1;
+						validTileDirection = _none;
 					} //end if
 				} //end if
 				//if we can, jump out of the loop and continue with the rest
-				if (validTile > -1)break;
+				if (validTileDirection!=_none)break;
 			} //end if
 		} //end for
-		if (validTile > -1){
+		if (validTileDirection!=_none){
 			//choose what to build now at our newly found place, and at what direction
 			var feature = getRand(0, 100);
 			if(feature <= chanceRoom){ 
-				if(makeRoom((newx + xmod), (newy + ymod), 8, 6, validTile)){
+				if(makeRoom((newx + xmod), (newy + ymod), roomSizeMin+Math.floor(Math.random()*(roomSizeMax-roomSizeMin)), roomSizeMin+Math.floor(Math.random()*roomSizeMax-roomSizeMin), validTileDirection)){
 					//a new room
 					currentFeatures++; //add to our quota
 					//then we mark the wall opening with a door
@@ -369,7 +372,7 @@ function generateMap_BSP(size, inobj){
 					setCell((newx + xmod), (newy + ymod), tileDirtFloor);
 				} //end if
 			}else if(feature >= chanceRoom){ //new corridor
-				if (makeCorridor((newx + xmod), (newy + ymod), 6, validTile)){
+				if (makeCorridor((newx + xmod), (newy + ymod), corridorSizeMin+Math.floor(Math.random()*(corridorSizeMax-corridorSizeMin)), validTileDirection)){
 					//same thing here, add to the quota and a door
 					currentFeatures++;
 					setCell(newx, newy, tileDoor);	
@@ -409,18 +412,14 @@ function generateMap_BSP(size, inobj){
 			} //end if
 			////console.log("ways: " + ways);
 			if(state == 0){
-				if(ways == 0){
-					//console.log("upstairs");
-					//we're in state 0, let's place a "upstairs" thing
+				if(ways == 0){ //place upstairs
 					setCell(newx, newy, tileUpStairs);
 					cx=newx;cy=newy;
 					state = 1;
 					break;
 				} //end if
 			}else if(state == 1){
-				if(ways == 0){
-					//console.log("downstairs");
-					//state 1, place a "downstairs"
+				if(ways == 0){ //place downstairs
 					setCell(newx, newy, tileDownStairs);
 					state = 10;
 					break;
