@@ -26,7 +26,7 @@
  * makeCorridor(x,y,length,direction)                         *
  * makeRoom(x,y,xlength,ylength,direction)                    *
  * surroundCorridors() - surround corridors with walls        *
- * createDungeon(inx,iny,inobj) <return success as boolean>   *
+ * generateMap_BSP(size,inobj) <return success as boolean>    *
  *------------------------------------------------------------*
  *           R E Q U I R E D      V A R I A B L E S           *
  *------------------------------------------------------------*
