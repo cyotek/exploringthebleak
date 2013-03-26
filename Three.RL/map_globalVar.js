@@ -9,10 +9,12 @@ var tileDownStairs = 6;
 
 var size = 41,cx,cy;
 var map = new Array(size);
+var map2 = new Array(size);
 
 /* Set the map array */
 for (var i=0;i<=size;i++){
 	map[i] = new Array(size);
+	map2[i] = new Array(size);
 } //end for
 
 /* Initialize the Map Array to Zeros */
@@ -21,6 +23,9 @@ for (i=0;i<=size;i++){
 		map[i][j]={
 			type:0
 		}; //end map[i][j]
+		map2[i][j]={
+			type:0
+		}; //end map2[i][j]
 	} //end for
 } //end for
 
