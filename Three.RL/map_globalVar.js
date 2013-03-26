@@ -31,7 +31,7 @@ var chanceCorridorBend = 80;
 var corridorSizeMin = 3;
 var corridorSizeMax = 7;
 var roomSizeMin = 5;
-var roomSizeMax = 10;
+var roomSizeMax = 7;
 var objects = 40;
 
 /* Place the Player */
