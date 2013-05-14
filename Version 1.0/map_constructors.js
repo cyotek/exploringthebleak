@@ -71,7 +71,7 @@ function runBlock(x,y,z){
 function addPlane(x,y,z,w,h,texture){
 	var _g = new THREE.PlaneGeometry(w,h);
 	    _g.applyMatrix(new THREE.Matrix4().makeRotationX(-Math.PI/2));
-	var _m = new THREE.MeshLambertMaterial({map:texture});
+	var _m = new THREE.MeshPhongMaterial({map:textureDirt,  normalMap:textureDirtNormal,  specularMap:textureDirtSpecular,shading:THREE.FlatShading,  shininess:210,bumpMap:textureDirtBump,  bumpScale:210,metal:false});
 	var _p = new THREE.Mesh(_g,_m);
 	    _p.position.set(x,y,z);
 	scene.add(_p);
@@ -110,12 +110,16 @@ function addBlockCustom(x,y,z,w,h,d,texture1,texture2,texture3,texture4,texture5
 	    _b.position.set(x,y,z)
 	scene.add(_b);
 } //end function
-function addBlockCustomAllExceptOne(x,y,z,w,h,d,texture1,texture2,face){
+function addBlockCustomAllExceptOne(x,y,z,w,h,d,texture1,bump1,texture2,bump2,face){
 	var _g = new THREE.CubeGeometry(w,d,h);
+		_g.faceVertexUvs[0][0] = [new THREE.UV(0, 1), new THREE.UV(1, 1), new THREE.UV(1, 0), new THREE.UV(0, 0)];
+		_g.faceVertexUvs[0][1] = [new THREE.UV(1, 0), new THREE.UV(0, 0), new THREE.UV(0, 1), new THREE.UV(1, 1)];
+		_g.faceVertexUvs[0][2] = [new THREE.UV(1, 0), new THREE.UV(1, 1), new THREE.UV(0, 1), new THREE.UV(0, 0)];
 	    _g.applyMatrix(new THREE.Matrix4().makeRotationX(-Math.PI/2));
 	var _m = [];
-	    _m.push(new THREE.MeshLambertMaterial({map:texture1}));
-	    _m.push(new THREE.MeshLambertMaterial({map:texture2}));
+		/* textureCobbleNormal, textureCobbleLight, textureCobbleBump, textureCobbleSpecular */
+	    _m.push(new THREE.MeshPhongMaterial({map:textureDirt,  normalMap:textureDirtNormal,  specularMap:textureDirtSpecular,  shininess:50,bumpMap:textureDirtBump,  bumpScale:50,metal:true}));
+		_m.push(new THREE.MeshPhongMaterial({map:textureCobble,normalMap:textureCobbleNormal,specularMap:textureCobbleSpecular,shininess:50,bumpMap:textureCobbleBump,bumpScale:50,metal:true}));
 	for (var __u=0;__u<=5;__u++){
 		_g.faces[__u].materialIndex=(__u==face?0:1);
 	} //end for
