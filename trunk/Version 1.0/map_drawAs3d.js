@@ -33,16 +33,10 @@ function drawMap(){
 /* Main animation loop */
 function animate() {
 	requestAnimationFrame( animate );
-	adjustCamera();
-	pointLight.position.z=10*cy;
-	pointLight.position.x=10*cx;
+	pointLight.position.set(playerObject.position.x,157,playerObject.position.z);
+	camera.position.set(10*cx,175,10*cy+20);
 	renderer.render( scene, camera );
 	stats.update();
-} //end function
-
-/* Make sure camera is correct */
-function adjustCamera(){
-	camera.position.set(10*cx,200,10*cy);
 } //end function
 
 /* Adjust drawing information on window resize */
@@ -63,14 +57,7 @@ function init() {
 		for(var j=0;j<=size;j++){
 			//if(Math.abs(i-cx)<=4 && Math.abs(j-cy)<=4){
 				if(map[i][j].type==tileDirtWall){
-					var randomType = Math.floor(Math.random()*10);
-					if(randomType==0){      randomType=textureCobble2;
-					}else if(randomType==1){randomType=textureCobble3;
-					}else if(randomType==2){randomType=textureCobble4;
-					}else if(randomType==3){randomType=textureCobble5;
-					}else{                  randomType=textureCobble;
-					} //end if
-					addBlockCustomAllExceptOne(10*i,150,10*j,10,10,10,textureDirt,randomType,4) //4 is top (not wall)
+					addBlockCustomAllExceptOne(10*i,150,10*j,10,10,10,textureDirt,0,textureDirtBump,textureCobbleBump,4) //4 is top (not wall)
 				}else if(map[i][j].type==tileDoor){
 					/* Draw the floor */
 					addPlane(10*i,145,10*j,10,10,textureDirt);
@@ -83,18 +70,17 @@ function init() {
 					runBlock(10*i,150,10*j);
 				}else if(map[i][j].type==tileDirtFloor){
 					/* draw the floor */
-					savPlane(10,10,textureDirt);
-					runPlane(10*i,145,10*j);
+					addPlane(10*i,145,10*j,10,10,textureDirt);
 					/* now see if it's populated with flora */
-					var randomType = Math.floor(Math.random()*10);
-					if(randomType==0){      repPlaneT(textureDecal,true);
-					}else if(randomType==1){repPlaneT(textureDecal2,true);
-					}else if(randomType==2){repPlaneT(textureDecal3,true);
-					}else{randomType=0;
-					} //end if
-					if(randomType!=0){
-						runPlane(10*i,146,10*j);
-					} //end if
+					//var randomType = Math.floor(Math.random()*10);
+					//if(randomType==0){      repPlaneT(textureDecal,true);
+					//}else if(randomType==1){repPlaneT(textureDecal2,true);
+					//}else if(randomType==2){repPlaneT(textureDecal3,true);
+					//}else{randomType=0;
+					//} //end if
+					//if(randomType!=0){
+						//runPlane(10*i,146,10*j);
+					//} //end if
 				}else if(map[i][j].type==tileDownStairs){
 					/* Transparent Overlay to Darken */
 					addTPlane(10*i+10,135,10*j,12,12,darkOverlay);
@@ -130,34 +116,38 @@ function init() {
 	var textMaterial = new THREE.MeshPhongMaterial({color:0x052205, ambient: 0x226622,diffuse: 0x053305,specular: 0x054405,shininess:12});
 	var text3d = new THREE.TextGeometry(text,{
 		size:5,
-		height:10,
-		curveSegments:2,
+		height:3,
+		curveSegments:6,
 		font:"helvetiker"
 	});
 	text=new THREE.Mesh(text3d,textMaterial);
-	text.position.set(10*cx-3,142,10*cy+2);
-	text.rotation.x=-1.5;
+	text.position.set(10*cx-3,147,10*cy+2);
+	text.rotation.x=-0.75;
 	scene.add(text);
 	playerObject=text;
 	/* Set up the Camera */
-	adjustCamera();
 	camera.useTarget=false;
-	camera.rotation.x=-1.5;
+	camera.rotation.x=-1.0;
+	/* fog */
+	//scene.fog = new THREE.FogExp2( 0x999999, 0.015 );
 	/* Lighting */
 	//ambient light to darken scene
-	var light = new THREE.AmbientLight( 0x000000 ); //0x668866
-	scene.add( light );
+	//var light = new THREE.AmbientLight( 0x000000 ); //0x668866
+	//scene.add( light );
 	//spot light to cast shadows on side of walls
-	var spotLight = new THREE.SpotLight( 0x776677 );
-	spotLight.position.set( 100, 800, 100 );
-	spotLight.castShadow = true; 
-	spotLight.shadowMapWidth = 1024;
-	spotLight.shadowMapHeight = 1024; 
-	spotLight.shadowCameraNear = 500;
-	spotLight.shadowCameraFar = 4000; 
-	spotLight.shadowCameraFov = 30;  
-	scene.add( spotLight );
+	//var spotLight = new THREE.SpotLight( 0x332233 );
+	//spotLight.position.set( 100, 800, 100 );
+	//spotLight.castShadow = true; 
+	//spotLight.shadowMapWidth = 1024;
+	//spotLight.shadowMapHeight = 1024; 
+	//spotLight.shadowCameraNear = 500;
+	//spotLight.shadowCameraFar = 4000; 
+	//spotLight.shadowCameraFov = 30;  
+	//scene.add( spotLight );
 	//point light to illuminate player
+	//light1 = new THREE.PointLight( 0xff0040, 2, 50 );
+	//			scene.add( light1 );
+    pointLight = new THREE.PointLight(0xaa9955,5,30);
 	pointLight.position.x = cx*10;
 	pointLight.position.y = 156;
 	pointLight.position.z = cy*10;
