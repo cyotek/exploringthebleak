@@ -95,6 +95,7 @@ function addBlock(x,y,z,w,h,d,texture){
 } //end function
 function addBlockCustom(x,y,z,w,h,d,texture1,texture2,texture3,texture4,texture5,texture6){
 	var _g = new THREE.CubeGeometry(w,d,h);
+		_g.matrixAutoUpdate = false;
 	    _g.applyMatrix(new THREE.Matrix4().makeRotationX(-Math.PI/2));
 	var _m = [];
 	    _m.push(new THREE.MeshLambertMaterial({map:texture1}));
@@ -115,6 +116,7 @@ function addBlockCustomAllExceptOne(x,y,z,w,h,d,texture1,bump1,texture2,bump2,fa
 		_g.faceVertexUvs[0][0] = [new THREE.UV(0, 1), new THREE.UV(1, 1), new THREE.UV(1, 0), new THREE.UV(0, 0)];
 		_g.faceVertexUvs[0][1] = [new THREE.UV(1, 0), new THREE.UV(0, 0), new THREE.UV(0, 1), new THREE.UV(1, 1)];
 		_g.faceVertexUvs[0][2] = [new THREE.UV(1, 0), new THREE.UV(1, 1), new THREE.UV(0, 1), new THREE.UV(0, 0)];
+		_g.matrixAutoUpdate = false;
 	    _g.applyMatrix(new THREE.Matrix4().makeRotationX(-Math.PI/2));
 	var _m = [];
 		/* textureCobbleNormal, textureCobbleLight, textureCobbleBump, textureCobbleSpecular */
