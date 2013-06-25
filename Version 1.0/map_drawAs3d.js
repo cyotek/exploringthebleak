@@ -55,7 +55,7 @@ function init() {
 	scene = new THREE.Scene();
 	for(var i=0;i<=size;i++){
 		for(var j=0;j<=size;j++){
-			//if(Math.abs(i-cx)<=4 && Math.abs(j-cy)<=4){
+			//if(Math.abs(i-cx)<=3 && Math.abs(j-cy)<=3){
 				if(map[i][j].type==tileDirtWall){
 					addBlockCustomAllExceptOne(10*i,150,10*j,10,10,10,textureDirt,0,textureDirtBump,textureCobbleBump,4) //4 is top (not wall)
 				}else if(map[i][j].type==tileDoor){
