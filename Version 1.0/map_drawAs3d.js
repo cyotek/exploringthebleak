@@ -63,50 +63,74 @@ function init() {
 					addPlane(10*i,145,10*j,10,10,textureDirt);
 					/* Find which axis the door resides on, and draw */
 					if(map[i-1][j].type==tileDirtWall && map[i+1][j].type==tileDirtWall && map[i][j+1].type==tileDirtFloor && map[i][j-1].type==tileDirtFloor){
-						savBlock(10,10,2,textureWood);
+						savBlock(10,10,2,textureDoor);
 					}else{
-						savBlock(2,10,10,textureWood);
+						savBlock(2,10,10,textureDoor);
 					} //end if
 					runBlock(10*i,150,10*j);
 				}else if(map[i][j].type==tileDirtFloor){
-					/* draw the floor */
-					addPlane(10*i,145,10*j,10,10,textureDirt);
-					/* now see if it's populated with flora */
-					//var randomType = Math.floor(Math.random()*10);
-					//if(randomType==0){      repPlaneT(textureDecal,true);
-					//}else if(randomType==1){repPlaneT(textureDecal2,true);
-					//}else if(randomType==2){repPlaneT(textureDecal3,true);
-					//}else{randomType=0;
-					//} //end if
-					//if(randomType!=0){
-						//runPlane(10*i,146,10*j);
-					//} //end if
+					addPlane(10*i,145,10*j,10,10,textureWood);
+				}else if(map[i][j].type==tileCorridor){
+					addPlane(10*i,145,10*j,10,10,textureWood);
 				}else if(map[i][j].type==tileDownStairs){
 					/* Transparent Overlay to Darken */
-					addTPlane(10*i+10,135,10*j,12,12,darkOverlay);
+					//addTPlane(10*i+10,135,10*j,12,12,darkOverlay);
 					/* floor */
 					addPlane(10*i+10,135,10*j,12,12,textureDirt);
 					/* walls */
-					savBlock(10,10,1,textureCobble);
-					runBlock(10*i   ,139,10*j-5); //front1
-					runBlock(10*i+10,139,10*j-5); //front2
-					runBlock(10*i   ,139,10*j+5); //back1
-					runBlock(10*i+10,139,10*j+5); //back2
+					addBlockCustomAllExceptOne(10*i   ,139.99,10*j-5,10,10,1,textureDirt,0,textureDirtBump,textureCobbleBump,4) //front1
+					addBlockCustomAllExceptOne(10*i+10,139.99,10*j-5,10,10,1,textureDirt,0,textureDirtBump,textureCobbleBump,4) //front2
+					addBlockCustomAllExceptOne(10*i   ,139.99,10*j+5,10,10,1,textureDirt,0,textureDirtBump,textureCobbleBump,4) //back1
+					addBlockCustomAllExceptOne(10*i+10,139.99,10*j+5,10,10,1,textureDirt,0,textureDirtBump,textureCobbleBump,4) //back2
 					/* stairs */
-					savBlock(1,1,10,textureWood);
 					for(var u=0;u<10;u++){
-						runBlock(10*i-5+u,144-u,10*j);
+						var rPlank=Math.floor(Math.random()*5);
+						if(rPlank==0){
+							addBlock(10*i-5+u,144-u,10*j,1,1,10,textureWoodPlank1)
+						}else if(rPlank==1){
+							addBlock(10*i-5+u,144-u,10*j,1,1,10,textureWoodPlank2)
+						}else if(rPlank==2){
+							addBlock(10*i-5+u,144-u,10*j,1,1,10,textureWoodPlank3)
+						}else if(rPlank==3){
+							addBlock(10*i-5+u,144-u,10*j,1,1,10,textureWoodPlank4)
+						}else{
+							addBlock(10*i-5+u,144-u,10*j,1,1,10,textureWoodPlank5)
+						} //end if
 					} //end for
 				}else if(map[i][j].type==tileUpStairs){
 					/* floor */
 					addPlane(10*i,145,10*j,10,10,textureDirt);
 					/* stairs */
-					savBlock(1,1,10,textureWood2);
 					for(var u=0;u<10;u++){
-						runBlock(10*i-5+u,154-u,10*j);
+						var rPlank=Math.floor(Math.random()*5);
+						if(rPlank==0){
+							addBlock(10*i-5+u,154-u,10*j,1,1,10,textureWoodPlank1)
+						}else if(rPlank==1){
+							addBlock(10*i-5+u,154-u,10*j,1,1,10,textureWoodPlank2)
+						}else if(rPlank==2){
+							addBlock(10*i-5+u,154-u,10*j,1,1,10,textureWoodPlank3)
+						}else if(rPlank==3){
+							addBlock(10*i-5+u,154-u,10*j,1,1,10,textureWoodPlank4)
+						}else{
+							addBlock(10*i-5+u,154-u,10*j,1,1,10,textureWoodPlank5)
+						} //end if
 					} //end for
 				}else if(map[i][j].type==tileUnused){
-					addPlane(10*i,155,10*j,10,10,textureDirt);
+					addPlane(10*i,155,10*j,10,10,textureWood);
+				} //end if
+				if(mobMap[i][j]!=0){
+					text=mobs[mobMap[i][j]].symbol
+					var textMaterial = new THREE.MeshPhongMaterial({color:0x220505, ambient: 0x662222,diffuse: 0x330605,specular: 0x440505,shininess:72});
+					var text3d = new THREE.TextGeometry(text,{
+						size:5,
+						height:3,
+						curveSegments:6,
+						font:"helvetiker"
+					});
+					text=new THREE.Mesh(text3d,textMaterial);
+					text.position.set(10*i-3,147,10*j+2);
+					text.rotation.x=-0.75;
+					scene.add(text);
 				} //end if
 			//} //end if
 		} //end for
@@ -124,6 +148,7 @@ function init() {
 	text.position.set(10*cx-3,147,10*cy+2);
 	text.rotation.x=-0.75;
 	scene.add(text);
+	
 	playerObject=text;
 	/* Set up the Camera */
 	camera.useTarget=false;
