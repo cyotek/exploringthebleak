@@ -36,10 +36,21 @@ var tileDownStairs = 6;
 
 var size = 41,cx,cy,px,py;
 var map = new Array(size);
-
-/* Set the map array */
+var mobMap = new Array(size);
+var mob = {
+	symbol:"b",
+	location:{x:0,y:0},
+	health:{cur:10,max:10},
+	damage:{min:1,max:5}
+}; //end mob
+var mobs = new Array(Math.floor(size/2));
+/* Set the standard arrays */
 for (var i=0;i<=size;i++){
 	map[i] = new Array(size);
+	mobMap[i] = new Array(size);
+	if(i<=Math.floor(size/2)){ //make sure that the mob indexs don't exceed the boundary.
+		mobs[i]=mob;
+	} //end if
 } //end for
 
 /* Initialize the Map Array to Zeros */
@@ -48,6 +59,7 @@ for (i=0;i<=size;i++){
 		map[i][j]={
 			type:0
 		}; //end map[i][j]
+		mobMap[i][j]=0;
 	} //end for
 } //end for
 
@@ -78,8 +90,13 @@ var textureCobbleSpecular = THREE.ImageUtils.loadTexture('img-highRes/textureCob
 var textureDecal  = THREE.ImageUtils.loadTexture('img-highRes/decalStones1.png');
 var textureDecal2 = THREE.ImageUtils.loadTexture('img-highRes/decalStones2.png');
 var textureDecal3 = THREE.ImageUtils.loadTexture('img-highRes/decalStones3.png');
-var textureWood   = THREE.ImageUtils.loadTexture('img-highRes/doorDungeonWood.png');
-var textureWood2  = THREE.ImageUtils.loadTexture('img-highRes/textureWoodDark.png');
+var textureDoor   = THREE.ImageUtils.loadTexture('img-highRes/doorDungeonWood.png');
+var textureWood   = THREE.ImageUtils.loadTexture('img-highRes/textureWoodWall.png');
+var textureWoodPlank1  = THREE.ImageUtils.loadTexture('img-highRes/textureWoodPlank.png');
+var textureWoodPlank2  = THREE.ImageUtils.loadTexture('img-highRes/textureWoodPlank2.png');
+var textureWoodPlank3  = THREE.ImageUtils.loadTexture('img-highRes/textureWoodPlank3.png');
+var textureWoodPlank4  = THREE.ImageUtils.loadTexture('img-highRes/textureWoodPlank4.png');
+var textureWoodPlank5  = THREE.ImageUtils.loadTexture('img-highRes/textureWoodPlank5.png');
 var darkOverlay   = THREE.ImageUtils.loadTexture('img-highRes/textureStairsOverlay.png');
 var pointLight = new THREE.PointLight(0xFFFFFF,10,50);
 var stairsBuilt=0;

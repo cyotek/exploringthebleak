@@ -14,6 +14,7 @@
 		<!-- Object Dependencies -->
 		<script type="application/javascript" src="fonts/helvetiker_regular.typeface.js"></script>
 		<!-- Core Dependencies -->
+		<script type="application/javascript" src="map_generateMobs.js"></script>
 		<script type="application/javascript" src="map_constructors.js"></script>
 		<script type="application/javascript" src="map_drawAs3d.js"></script>
 		<script type="application/javascript" src="map_generateBSP.js"></script>
@@ -23,6 +24,7 @@
 		<!-- Main Procedure -->
 		<script>
 			if(generateMap_BSP(size, objects)){
+				generateMobs();
 				placePlayer();
 				drawMap();
 				listen();
