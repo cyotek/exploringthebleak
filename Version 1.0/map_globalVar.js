@@ -25,7 +25,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                    *
 \***********************************************************************************/
 
-/* Main Mapping Variables and declarations */
+/* Constants */
 var tileUnused     = 0;
 var tileDirtWall   = 1;
 var tileDirtFloor  = 2;
@@ -34,19 +34,23 @@ var tileDoor       = 4;
 var tileUpStairs   = 5;
 var tileDownStairs = 6;
 
+/* Main Variables and Declarations */
 var size = 41,cx,cy,px,py;
 var map = new Array(size);
+var map2 = new Array(size);
 var mobMap = new Array(size);
 var mob = {
 	symbol:"b",
-	location:{x:0,y:0},
-	health:{cur:10,max:10},
-	damage:{min:1,max:5}
+	location:{x:   0,y:  0},
+	health:  {cur:10,max:10},
+	damage:  {min: 1,max:5}
 }; //end mob
 var mobs = new Array(Math.floor(size/2));
+
 /* Set the standard arrays */
 for (var i=0;i<=size;i++){
 	map[i] = new Array(size);
+	map2[i] = new Array(size);
 	mobMap[i] = new Array(size);
 	if(i<=Math.floor(size/2)){ //make sure that the mob indexs don't exceed the boundary.
 		mobs[i]=mob;
@@ -59,84 +63,10 @@ for (i=0;i<=size;i++){
 		map[i][j]={
 			type:0
 		}; //end map[i][j]
-		mobMap[i][j]=0;
-	} //end for
-} //end for
-
-/* variables for BSP */
-var chanceRoom = 70;
-var chanceCorridor = 30;
-var objects = 0;
-
-/* Place the Player */
-function placePlayer(){
-	do{
-		cx=1+Math.floor(Math.random()*size);
-		cy=1+Math.floor(Math.random()*size);
-	}while(map[cx][cy].type!=tileDirtFloor);
-} //end function
-
-/* dimensionalize variables */
-var container, stats;
-var camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 1000 );
-var textureDirt  = THREE.ImageUtils.loadTexture('img-highRes/textureDirt.png');
-var textureDirtNormal = THREE.ImageUtils.loadTexture('img-highRes/textureDirt_NORM.png');
-var textureDirtBump = THREE.ImageUtils.loadTexture('img-highRes/textureDirt_DISP.png');
-var textureDirtSpecular = THREE.ImageUtils.loadTexture('img-highRes/textureDirt_SPEC.png');
-var textureCobble = THREE.ImageUtils.loadTexture('img-highRes/textureCobblestone.png');
-var textureCobbleNormal = THREE.ImageUtils.loadTexture('img-highRes/textureCobblestone_NORM.png');
-var textureCobbleBump = THREE.ImageUtils.loadTexture('img-highRes/textureCobblestone_DISP.png');
-var textureCobbleSpecular = THREE.ImageUtils.loadTexture('img-highRes/textureCobblestone_SPEC.png');
-var textureDecal  = THREE.ImageUtils.loadTexture('img-highRes/decalStones1.png');
-var textureDecal2 = THREE.ImageUtils.loadTexture('img-highRes/decalStones2.png');
-var textureDecal3 = THREE.ImageUtils.loadTexture('img-highRes/decalStones3.png');
-var textureDoor   = THREE.ImageUtils.loadTexture('img-highRes/doorDungeonWood.png');
-var textureWood   = THREE.ImageUtils.loadTexture('img-highRes/textureWoodWall.png');
-var textureWoodPlank1  = THREE.ImageUtils.loadTexture('img-highRes/textureWoodPlank.png');
-var textureWoodPlank2  = THREE.ImageUtils.loadTexture('img-highRes/textureWoodPlank2.png');
-var textureWoodPlank3  = THREE.ImageUtils.loadTexture('img-highRes/textureWoodPlank3.png');
-var textureWoodPlank4  = THREE.ImageUtils.loadTexture('img-highRes/textureWoodPlank4.png');
-var textureWoodPlank5  = THREE.ImageUtils.loadTexture('img-highRes/textureWoodPlank5.png');
-var darkOverlay   = THREE.ImageUtils.loadTexture('img-highRes/textureStairsOverlay.png');
-var pointLight = new THREE.PointLight(0xFFFFFF,10,50);
-var stairsBuilt=0;
-var scene, renderer;
-var cube, plane, playerObject;
-var targetRotation = 0;
-var targetRotationOnMouseDown = 0;
-var mouseX = 0;
-var mouseXOnMouseDown = 0;
-var windowHalfX = window.innerWidth / 2;
-var windowHalfY = window.innerHeight / 2;
-
-/* Main Mapping Variables and declarations */
-var tileUnused     = 0;
-var tileDirtWall   = 1;
-var tileDirtFloor  = 2;
-var tileCorridor   = 3;
-var tileDoor       = 4;
-var tileUpStairs   = 5;
-var tileDownStairs = 6;
-
-var size = 41,cx,cy;
-var map = new Array(size);
-var map2 = new Array(size);
-
-/* Set the map array */
-for (var i=0;i<=size;i++){
-	map[i] = new Array(size);
-	map2[i] = new Array(size);
-} //end for
-
-/* Initialize the Map Array to Zeros */
-for (i=0;i<=size;i++){
-	for(j=0;j<=size;j++){
-		map[i][j]={
-			type:0
-		}; //end map[i][j]
 		map2[i][j]={
 			type:0
 		}; //end map2[i][j]
+		mobMap[i][j]=0;
 	} //end for
 } //end for
 
@@ -157,3 +87,45 @@ function placePlayer(){
 		cy=1+Math.floor(Math.random()*size);
 	}while(map[cx][cy].type!=tileDirtFloor);
 } //end function
+
+/* dimensionalize variables */
+var container, stats;
+var camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 1000 );
+var tex_Particle    = THREE.ImageUtils.loadTexture('img-highRes/particle2.png');
+var tex_Dirt_D      = THREE.ImageUtils.loadTexture('img-highRes/textureDirt.png');
+var tex_Dirt_N      = THREE.ImageUtils.loadTexture('img-highRes/textureDirt_NORM.png');
+var tex_Dirt_S      = THREE.ImageUtils.loadTexture('img-highRes/textureDirt_SPEC.png');
+var tex_Dirt_B      = THREE.ImageUtils.loadTexture('img-highRes/textureDirt_DISP.png');
+var tex_Dirt        = {diffuse:tex_Dirt_D,normal:tex_Dirt_N,specular:tex_Dirt_S,bump:tex_Dirt_B};
+var tex_DirtC_D     = THREE.ImageUtils.loadTexture('img-highRes/textureDirtC.png');
+var tex_DirtC_N     = THREE.ImageUtils.loadTexture('img-highRes/textureDirtC_NORM.png');
+var tex_DirtC_S     = THREE.ImageUtils.loadTexture('img-highRes/textureDirtC_SPEC.png');
+var tex_DirtC_B     = THREE.ImageUtils.loadTexture('img-highRes/textureDirtC_DISP.png');
+var tex_DirtC       = {diffuse:tex_DirtC_D,normal:tex_DirtC_N,specular:tex_DirtC_S,bump:tex_DirtC_B};
+var tex_Cobble_D    = THREE.ImageUtils.loadTexture('img-highRes/textureCobblestone.png');
+var tex_Cobble_N    = THREE.ImageUtils.loadTexture('img-highRes/textureCobblestone_NORM.png');
+var tex_Cobble_S    = THREE.ImageUtils.loadTexture('img-highRes/textureCobblestone_SPEC.png');
+var tex_Cobble_B    = THREE.ImageUtils.loadTexture('img-highRes/textureCobblestone_DISP.png');
+var tex_Cobble      = {diffuse:tex_Cobble_D,normal:tex_Cobble_N,specular:tex_Cobble_S,bump:tex_Cobble_B};
+var tex_Door        = THREE.ImageUtils.loadTexture('img-highRes/doorDungeonWood.png');
+var tex_Wood_D      = THREE.ImageUtils.loadTexture('img-highRes/textureWoodWall.png');
+var tex_Wood_N      = THREE.ImageUtils.loadTexture('img-highRes/textureWoodWall_NORM.png');
+var tex_Wood_S      = THREE.ImageUtils.loadTexture('img-highRes/textureWoodWall_SPEC.png');
+var tex_Wood_B      = THREE.ImageUtils.loadTexture('img-highRes/textureWoodWall_DISP.png');
+var tex_Wood        = {diffuse:tex_Wood_D,normal:tex_Wood_N,specular:tex_Wood_S,bump:tex_Wood_B};
+var tex_WoodPlank1  = THREE.ImageUtils.loadTexture('img-highRes/textureWoodPlank.png');
+var tex_WoodPlank2  = THREE.ImageUtils.loadTexture('img-highRes/textureWoodPlank2.png');
+var tex_WoodPlank3  = THREE.ImageUtils.loadTexture('img-highRes/textureWoodPlank3.png');
+var tex_WoodPlank4  = THREE.ImageUtils.loadTexture('img-highRes/textureWoodPlank4.png');
+var tex_WoodPlank5  = THREE.ImageUtils.loadTexture('img-highRes/textureWoodPlank5.png');
+var pointLight = new THREE.PointLight(0xFFFFFF,10,50);
+var stairsBuilt=0;
+var particleCount = 100,particles;
+var scene, renderer, particleSystem;
+var cube, plane, playerObject;
+var targetRotation = 0;
+var targetRotationOnMouseDown = 0;
+var mouseX = 0;
+var mouseXOnMouseDown = 0;
+var windowHalfX = window.innerWidth / 2;
+var windowHalfY = window.innerHeight / 2;

@@ -24,28 +24,11 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS   *
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                    *
 \***********************************************************************************/
-/* ensure that the location intended is walkable first */
-function walkable(x,y){
-	var t=map[x][y].type;
-	return (t==tileDirtFloor?true:(t==tileCorridor?true:(t==tileDoor?true:(t==tileUpStairs?true:(t==tileDownStairs?true:false)))));
+function tick(){ //this is called after player movement or action
+	moveMobiles();
 } //end function
-/* process and operate on the command the user inputted */
-function operate(command){
-	if(command=="west" && walkable(cx-1,cy)){
-		cx--;playerObject.position.x-=10;tick();
-	}else if(command=="east" && walkable(cx+1,cy)){
-		cx++;px=-10;playerObject.position.x+=10;tick();
-	}else if(command=="north" && walkable(cx,cy-1)){
-		cy--;py=-10;playerObject.position.z-=10;tick();
-	}else if(command=="south" && walkable(cx,cy+1)){
-		cy++;py=10;playerObject.position.z+=10;tick();
-	}else if(command=="northeast" && walkable(cx+1,cy-1)){
-		cx++;cy--;playerObject.position.z-=10;playerObject.position.x+=10;px=cx;py=cy;tick();
-	}else if(command=="northwest" && walkable(cx-1,cy-1)){
-		cx--;cy--;playerObject.position.z-=10;playerObject.position.x-=10;px=cx;py=cy;tick();
-	}else if(command=="southwest" && walkable(cx-1,cy+1)){
-		cx--;cy++;playerObject.position.z+=10;playerObject.position.x-=10;px=cx;py=cy;tick();
-	}else if(command=="southeast" && walkable(cx+1,cy+1)){
-		cx++;cy++;playerObject.position.z+=10;playerObject.position.x+=10;px=cx;py=cy;tick();
-	} //end if
+function moveMobiles(){
+	for(var i=0;i<=Math.floor(size/2);i++){
+		
+	} //end for
 } //end function
