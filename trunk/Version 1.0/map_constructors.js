@@ -24,6 +24,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS   *
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                    *
 \***********************************************************************************/
+
 /* generic constructor variables to keep track of */
 var __localPlaneGeometry; //save the geometry dimensions of the plane
 var __localPlaneMaterial; //save the material specific to the plane
@@ -68,14 +69,6 @@ function runBlock(x,y,z){
 } //end function
 
 /* create primitive geometry from scratch */
-function addPlane(x,y,z,w,h,texture){
-	var _g = new THREE.PlaneGeometry(w,h);
-	    _g.applyMatrix(new THREE.Matrix4().makeRotationX(-Math.PI/2));
-	var _m = new THREE.MeshPhongMaterial({map:textureDirt,  normalMap:textureDirtNormal,  specularMap:textureDirtSpecular,shading:THREE.FlatShading,  shininess:210,bumpMap:textureDirtBump,  bumpScale:210,metal:false});
-	var _p = new THREE.Mesh(_g,_m);
-	    _p.position.set(x,y,z);
-	scene.add(_p);
-} //end function
 function addTPlane(x,y,z,w,h,texture){ //transparent allowant plane
 	var _g = new THREE.PlaneGeometry(w,h);
 	    _g.applyMatrix(new THREE.Matrix4().makeRotationX(-Math.PI/2));
@@ -111,7 +104,15 @@ function addBlockCustom(x,y,z,w,h,d,texture1,texture2,texture3,texture4,texture5
 	    _b.position.set(x,y,z)
 	scene.add(_b);
 } //end function
-function addBlockCustomAllExceptOne(x,y,z,w,h,d,texture1,bump1,texture2,bump2,face){
+
+/* addPhongBlockCustomAllExceptOne function will create a block <Phong> using a position,
+ * size,and textures for all sides except one with a seperate texture, as well
+ * as the face# for identifying which face of the block the unique texture is on.
+ * 	- x,y,z is the position of the block
+ * 	- w,h,d is the size of the block
+ * 	- texture1&texture2 = {diffuse:$map,normal:$map,specular:$map,bump:$map}
+ * 	- face is the face that has the unique texture */
+function addBlockCustomAllExceptOne(x,y,z,w,h,d,texture1,texture2,face){
 	var _g = new THREE.CubeGeometry(w,d,h);
 		_g.faceVertexUvs[0][0] = [new THREE.UV(0, 1), new THREE.UV(1, 1), new THREE.UV(1, 0), new THREE.UV(0, 0)];
 		_g.faceVertexUvs[0][1] = [new THREE.UV(1, 0), new THREE.UV(0, 0), new THREE.UV(0, 1), new THREE.UV(1, 1)];
@@ -119,13 +120,26 @@ function addBlockCustomAllExceptOne(x,y,z,w,h,d,texture1,bump1,texture2,bump2,fa
 		_g.matrixAutoUpdate = false;
 	    _g.applyMatrix(new THREE.Matrix4().makeRotationX(-Math.PI/2));
 	var _m = [];
-		/* textureCobbleNormal, textureCobbleLight, textureCobbleBump, textureCobbleSpecular */
-	    _m.push(new THREE.MeshPhongMaterial({map:textureDirt,  normalMap:textureDirtNormal,  specularMap:textureDirtSpecular,  shininess:50,bumpMap:textureDirtBump,  bumpScale:50,metal:true}));
-		_m.push(new THREE.MeshPhongMaterial({map:textureCobble,normalMap:textureCobbleNormal,specularMap:textureCobbleSpecular,shininess:50,bumpMap:textureCobbleBump,bumpScale:50,metal:true}));
+	    	_m.push(new THREE.MeshPhongMaterial({map:texture1.diffuse,normalMap:texture1.normal,specularMap:texture1.specular,shininess:50,bumpMap:texture1.bump,bumpScale:50,metal:true}));
+		_m.push(new THREE.MeshPhongMaterial({map:texture2.diffuse,normalMap:texture2.normal,specularMap:texture2.specular,shininess:50,bumpMap:texture2.bump,bumpScale:50,metal:true}));
 	for (var __u=0;__u<=5;__u++){
 		_g.faces[__u].materialIndex=(__u==face?0:1);
 	} //end for
 	var _b = new THREE.Mesh(_g,new THREE.MeshFaceMaterial(_m));
 	    _b.position.set(x,y,z)
 	scene.add(_b);
+} //end function
+
+/* addPlane function will create a plane <Phong> using a position, size, and textures
+ * for the phong material.
+ *	- x,y,z is the position of the plane
+ *	- w,h is the size of the plane
+ *	- texture = {diffuse:$map,normal:$map,specular:$map,bump:$map} */
+function addPlane(x,y,z,w,h,texture){
+	var _g = new THREE.PlaneGeometry(w,h);
+	    _g.applyMatrix(new THREE.Matrix4().makeRotationX(-Math.PI/2));
+	var _m = new THREE.MeshPhongMaterial({map:texture.diffuse,normalMap:texture.normal,specularMap:texture.specular,shading:THREE.FlatShading,shininess:210,bumpMap:texture.bump,bumpScale:210,metal:false});
+	var _p = new THREE.Mesh(_g,_m);
+	    _p.position.set(x,y,z);
+	scene.add(_p);
 } //end function
